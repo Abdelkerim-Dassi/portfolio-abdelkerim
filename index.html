@@ -1207,9 +1207,9 @@ footer {
     </div>
     <div class="contact-cols r">
       <div class="c-links">
-        <a href="/cdn-cgi/l/email-protection#21404345444d4a4453484c454052524861464c40484d0f424e4c" class="c-row">
+        <a href="mailto:abdelkerimdassi@gmail.com" class="c-row">
           <span class="c-lbl">Email</span>
-          <span class="c-val"><span class="__cf_email__" data-cfemail="5a3b383e3f36313f2833373e3b2929331a3d373b333674393537">[email&#160;protected]</span></span>
+          <span class="c-val">abdelkerimdassi@gmail.com</span>
           <span class="c-arr">↗</span>
         </a>
         <a href="https://linkedin.com/in/abdelkerim-dassi/" target="_blank" class="c-row">
@@ -1244,11 +1244,11 @@ footer {
   <div class="ft-r">
     <a href="https://github.com/Abdelkerim-Dassi" target="_blank">GitHub</a>
     <a href="https://linkedin.com/in/abdelkerim-dassi/" target="_blank">LinkedIn</a>
-    <a href="/cdn-cgi/l/email-protection#43222127262f2826312a2e272230302a03242e222a2f6d202c2e">Email</a>
+    <a href="mailto:abdelkerimdassi@gmail.com">Email</a>
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 /* ── CURSOR ── */
 const cur  = document.getElementById('cur');
 const curO = document.getElementById('cur-o');
@@ -1284,4 +1284,16 @@ const io = new IntersectionObserver(entries => {
   });
 }, { threshold:.07 });
 
-document.querySelectorAll('.r
+document.querySelectorAll('.r').forEach(el => io.observe(el));
+
+/* stagger list rows */
+document.querySelectorAll('.exp-row,.proj-row,.w-row,.cert').forEach((el,i) => {
+  el.dataset.d = (i % 6) * 60;
+});
+/* stagger stats */
+document.querySelectorAll('.st').forEach((el,i) => {
+  el.dataset.d = i * 80;
+});
+</script>
+</body>
+</html>
