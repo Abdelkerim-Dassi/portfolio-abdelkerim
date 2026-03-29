@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG in Production: What Nobody Tells You — Abdelkerim Dassi</title>
+<meta name="description" content="Beyond basics — chunking strategies, retrieval quality, re-ranking, and the subtle failures that kill accuracy in real RAG deployments.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:ital,wght@0,200;0,300;0,400;1,300&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+<style>
+
+/* ─────────────────────────────────────
+   RESET & TOKENS
+───────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:      #0f1624;
+  --bg2:     #141c2e;
+  --paper:   #f0ece4;
+  --muted:   rgba(240,236,228,.42);
+  --dim:     rgba(240,236,228,.16);
+  --line:    rgba(240,236,228,.09);
+  --accent:  #c8a97e;
+  --teal:    #00c9a7;
+  --glow:    rgba(200,169,126,.12);
+}
+
+[data-theme="light"] {
+  --bg:      #d5cec3;
+  --bg2:     #cac2b6;
+  --paper:   #1c1912;
+  --muted:   rgba(28,25,18,.42);
+  --dim:     rgba(28,25,18,.16);
+  --line:    rgba(28,25,18,.12);
+  --accent:  #8a6832;
+  --teal:    #0d7d6a;
+  --glow:    rgba(138,104,50,.1);
+}
+
+html { background: var(--bg); scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--paper);
+  font-family: 'Archivo', sans-serif;
+  font-weight: 300;
+  font-size: 13px;
+  line-height: 1.65;
+  overflow-x: hidden;
+  cursor: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { text-decoration:none; color:inherit; }
+em { font-style:italic; }
+
+/* ── CURSOR ── */
+#cur {
+  position:fixed; width:7px; height:7px;
+  background:var(--paper); border-radius:50%;
+  pointer-events:none; z-index:9999;
+  transform:translate(-50%,-50%);
+  transition: width .35s cubic-bezier(.23,1,.32,1),
+              height .35s cubic-bezier(.23,1,.32,1),
+              background .3s, border .3s;
+  mix-blend-mode: difference;
+}
+#cur-o {
+  position:fixed; width:34px; height:34px;
+  border:1px solid rgba(240,236,228,.22);
+  border-radius:50%; pointer-events:none; z-index:9998;
+  transform:translate(-50%,-50%);
+  transition: all .55s cubic-bezier(.23,1,.32,1);
+  mix-blend-mode:difference;
+}
+body.h #cur  { width:52px; height:52px; background:transparent; border:1px solid var(--paper); }
+body.h #cur-o{ opacity:0; width:52px; height:52px; }
+
+/* ── GRAIN ── */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:190px;
+  opacity:.026;
+  pointer-events:none; z-index:800;
+  animation:grain .7s steps(3) infinite;
+}
+@keyframes grain {
+  0%  { background-position:   0    0; }
+  33% { background-position: -80px  60px; }
+  66% { background-position:  60px -80px; }
+}
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding:28px 48px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+.n-logo {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:17px; letter-spacing:.18em;
+  color:rgba(240,236,228,.5);
+  transition:color .3s;
+}
+.n-logo:hover { color:var(--paper); }
+
+.n-right { display:flex; align-items:center; gap:32px; }
+
+.n-back {
+  font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(240,236,228,.32);
+  transition:color .3s;
+  display:flex; align-items:center; gap:8px;
+}
+.n-back:hover { color:var(--paper); }
+
+.theme-toggle {
+  background:none; border:1px solid rgba(240,236,228,.15);
+  color:rgba(240,236,228,.4);
+  font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+  padding:6px 14px; cursor:pointer;
+  transition:color .3s, border-color .3s;
+  font-family:'Archivo',sans-serif;
+}
+.theme-toggle:hover { color:var(--paper); border-color:rgba(240,236,228,.35); }
+
+/* ── BLOG HERO ── */
+.blog-hero {
+  min-height:60vh;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:100px 48px 56px;
+  position:relative;
+}
+
+.blog-meta {
+  font-size:10px; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--accent);
+  margin-bottom:20px;
+  display:flex; align-items:center; gap:14px;
+}
+.blog-meta::before { content:''; width:28px; height:1px; background:var(--accent); }
+
+.blog-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(48px,10vw,120px);
+  line-height:.92; letter-spacing:-.01em;
+  color:var(--paper);
+  max-width:900px;
+}
+
+.blog-subtitle {
+  margin-top:24px;
+  font-size:15px; line-height:1.8;
+  color:rgba(240,236,228,.45);
+  max-width:560px;
+}
+.blog-subtitle em { font-family:'Libre Baskerville',serif; color:var(--accent); }
+
+.blog-tags {
+  display:flex; gap:10px; margin-top:28px;
+}
+.blog-tag {
+  font-size:9px; letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--accent);
+  border:1px solid rgba(200,169,126,.3);
+  padding:4px 12px;
+}
+
+.blog-border { position:absolute; bottom:0; left:48px; right:48px; height:1px; background:var(--line); }
+
+/* ── ARTICLE BODY ── */
+.article {
+  max-width:720px;
+  margin:0 auto;
+  padding:96px 48px 120px;
+}
+
+.article h2 {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(28px,4vw,42px);
+  letter-spacing:.02em;
+  color:var(--paper);
+  margin:72px 0 28px;
+  line-height:1.05;
+}
+
+.article h3 {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(20px,2.5vw,28px);
+  letter-spacing:.02em;
+  color:rgba(240,236,228,.8);
+  margin:48px 0 20px;
+  line-height:1.1;
+}
+
+.article p {
+  font-size:15px;
+  line-height:2;
+  color:rgba(240,236,228,.55);
+  margin-bottom:24px;
+}
+
+.article p strong {
+  font-weight:400;
+  color:rgba(240,236,228,.82);
+}
+
+.article p em {
+  font-family:'Libre Baskerville',serif;
+  color:var(--accent);
+}
+
+.article ul, .article ol {
+  list-style:none;
+  display:flex; flex-direction:column; gap:12px;
+  margin-bottom:28px;
+  padding-left:0;
+}
+
+.article li {
+  font-size:14px;
+  color:rgba(240,236,228,.5);
+  padding-left:20px;
+  position:relative;
+  line-height:1.85;
+}
+.article li::before {
+  content:'—';
+  position:absolute; left:0;
+  color:var(--accent);
+  font-size:12px;
+}
+
+.article blockquote {
+  border-left:2px solid var(--accent);
+  padding:20px 0 20px 28px;
+  margin:36px 0;
+}
+.article blockquote p {
+  font-size:16px;
+  color:rgba(240,236,228,.65);
+  font-style:italic;
+  font-family:'Libre Baskerville',serif;
+  margin-bottom:0;
+  line-height:1.9;
+}
+
+.article code {
+  font-family:'Courier New', monospace;
+  font-size:13px;
+  background:rgba(240,236,228,.06);
+  border:1px solid rgba(240,236,228,.08);
+  padding:2px 8px;
+  color:var(--accent);
+  border-radius:2px;
+}
+
+.article pre {
+  background:rgba(240,236,228,.04);
+  border:1px solid rgba(240,236,228,.08);
+  padding:24px 28px;
+  margin:28px 0;
+  overflow-x:auto;
+  border-radius:2px;
+}
+.article pre code {
+  background:none;
+  border:none;
+  padding:0;
+  color:rgba(240,236,228,.6);
+  font-size:13px;
+  line-height:1.8;
+}
+
+.article hr {
+  border:none;
+  height:1px;
+  background:var(--line);
+  margin:56px 0;
+}
+
+.article .caption {
+  font-size:11px;
+  color:rgba(240,236,228,.25);
+  letter-spacing:.05em;
+  text-align:center;
+  margin-top:-16px;
+  margin-bottom:32px;
+}
+
+/* ── CALLOUT BOX ── */
+.callout {
+  background:rgba(200,169,126,.06);
+  border:1px solid rgba(200,169,126,.15);
+  padding:24px 28px;
+  margin:32px 0;
+  border-radius:2px;
+}
+.callout-label {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:13px;
+  letter-spacing:.12em;
+  color:var(--accent);
+  margin-bottom:12px;
+}
+.callout p {
+  font-size:13px;
+  color:rgba(240,236,228,.5);
+  margin-bottom:0;
+  line-height:1.85;
+}
+
+/* ── FOOTER ── */
+.blog-footer {
+  border-top:1px solid var(--line);
+  padding:56px 48px;
+  display:flex; flex-direction:column; align-items:center; gap:28px;
+}
+
+.blog-footer-cta {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(32px,5vw,56px);
+  color:var(--paper);
+  text-align:center;
+  line-height:1;
+}
+.blog-footer-cta em {
+  font-family:'Libre Baskerville',serif;
+  font-style:italic; color:var(--accent);
+}
+
+.blog-footer-links {
+  display:flex; gap:32px;
+}
+.blog-footer-links a {
+  font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(240,236,228,.3);
+  transition:color .3s;
+  display:flex; align-items:center; gap:6px;
+}
+.blog-footer-links a:hover { color:var(--accent); }
+
+footer {
+  border-top:1px solid var(--line);
+  padding:26px 48px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.ft-l { font-size:10px; letter-spacing:.08em; color:rgba(240,236,228,.18); }
+.ft-r { display:flex; gap:32px; }
+.ft-r a {
+  font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:rgba(240,236,228,.18);
+  transition:color .25s;
+}
+.ft-r a:hover { color:var(--accent); }
+
+/* ── LIGHT THEME ── */
+[data-theme="light"] body { background:var(--bg); color:var(--paper); }
+[data-theme="light"] html { background:var(--bg); }
+[data-theme="light"] body::before { opacity:.02; }
+[data-theme="light"] #cur { background:var(--paper); }
+[data-theme="light"] #cur-o { border-color:rgba(28,25,18,.2); }
+[data-theme="light"] .n-logo { color:rgba(28,25,18,.55); }
+[data-theme="light"] .n-logo:hover { color:var(--paper); }
+[data-theme="light"] .n-back { color:rgba(28,25,18,.4); }
+[data-theme="light"] .n-back:hover { color:var(--paper); }
+[data-theme="light"] .theme-toggle { border-color:rgba(28,25,18,.2); color:rgba(28,25,18,.5); }
+[data-theme="light"] .theme-toggle:hover { color:var(--paper); border-color:rgba(28,25,18,.4); }
+[data-theme="light"] .blog-subtitle { color:rgba(28,25,18,.55); }
+[data-theme="light"] .blog-tag { border-color:rgba(138,104,50,.35); }
+[data-theme="light"] .article p { color:rgba(28,25,18,.6); }
+[data-theme="light"] .article p strong { color:rgba(28,25,18,.88); }
+[data-theme="light"] .article li { color:rgba(28,25,18,.58); }
+[data-theme="light"] .article h3 { color:rgba(28,25,18,.8); }
+[data-theme="light"] .article code { background:rgba(28,25,18,.06); border-color:rgba(28,25,18,.1); }
+[data-theme="light"] .article pre { background:rgba(28,25,18,.04); border-color:rgba(28,25,18,.08); }
+[data-theme="light"] .article pre code { color:rgba(28,25,18,.6); }
+[data-theme="light"] .article blockquote p { color:rgba(28,25,18,.65); }
+[data-theme="light"] .callout { background:rgba(138,104,50,.06); border-color:rgba(138,104,50,.18); }
+[data-theme="light"] .callout p { color:rgba(28,25,18,.55); }
+[data-theme="light"] .blog-footer-links a { color:rgba(28,25,18,.35); }
+[data-theme="light"] .blog-footer-links a:hover { color:var(--accent); }
+[data-theme="light"] .ft-l { color:rgba(28,25,18,.28); }
+[data-theme="light"] .ft-r a { color:rgba(28,25,18,.28); }
+[data-theme="light"] .ft-r a:hover { color:var(--accent); }
+
+/* ── MOBILE ── */
+@media (max-width:860px) {
+  nav { padding:20px 24px; }
+  .blog-hero { padding:80px 24px 40px; min-height:50vh; }
+  .article { padding:64px 24px 80px; }
+  .blog-footer { padding:40px 24px; }
+  footer { padding:20px 24px; flex-direction:column; gap:10px; text-align:center; }
+}
+
+/* ── SCROLL REVEAL ── */
+.r {
+  opacity:0; transform:translateY(32px);
+  transition:opacity 1s cubic-bezier(.23,1,.32,1),
+              transform 1s cubic-bezier(.23,1,.32,1);
+}
+.r.on { opacity:1; transform:none; }
+
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-o"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="n-logo" href="/">A.DASSI</a>
+  <div class="n-right">
+    <a class="n-back" href="/#writing">← Back</a>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">Light</button>
+  </div>
+</nav>
+
+<!-- ── BLOG HERO ── -->
+<section class="blog-hero">
+  <div class="blog-meta">March 2026 · 8 min read</div>
+  <h1 class="blog-title">RAG in Production:<br>What Nobody Tells You</h1>
+  <p class="blog-subtitle">
+    Beyond basics — <em>chunking strategies, retrieval quality, re-ranking</em>, and the subtle failures that kill accuracy in real deployments. Written from 3 production systems.
+  </p>
+  <div class="blog-tags">
+    <span class="blog-tag">RAG</span>
+    <span class="blog-tag">LLMs</span>
+    <span class="blog-tag">Production</span>
+    <span class="blog-tag">AWS</span>
+  </div>
+  <div class="blog-border"></div>
+</section>
+
+<!-- ── ARTICLE ── -->
+<article class="article">
+
+  <p>
+    Everyone writes about RAG. The tutorials make it look easy: embed your documents, throw them into a vector database, wire up an LLM, done. Ship it.
+  </p>
+  <p>
+    I believed that too — until I had to build RAG systems that <strong>actually worked in production</strong>. Not demos. Not notebooks. Systems where real users asked unpredictable questions, where wrong answers had consequences, and where "it works most of the time" wasn't good enough.
+  </p>
+  <p>
+    Over the past two years, I've built and shipped three production RAG systems — an <strong>AI-powered documentation assistant</strong> deployed on AWS with Kubernetes, a <strong>parliamentary speech analysis platform</strong> processing 100K+ documents, and a <strong>QHSE AI assistant</strong> built with Spring AI and MCP. Each one taught me things no tutorial ever mentioned.
+  </p>
+  <p>
+    This is what I wish someone had told me before I started.
+  </p>
+
+  <hr>
+
+  <h2>The Document Ingestion Trap</h2>
+
+  <p>
+    The first system I built was a documentation assistant — a chatbot that could answer questions about internal project documentation. The stack was Python, Weaviate as the vector store, and AWS SageMaker for the LLM. The deployment ran on <strong>EKS with Docker containers</strong>, orchestrated through a CI/CD pipeline.
+  </p>
+  <p>
+    The prototype took two weeks. Getting it production-ready took three months.
+  </p>
+  <p>
+    The first lesson hit immediately: <strong>your ingestion pipeline is your most important component</strong>. Not your LLM. Not your prompt. The way you process, chunk, and embed documents determines 80% of your system's quality.
+  </p>
+
+  <h3>Chunking Is Not Splitting</h3>
+
+  <p>
+    Every tutorial says "split your documents into chunks of ~500 tokens." This advice is technically correct and practically useless.
+  </p>
+  <p>
+    In the documentation assistant, project docs had nested structures — specs with subsections referencing other subsections, tables that only made sense with their headers, code blocks that lost meaning when cut in half. A naive recursive text splitter destroyed all of this context.
+  </p>
+  <p>
+    What actually worked:
+  </p>
+  <ul>
+    <li><strong>Structure-aware chunking</strong> — parsing the document format first (Markdown headers, HTML sections, PDF layout) and chunking along semantic boundaries, not token counts</li>
+    <li><strong>Overlapping windows with metadata</strong> — 15-20% overlap between chunks, with parent section titles injected as metadata so the retriever could score relevance against the broader context</li>
+    <li><strong>Table preservation</strong> — tables were extracted whole and stored as separate chunks with a "table" type flag, never split across rows</li>
+    <li><strong>Small chunks for retrieval, large chunks for generation</strong> — the "parent-child" pattern, where you embed small granular chunks but retrieve the larger parent when a match is found</li>
+  </ul>
+
+  <div class="callout">
+    <div class="callout-label">Lesson Learned</div>
+    <p>If your retrieval accuracy is bad, don't tune your prompt or swap your LLM. Fix your chunking first. I've seen 20-30% accuracy improvements just from better chunking — more than any prompt engineering ever delivered.</p>
+  </div>
+
+  <h2>The Retrieval Quality Problem</h2>
+
+  <p>
+    The second system — a parliamentary RAG platform — forced me to confront retrieval quality at scale. We had <strong>100,000+ parliamentary speeches</strong> that citizens could query in natural language. The topic classification pipeline hit 95% accuracy, but the RAG component initially struggled.
+  </p>
+  <p>
+    The problem was deceptively simple: <strong>semantic similarity is not the same as relevance</strong>.
+  </p>
+  <p>
+    A citizen asking "What did parliament say about healthcare reform in 2023?" would get semantically similar results — speeches that <em>mentioned</em> healthcare — but not the most <em>relevant</em> ones. The actual policy debates, the key votes, the turning-point speeches were buried under dozens of tangential mentions.
+  </p>
+
+  <h3>Hybrid Search Saved Us</h3>
+
+  <p>
+    Pure vector search wasn't enough. Pure keyword search (BM25) wasn't enough either. The breakthrough came from <strong>combining both</strong>:
+  </p>
+  <ul>
+    <li><strong>Vector search</strong> caught semantic intent — understanding that "healthcare reform" relates to "medical policy changes"</li>
+    <li><strong>BM25 keyword search</strong> caught exact terminology — specific bill numbers, politician names, legal terms that embeddings often blur</li>
+    <li><strong>Reciprocal Rank Fusion</strong> merged the two result sets, giving us significantly better recall than either approach alone</li>
+  </ul>
+  <p>
+    At the scale of 100K+ documents, I also learned that <strong>metadata filtering is not optional</strong>. Date ranges, document types, speaker roles, parliamentary sessions — these filters happen before the vector search, dramatically reducing the search space and improving both speed and relevance.
+  </p>
+
+  <h2>Re-Ranking: The Hidden Multiplier</h2>
+
+  <p>
+    Here's something almost no tutorial covers: <strong>your initial retrieval results are just candidates</strong>. They're not the final context you should feed to your LLM.
+  </p>
+  <p>
+    In the documentation assistant, I added a cross-encoder re-ranking step after retrieval. The process:
+  </p>
+  <ul>
+    <li>Retrieve top-20 chunks from Weaviate using hybrid search</li>
+    <li>Re-rank those 20 chunks using a cross-encoder model that scores each (query, chunk) pair</li>
+    <li>Pass only the top-5 re-ranked chunks to the LLM</li>
+  </ul>
+  <p>
+    The cross-encoder is slower than embedding similarity (it processes each pair individually), but it's dramatically more accurate because it sees the query and the document <strong>together</strong>, not as independent embeddings.
+  </p>
+
+  <blockquote>
+    <p>Retrieval gets you in the neighborhood. Re-ranking gets you to the right door.</p>
+  </blockquote>
+
+  <p>
+    The accuracy improvement was striking. On our internal evaluation set, re-ranking lifted answer quality from roughly 72% to 89% — measured by human evaluation of "did this answer the question correctly and completely."
+  </p>
+
+  <h2>The Failures Nobody Talks About</h2>
+
+  <p>
+    Production RAG systems fail in ways that are invisible in demos. Here are the failure modes I've encountered across all three systems:
+  </p>
+
+  <h3>1. The Confident Wrong Answer</h3>
+
+  <p>
+    The LLM retrieves somewhat-relevant context and generates a fluent, confident answer that's <strong>subtly wrong</strong>. The user has no way to know. This is worse than no answer at all.
+  </p>
+  <p>
+    My fix: <strong>always surface the source chunks</strong> alongside the answer. In the parliamentary system, every response included clickable references to the original speeches. In the QHSE platform, answers linked back to the specific regulation or audit document. This doesn't prevent hallucination, but it makes it verifiable.
+  </p>
+
+  <h3>2. The Unanswerable Question</h3>
+
+  <p>
+    Users ask questions your knowledge base simply cannot answer. A naive RAG system will retrieve the "least irrelevant" chunks and hallucinate an answer anyway.
+  </p>
+  <p>
+    The solution that worked: a <strong>relevance threshold on retrieval scores</strong>. If the best chunk scores below a calibrated threshold, the system responds with "I don't have enough information to answer this" instead of guessing. Calibrating that threshold per-domain took experimentation — too high and you reject valid queries, too low and you let garbage through.
+  </p>
+
+  <h3>3. The Stale Knowledge Problem</h3>
+
+  <p>
+    Documents get updated. Regulations change. New speeches get published. Your vector store doesn't know this unless you tell it.
+  </p>
+  <p>
+    In the QHSE platform (built with <strong>Spring AI, MCP, and Groq</strong>), I implemented an incremental ingestion pipeline — documents were versioned, and updates triggered re-embedding of only the changed sections. Deletes were handled through metadata-based invalidation, not full re-indexing.
+  </p>
+
+  <h3>4. The Multi-Hop Question</h3>
+
+  <p>
+    "How did the healthcare budget compare between 2022 and 2023?" This requires retrieving from two different time periods and synthesizing. Single-shot retrieval fails here.
+  </p>
+  <p>
+    The approach that worked: <strong>query decomposition</strong>. The LLM first breaks the question into sub-queries ("healthcare budget 2022" and "healthcare budget 2023"), retrieves separately for each, then synthesizes. It's slower but dramatically more accurate for comparative or multi-step questions.
+  </p>
+
+  <h2>Infrastructure Lessons from AWS</h2>
+
+  <p>
+    The documentation assistant ran on <strong>AWS EKS</strong> — Kubernetes-managed containers with SageMaker endpoints for the LLM. Here's what I learned about running RAG in the cloud:
+  </p>
+  <ul>
+    <li><strong>Separate your embedding service from your generation service</strong> — they have completely different scaling profiles. Embedding is CPU/GPU-bound and bursty during ingestion. Generation is latency-sensitive and scales with user traffic</li>
+    <li><strong>Vector database sizing matters more than you think</strong> — Weaviate's memory footprint grows linearly with the number of vectors. We underestimated this initially and hit OOM kills in production. Plan for 2-3x your expected index size</li>
+    <li><strong>Cache aggressively</strong> — identical or near-identical queries are more common than you'd expect. A simple query hash cache with a 1-hour TTL cut our SageMaker inference costs significantly</li>
+    <li><strong>S3 as the source of truth</strong> — raw documents lived in S3, processed chunks in the vector store. If the vector store corrupted or needed re-indexing, we could always rebuild from S3. This saved us twice</li>
+  </ul>
+
+  <div class="callout">
+    <div class="callout-label">Architecture Tip</div>
+    <p>Your vector database is a derived store, not a primary store. Treat it like a cache that can be rebuilt. Keep your raw documents and processing metadata somewhere durable. When — not if — you need to re-index with a new embedding model or different chunking strategy, you'll be glad you did.</p>
+  </div>
+
+  <h2>Evaluation: The Hardest Part</h2>
+
+  <p>
+    How do you know your RAG system is actually good? This is the question I still struggle with, even after three production systems.
+  </p>
+  <p>
+    What I've settled on is a <strong>three-layer evaluation</strong>:
+  </p>
+  <ul>
+    <li><strong>Retrieval quality</strong> — given a question, are the right chunks in the top-5? Measured by recall@5 against a manually curated test set. This is the most important metric and the one most people skip</li>
+    <li><strong>Answer quality</strong> — given the right chunks, does the LLM produce a correct answer? This isolates generation from retrieval. Measured by human evaluation on a sample</li>
+    <li><strong>End-to-end quality</strong> — given a question, is the final answer correct? This is what users experience. Measured by a combination of automated checks and periodic human review</li>
+  </ul>
+  <p>
+    The critical insight: <strong>if retrieval is broken, nothing downstream can fix it</strong>. I've seen teams spend weeks tuning prompts when the real problem was that the right documents weren't being retrieved in the first place. Always debug from retrieval upward.
+  </p>
+
+  <h2>What I'd Do Differently</h2>
+
+  <p>
+    If I were starting a new RAG system tomorrow, here's what I'd change:
+  </p>
+  <ul>
+    <li><strong>Start with evaluation, not with building</strong> — create your test set of 50-100 question/answer pairs before writing a single line of pipeline code. Every design decision should be measured against this set</li>
+    <li><strong>Invest in chunking early</strong> — spend a week on chunking strategy before touching retrieval or generation. The ROI is enormous</li>
+    <li><strong>Hybrid search from day one</strong> — don't start with pure vector search thinking you'll "add BM25 later." The architectural assumptions are different</li>
+    <li><strong>Build the feedback loop first</strong> — instrument your system to capture which answers users found helpful and which they didn't. This data is gold for iterating</li>
+    <li><strong>Keep your LLM swappable</strong> — I've switched LLMs mid-project twice. Abstract the generation layer so you can swap models without rewiring your pipeline</li>
+  </ul>
+
+  <hr>
+
+  <p>
+    RAG is not a solved problem. It's an <em>engineering discipline</em> — one that requires as much attention to data quality, infrastructure, and evaluation as it does to the AI itself. The tutorials get you 20% of the way there. The remaining 80% is what happens when real users meet real documents in production.
+  </p>
+  <p>
+    That 80% is where the actual work — and the actual value — lives.
+  </p>
+
+</article>
+
+<!-- ── BLOG FOOTER ── -->
+<div class="blog-footer">
+  <div class="blog-footer-cta">More <em>writing</em> soon.</div>
+  <div class="blog-footer-links">
+    <a href="/">← Portfolio</a>
+    <a href="https://github.com/Abdelkerim-Dassi" target="_blank">GitHub ↗</a>
+    <a href="https://linkedin.com/in/abdelkerim-dassi/" target="_blank">LinkedIn ↗</a>
+    <a href="mailto:abdelkerimdassi@gmail.com">Email ↗</a>
+  </div>
+</div>
+
+<footer>
+  <span class="ft-l">&copy; 2026 Abdelkerim Dassi — Tunis, Tunisia</span>
+  <div class="ft-r">
+    <a href="https://github.com/Abdelkerim-Dassi" target="_blank">GitHub</a>
+    <a href="https://linkedin.com/in/abdelkerim-dassi/" target="_blank">LinkedIn</a>
+    <a href="mailto:abdelkerimdassi@gmail.com">Email</a>
+  </div>
+</footer>
+
+<script>
+/* ── CURSOR ── */
+const cur  = document.getElementById('cur');
+const curO = document.getElementById('cur-o');
+let mx=0,my=0,ox=0,oy=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+(function loop(){
+  cur.style.left  = mx+'px'; cur.style.top  = my+'px';
+  ox += (mx-ox)*.12; oy += (my-oy)*.12;
+  curO.style.left = ox+'px'; curO.style.top = oy+'px';
+  requestAnimationFrame(loop);
+})();
+document.querySelectorAll('a,button').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('h'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('h'));
+});
+
+/* ── SCROLL REVEAL ── */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) e.target.classList.add('on');
+  });
+}, { threshold:.07 });
+document.querySelectorAll('.r').forEach(el => io.observe(el));
+
+/* ── THEME TOGGLE ── */
+(function(){
+  const btn = document.getElementById('theme-toggle');
+  const saved = localStorage.getItem('theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+  function update(){
+    const current = document.documentElement.getAttribute('data-theme');
+    btn.textContent = current === 'light' ? 'Dark' : 'Light';
+  }
+  update();
+  btn.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    update();
+  });
+})();
+</script>
+</body>
+</html>

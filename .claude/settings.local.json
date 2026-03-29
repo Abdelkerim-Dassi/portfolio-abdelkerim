@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx vercel:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(gh api:*)",
+      "Bash(for repo:*)",
+      "Bash(do echo:*)",
+      "Bash(done)"
+    ]
+  }
+}
