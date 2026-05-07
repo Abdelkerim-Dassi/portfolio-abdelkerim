@@ -9,7 +9,8 @@
       "Bash(done)",
       "WebFetch(domain:python.plainenglish.io)",
       "WebFetch(domain:envelope.dev)",
-      "WebFetch(domain:medium.com)"
+      "WebFetch(domain:medium.com)",
+      "Bash(start *)"
     ]
   }
 }

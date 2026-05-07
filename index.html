@@ -692,6 +692,94 @@ footer {
 }
 
 /* ─────────────────────────────────────
+   ACTIVITY (GitHub heatmap)
+───────────────────────────────────── */
+.activity-card {
+  border:1px solid var(--line);
+  background:rgba(240,236,228,.02);
+  padding:34px 36px 30px;
+  display:flex; flex-direction:column; gap:24px;
+  transition:background .35s, border-color .35s;
+}
+.activity-card:hover { background:rgba(240,236,228,.04); border-color:rgba(200,169,126,.2); }
+
+.activity-meta {
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:14px;
+}
+.activity-user {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:18px; letter-spacing:.14em;
+  color:var(--paper);
+}
+.activity-live {
+  font-size:11px; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--accent);
+  display:flex; align-items:center; gap:9px;
+}
+.activity-dot {
+  width:7px; height:7px; border-radius:50%;
+  background:var(--teal);
+  box-shadow:0 0 0 0 rgba(0,201,167,.5);
+  animation:livePulse 2.2s ease-out infinite;
+}
+@keyframes livePulse {
+  0%   { box-shadow:0 0 0 0 rgba(0,201,167,.45); }
+  70%  { box-shadow:0 0 0 9px rgba(0,201,167,0); }
+  100% { box-shadow:0 0 0 0 rgba(0,201,167,0); }
+}
+
+.activity-graph {
+  border:1px solid var(--line);
+  padding:18px 22px 14px;
+  overflow-x:auto;
+}
+.gh-grid {
+  display:block;
+  min-width:720px;
+}
+.gh-grid svg { display:block; width:100%; height:auto; font-family:'Archivo',sans-serif; }
+.gh-grid text { font-size:9px; fill:rgba(240,236,228,.42); }
+.gh-grid .gh-cell { stroke: rgba(240,236,228,.04); stroke-width:1px; shape-rendering:geometricPrecision; }
+.gh-grid .gh-cell:hover { stroke: var(--accent); stroke-width:1.2px; }
+.gh-legend {
+  display:flex; align-items:center; justify-content:flex-end;
+  gap:6px; margin-top:10px;
+  font-size:11px; color:rgba(240,236,228,.45); letter-spacing:.04em;
+}
+.gh-legend-cell { width:10px; height:10px; border-radius:2px; display:inline-block; }
+.gh-loading, .gh-error {
+  font-size:13px; color:rgba(240,236,228,.45);
+  padding:18px 0; text-align:center;
+}
+.gh-error a { color:var(--accent); border-bottom:1px solid rgba(200,169,126,.4); }
+
+.activity-foot {
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:14px;
+}
+.activity-cap {
+  font-size:13px; color:rgba(240,236,228,.32);
+  letter-spacing:.02em;
+}
+.activity-link {
+  display:inline-flex; align-items:center; gap:10px;
+  font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:rgba(240,236,228,.4);
+  border-bottom:1px solid var(--line);
+  padding-bottom:6px;
+  transition:color .3s, border-color .3s;
+}
+.activity-link span { transition:transform .35s; }
+.activity-link:hover { color:var(--accent); border-color:var(--accent); }
+.activity-link:hover span { transform:translate(3px,-3px); }
+
+@media (max-width:860px) {
+  .activity-card { padding:24px 20px; }
+  .activity-graph { padding:14px 16px; }
+}
+
+/* ─────────────────────────────────────
    SCROLL REVEAL
 ───────────────────────────────────── */
 .r {
@@ -796,11 +884,24 @@ footer {
 /* alternating section fills */
 [data-theme="light"] #experience { background:var(--bg); }
 [data-theme="light"] #projects { background:var(--bg2); }
-[data-theme="light"] #stack { background:var(--bg); }
-[data-theme="light"] #certifications { background:var(--bg2); }
-[data-theme="light"] #recommendations { background:var(--bg); }
-[data-theme="light"] #writing { background:var(--bg2); }
-[data-theme="light"] #contact { background:var(--bg); }
+[data-theme="light"] #activity { background:var(--bg); }
+[data-theme="light"] #stack { background:var(--bg2); }
+[data-theme="light"] #certifications { background:var(--bg); }
+[data-theme="light"] #recommendations { background:var(--bg2); }
+[data-theme="light"] #writing { background:var(--bg); }
+[data-theme="light"] #contact { background:var(--bg2); }
+
+/* activity panel — light theme */
+[data-theme="light"] .activity-card { background:var(--bg2); border-color:rgba(44,39,34,.06); }
+[data-theme="light"] .activity-card:hover { background:rgba(176,125,53,.05); border-color:rgba(176,125,53,.22); }
+[data-theme="light"] .activity-user { color:var(--paper); }
+[data-theme="light"] .activity-graph { background:var(--bg); border-color:rgba(44,39,34,.06); }
+[data-theme="light"] .gh-grid text { fill:rgba(44,39,34,.55); }
+[data-theme="light"] .gh-grid .gh-cell { stroke: rgba(27,31,35,.06); }
+[data-theme="light"] .gh-legend { color:rgba(44,39,34,.55); }
+[data-theme="light"] .activity-cap { color:rgba(44,39,34,.5); }
+[data-theme="light"] .activity-link { color:rgba(44,39,34,.5); border-color:rgba(44,39,34,.18); }
+[data-theme="light"] .activity-link:hover { color:var(--accent); border-color:var(--accent); }
 
 /* section heads */
 [data-theme="light"] .sec-label { color:var(--accent); opacity:.7; }
@@ -914,6 +1015,7 @@ footer {
   <div class="n-links">
     <a href="#experience">Experience</a>
     <a href="#projects">Projects</a>
+    <a href="#activity">Activity</a>
     <a href="#stack">Stack</a>
     <a href="#recommendations">Reviews</a>
     <a href="#writing">Writing</a>
@@ -989,14 +1091,14 @@ footer {
       <span class="e-num">02</span>
       <div>
         <div class="e-role">Data Science Instructor</div>
-        <div class="e-co">RCH International Academy — Remote · Freelance</div>
+        <div class="e-co">RCH International · TeachCode · GOMYCODE — Remote &amp; Hybrid · Freelance</div>
         <ul class="e-bullets">
-          <li>Teaching <b>AI Full Pack bootcamp</b> — Python, ML, Deep Learning, Generative AI, Transformers</li>
-          <li>Praised for clear, practical teaching of complex topics with patience and real-world grounding</li>
+          <li>Teaching <b>AI Full Pack</b> across three academies — Python, ML, Deep Learning, Generative AI, Transformers</li>
+          <li>Curricula in English, French and <b>Tunisian dialect</b> — praised for clear, practical, hands-on delivery</li>
         </ul>
       </div>
       <div></div>
-      <div class="e-date">Jan 2026<br>Present<span class="e-now">● Live</span></div>
+      <div class="e-date">Mar 2025<br>Present<span class="e-now">● Live</span></div>
     </div>
 
     <div class="exp-row r">
@@ -1016,34 +1118,6 @@ footer {
     <div class="exp-row r">
       <span class="e-num">04</span>
       <div>
-        <div class="e-role">Data Science Instructor</div>
-        <div class="e-co">TeachCode بالتونسي — Remote · Freelance</div>
-        <ul class="e-bullets">
-          <li>Delivered data science curriculum in <b>Tunisian dialect</b> — making AI accessible locally</li>
-          <li>Hands-on projects, deep learning fundamentals, real-world applications</li>
-        </ul>
-      </div>
-      <div></div>
-      <div class="e-date">Sep 2025<br>Jan 2026</div>
-    </div>
-
-    <div class="exp-row r">
-      <span class="e-num">05</span>
-      <div>
-        <div class="e-role">Data Science Instructor</div>
-        <div class="e-co">GOMYCODE — Tunisia · Hybrid · Freelance</div>
-        <ul class="e-bullets">
-          <li>5-month Data Science course — <b>real-world examples</b>, hands-on projects, deep learning fundamentals</li>
-          <li>Students praised guidance through projects and encouragement to explore beyond the basics</li>
-        </ul>
-      </div>
-      <div></div>
-      <div class="e-date">Mar 2025<br>Dec 2025</div>
-    </div>
-
-    <div class="exp-row r">
-      <span class="e-num">06</span>
-      <div>
         <div class="e-role">Data Scientist</div>
         <div class="e-co">D2D Analytics — Canada · Remote</div>
         <ul class="e-bullets">
@@ -1056,7 +1130,7 @@ footer {
     </div>
 
     <div class="exp-row r">
-      <span class="e-num">07</span>
+      <span class="e-num">05</span>
       <div>
         <div class="e-role">AI Engineer</div>
         <div class="e-co">WEVIOO — Tunisia · Hybrid · Internship</div>
@@ -1070,7 +1144,7 @@ footer {
     </div>
 
     <div class="exp-row r">
-      <span class="e-num">08</span>
+      <span class="e-num">06</span>
       <div>
         <div class="e-role">Data Scientist</div>
         <div class="e-co">Silver Brain AI AG — Zurich, Switzerland · Remote</div>
@@ -1081,34 +1155,6 @@ footer {
       </div>
       <div></div>
       <div class="e-date">Jun 2023<br>Oct 2023</div>
-    </div>
-
-    <div class="exp-row r">
-      <span class="e-num">09</span>
-      <div>
-        <div class="e-role">Data Scientist</div>
-        <div class="e-co">ADDINN Group — Tunisia · Hybrid · Internship</div>
-        <ul class="e-bullets">
-          <li>Custom CNN — <b>5K+ images, 91% precision</b> with transfer learning</li>
-          <li>Production deploy: FastAPI, Docker, GitHub Actions</li>
-        </ul>
-      </div>
-      <div></div>
-      <div class="e-date">Jun 2023<br>Sep 2023</div>
-    </div>
-
-    <div class="exp-row r">
-      <span class="e-num">10</span>
-      <div>
-        <div class="e-role">Software Engineer</div>
-        <div class="e-co">ADDINN Group — Tunisia · On-site · Internship</div>
-        <ul class="e-bullets">
-          <li>Backend development with <b>.NET framework</b> and PostgreSQL</li>
-          <li>Collaborative tooling with Git/GitHub; UML-driven design approach</li>
-        </ul>
-      </div>
-      <div></div>
-      <div class="e-date">Jun 2022<br>Sep 2022</div>
     </div>
 
   </div>
@@ -1160,11 +1206,48 @@ footer {
   </div>
 </section>
 
+<!-- ── ACTIVITY ── -->
+<section id="activity" class="sec">
+  <div class="sec-inner">
+    <div class="sec-head r">
+      <span class="sec-label">/ 03 — Live from GitHub</span>
+      <h2 class="sec-title">Activity</h2>
+    </div>
+
+    <div class="activity-card r">
+      <div class="activity-meta">
+        <span class="activity-user">@Abdelkerim-Dassi</span>
+        <span class="activity-live"><span class="activity-dot"></span>Synced live</span>
+      </div>
+      <div class="activity-graph">
+        <div id="gh-chart" class="gh-grid" role="img" aria-label="GitHub contribution graph">
+          <div class="gh-loading">Loading contribution graph…</div>
+        </div>
+        <div class="gh-legend" id="gh-legend" hidden>
+          <span>Less</span>
+          <span class="gh-legend-cell" data-lvl="0"></span>
+          <span class="gh-legend-cell" data-lvl="1"></span>
+          <span class="gh-legend-cell" data-lvl="2"></span>
+          <span class="gh-legend-cell" data-lvl="3"></span>
+          <span class="gh-legend-cell" data-lvl="4"></span>
+          <span>More</span>
+        </div>
+      </div>
+      <div class="activity-foot">
+        <span class="activity-cap" id="gh-total">Contribution graph — refreshed from GitHub on every visit.</span>
+        <a href="https://github.com/Abdelkerim-Dassi" target="_blank" rel="noopener" class="activity-link">
+          View profile <span>↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── STACK ── -->
 <section id="stack" class="sec">
   <div class="sec-inner">
     <div class="sec-head r">
-      <span class="sec-label">/ 03 — Technologies</span>
+      <span class="sec-label">/ 04 — Technologies</span>
       <h2 class="sec-title">Stack</h2>
     </div>
 
@@ -1234,7 +1317,7 @@ footer {
 <section id="certifications" class="sec">
   <div class="sec-inner">
     <div class="sec-head r">
-      <span class="sec-label">/ 04 — Credentials</span>
+      <span class="sec-label">/ 05 — Credentials</span>
       <h2 class="sec-title">Certifications</h2>
     </div>
     <div class="certs-grid r">
@@ -1270,7 +1353,7 @@ footer {
 <section id="recommendations" class="sec">
   <div class="sec-inner">
     <div class="sec-head r">
-      <span class="sec-label">/ 05 — From colleagues &amp; mentors</span>
+      <span class="sec-label">/ 06 — From colleagues &amp; mentors</span>
       <h2 class="sec-title">Reviews</h2>
     </div>
     <div class="rec-grid r">
@@ -1335,7 +1418,7 @@ footer {
 <section id="writing" class="sec">
   <div class="sec-inner">
     <div class="sec-head r">
-      <span class="sec-label">/ 06 — Essays &amp; articles</span>
+      <span class="sec-label">/ 07 — Essays &amp; articles</span>
       <h2 class="sec-title">Writing</h2>
     </div>
     <div class="writing-list">
@@ -1507,8 +1590,160 @@ document.querySelectorAll('.st').forEach((el,i) => {
       const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
+      window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: next } }));
     });
   });
+})();
+
+/* ── GITHUB CONTRIBUTION GRAPH (native styling) ── */
+(function(){
+  const USER = 'Abdelkerim-Dassi';
+  const API  = `https://github-contributions-api.jogruber.de/v4/${USER}?y=last`;
+  const PALETTE = {
+    dark:  ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
+    light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39']
+  };
+  const CELL = 11, GAP = 3, DAY_LABEL_W = 28, MONTH_LABEL_H = 18;
+  const DAY_LABELS = { 1:'Mon', 3:'Wed', 5:'Fri' };
+
+  let cached = null;
+
+  function colors(){
+    const t = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    return PALETTE[t];
+  }
+
+  function buildWeeks(contributions){
+    if(!contributions.length) return [];
+    const map = new Map(contributions.map(c => [c.date, c]));
+    const first = new Date(contributions[0].date + 'T00:00:00');
+    const start = new Date(first);
+    start.setDate(first.getDate() - first.getDay()); // back to Sunday
+    const lastStr = contributions[contributions.length - 1].date;
+    const end = new Date(lastStr + 'T00:00:00');
+
+    const weeks = [];
+    const cur = new Date(start);
+    while(cur <= end){
+      const week = [];
+      for(let d=0; d<7; d++){
+        const y = cur.getFullYear();
+        const m = String(cur.getMonth()+1).padStart(2,'0');
+        const day = String(cur.getDate()).padStart(2,'0');
+        const ds = `${y}-${m}-${day}`;
+        if(cur >= first && cur <= end){
+          week.push(map.get(ds) || { date: ds, count: 0, level: 0 });
+        } else {
+          week.push(null);
+        }
+        cur.setDate(cur.getDate() + 1);
+      }
+      weeks.push(week);
+    }
+    return weeks;
+  }
+
+  function fmtTitle(day){
+    if(!day) return '';
+    const d = new Date(day.date + 'T00:00:00');
+    const dateStr = d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+    const c = day.count;
+    if(c === 0) return `No contributions on ${dateStr}`;
+    return `${c} contribution${c === 1 ? '' : 's'} on ${dateStr}`;
+  }
+
+  function render(){
+    const root = document.getElementById('gh-chart');
+    const legend = document.getElementById('gh-legend');
+    const totalEl = document.getElementById('gh-total');
+    if(!root || !cached) return;
+
+    const weeks = buildWeeks(cached.contributions);
+    const pal = colors();
+    const w = DAY_LABEL_W + weeks.length * (CELL + GAP);
+    const h = MONTH_LABEL_H + 7 * (CELL + GAP);
+
+    let svg = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMinYMin meet" xmlns="http://www.w3.org/2000/svg">`;
+
+    // month labels
+    svg += `<g class="gh-months">`;
+    let lastMonth = -1;
+    weeks.forEach((week, i) => {
+      const firstReal = week.find(d => d) || null;
+      if(!firstReal) return;
+      const dt = new Date(firstReal.date + 'T00:00:00');
+      const mo = dt.getMonth();
+      if(mo !== lastMonth && dt.getDate() <= 7){
+        const x = DAY_LABEL_W + i * (CELL + GAP);
+        const name = dt.toLocaleString('en-US', { month:'short' });
+        svg += `<text x="${x}" y="${MONTH_LABEL_H - 6}">${name}</text>`;
+        lastMonth = mo;
+      }
+    });
+    svg += `</g>`;
+
+    // day labels
+    svg += `<g class="gh-days">`;
+    Object.entries(DAY_LABELS).forEach(([di, label]) => {
+      const y = MONTH_LABEL_H + Number(di) * (CELL + GAP) + CELL - 2;
+      svg += `<text x="0" y="${y}">${label}</text>`;
+    });
+    svg += `</g>`;
+
+    // cells
+    svg += `<g class="gh-cells">`;
+    weeks.forEach((week, wi) => {
+      week.forEach((day, di) => {
+        if(!day) return;
+        const x = DAY_LABEL_W + wi * (CELL + GAP);
+        const y = MONTH_LABEL_H + di * (CELL + GAP);
+        const fill = pal[day.level] || pal[0];
+        svg += `<rect class="gh-cell" x="${x}" y="${y}" width="${CELL}" height="${CELL}" rx="2" ry="2" fill="${fill}"><title>${fmtTitle(day)}</title></rect>`;
+      });
+    });
+    svg += `</g>`;
+    svg += `</svg>`;
+
+    root.innerHTML = svg;
+
+    // legend
+    if(legend){
+      legend.hidden = false;
+      legend.querySelectorAll('.gh-legend-cell').forEach(el => {
+        el.style.background = pal[Number(el.dataset.lvl)];
+      });
+    }
+
+    // total caption
+    if(totalEl && cached.total){
+      const t = cached.total.lastYear ?? Object.values(cached.total)[0];
+      if(t != null) totalEl.textContent = `${t.toLocaleString()} contributions in the last year — synced live from GitHub.`;
+    }
+  }
+
+  function showError(){
+    const root = document.getElementById('gh-chart');
+    if(!root) return;
+    root.innerHTML = `<div class="gh-error">Couldn't load live activity. <a href="https://github.com/${USER}" target="_blank" rel="noopener">View on GitHub</a></div>`;
+  }
+
+  async function load(){
+    try {
+      const res = await fetch(API + `&_=${Date.now()}`);
+      if(!res.ok) throw new Error('http ' + res.status);
+      cached = await res.json();
+      render();
+    } catch(e){
+      showError();
+    }
+  }
+
+  window.addEventListener('themechange', render);
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', load);
+  } else {
+    load();
+  }
 })();
 </script>
 </body>
