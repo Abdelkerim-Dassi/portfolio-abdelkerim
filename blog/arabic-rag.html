@@ -489,7 +489,7 @@ footer {
 <article class="article">
 
   <p>
-    RAG looks like magic in English demos. You drop in PDFs, retrieve, prompt the model, and it talks. I shipped one in Egyptian Arabic for an agriculture use case. On day one, retrieval came back almost empty. Users were typing dialect on their phones. My docs were in Modern Standard Arabic. The English playbook didn't survive contact with them.
+    RAG looks like magic in English demos. You drop in PDFs, retrieve, prompt the model, and it talks. I shipped one in Egyptian Arabic for an agriculture use case. On day one, retrieval came back almost empty. Users typed dialect on their phones; my docs were in Modern Standard Arabic. The English playbook didn't survive them.
   </p>
   <p>
     Here are the six small fixes that turned almost-nothing into something I'm willing to put in front of farmers.
@@ -500,13 +500,13 @@ footer {
   <h2>Arabic Isn't One Language</h2>
 
   <p>
-    Arabic users don't type the same way. The same word can carry different alif shapes (ٱ, آ, إ, أ), with or without diacritics, with stray RTL marks copied from a keyboard. Dialect is a separate problem layered on top: the dictionary form your docs use and what a farmer types on WhatsApp are often very different. Most embedding models, even multilingual ones, can't tell that <em>"how do I water my courgette in summer"</em> and <code>ازاى اروى الكوسة فى الصيف؟</code> mean the same thing.
+    Arabic users don't type the same way. The same word can carry different alif shapes (ٱ, آ, إ, أ), diacritics or no diacritics, stray RTL marks from a keyboard. Dialect is a separate problem on top: the dictionary form your docs use and what a farmer types on WhatsApp are often very different. Most embedding models, even multilingual ones, can't tell that <em>"how do I water my courgette in summer"</em> and <code>ازاى اروى الكوسة فى الصيف؟</code> mean the same thing.
   </p>
 
   <h2>Fix #1 — Normalize the Query, Not the Docs</h2>
 
   <p>
-    The simplest win came first. On every incoming query I strip diacritics, the tatweel character, RTL marks, and unify the alif variants into a single <code>ا</code>. Ya folds into maqsura. One thing I deliberately leave alone: ta-marbuta. It carries meaning in technical Arabic, and stripping it muddied real distinctions in my benchmark.
+    The simplest win came first. On every incoming query I strip diacritics, the tatweel character, RTL marks, and unify the alif variants into a single <code>ا</code>. Ya folds into maqsura. One thing I deliberately leave alone: ta-marbuta. It carries meaning in technical Arabic, and stripping it muddied real distinctions.
   </p>
   <p>
     The harder rule I learned: <strong>don't run the same normalization on your knowledge base</strong>. You'll quietly damage the exact words farmers search for. Normalize what comes in. Leave what's already indexed.
@@ -520,17 +520,17 @@ text = re.sub(r"\s+", " ", text).strip()</code></pre>
   <h2>Fix #2 — Rewrite Dialect Into MSA, but Freeze the Nouns</h2>
 
   <p>
-    Normalization fixes spelling. It doesn't fix dialect. So before retrieval, I send the query through a small GPT-4o call with a few-shot prompt that rewrites Egyptian colloquial into MSA.
+    Normalization fixes spelling, not dialect. So before retrieval, I send the query through a small GPT-4o call with a few-shot prompt that rewrites Egyptian colloquial into MSA.
   </p>
   <ul>
     <li>Original: <code>ازاى اروى الكوسة فى الصيف؟</code></li>
     <li>Rewritten: <code>كيف أروي الكوسة في فصل الصيف؟</code></li>
   </ul>
   <p>
-    The trick most people miss is in the rewriter prompt itself: tell the model <strong>what not to touch</strong>. Crop names, pesticide names, fertilizer names, varieties, numbers, dates, and units must stay verbatim. If GPT helpfully "translates" a courgette name, your knowledge base will never match it again.
+    The trick most people miss is in the prompt itself: tell the model <strong>what not to touch</strong>. Crop names, pesticide names, fertilizer names, varieties, numbers, dates, and units stay verbatim. If GPT "translates" a courgette name, your knowledge base will never match it.
   </p>
   <p>
-    A few details earned their keep. I pass the <em>original</em>, unnormalized query into the rewriter — register cues live in the spelling. I cache rewrites by the normalized form, so dialect spelling variants share a slot. I cache failures too, so I don't burn tokens retrying hopeless queries. And I fail open: if the rewriter dies or hands back the same string, retrieval falls back to the original. Then I run retrieval against both versions and merge by max score.
+    A few details earned their keep. I pass the <em>original</em>, unnormalized query into the rewriter — register cues live in the spelling. I cache rewrites by the normalized form, so dialect variants share a slot. I cache failures too. I fail open: if the rewriter dies, retrieval falls back to the original. Then I run both versions and merge by max score.
   </p>
 
   <h2>Fix #3 — Hybrid Search With the Arabic Tokenizer</h2>
@@ -539,29 +539,29 @@ text = re.sub(r"\s+", " ", text).strip()</code></pre>
     Vector search alone misses crop names. BM25 alone misses dialect paraphrases. Together they cover both. I use pgvector for the semantic side and Postgres full-text for the keyword side, merged by node ID with the higher score winning.
   </p>
   <p>
-    The catch is small but vicious: Postgres' default full-text config tokenizes English. On Arabic input it produces nonsense — long words chopped at the wrong points, no proper stemming. You have to switch to the Arabic full-text config explicitly. That one config line did more for recall than any prompt change.
+    The catch is small but vicious: Postgres' default full-text config tokenizes English. On Arabic it produces nonsense. You have to switch to the Arabic full-text config explicitly. That one line did more for recall than any prompt change.
   </p>
 
   <h2>Fix #4 — Recalibrate Your Similarity Scores</h2>
 
   <p>
-    Multilingual embeddings don't score Arabic the way they score English. The 0.7 cosine threshold I trusted from English projects rejected almost every correct Arabic match. Real cosine values for relevant Arabic chunks were landing between 0.20 and 0.45.
+    Multilingual embeddings don't score Arabic the way they score English. The 0.7 threshold I trusted from English projects rejected almost every correct Arabic match. Real cosine values for relevant Arabic chunks were landing between 0.20 and 0.45.
   </p>
   <p>
-    So I built a small benchmark — 20 queries, half in-scope agriculture, half deliberately off-topic, mixed across Arabic, French, and English. Then I picked an empirical floor (<code>0.15</code>) and ceiling (<code>0.50</code>) from what I was actually seeing, and linearly remapped raw cosine into a 0–1 confidence score the rest of my code could trust. Threshold sits at raw <code>0.30</code>, calibrated around <code>0.50</code>.
+    So I built a small benchmark — 20 queries, half in-scope agriculture, half off-topic, across Arabic, French, and English. Then I picked an empirical floor (<code>0.15</code>) and ceiling (<code>0.50</code>) from what I was actually seeing, and remapped raw cosine into a 0–1 confidence score. Threshold sits at raw <code>0.30</code>.
   </p>
 
   <h2>Fix #5 — Confidence Is Two Questions, Not One</h2>
 
   <p>
-    I ask the LLM to return its own confidence inside its JSON answer — <code>{"answer": "...", "confidence": 0.XX}</code>. That's the primary signal. But I keep <code>max_similarity</code> from retrieval as a safety net for when the JSON is malformed, or when the model is hallucinating its own certainty.
+    I ask the LLM to return its own confidence inside its JSON answer — <code>{"answer": "...", "confidence": 0.XX}</code>. That's the primary signal. I keep <code>max_similarity</code> from retrieval as a safety net for when the JSON is malformed, or when the model is hallucinating its own certainty.
   </p>
   <p>
-    Three buckets, three behaviors:
+    Three buckets:
   </p>
   <ul>
     <li>≥ 0.7 — answer directly.</li>
-    <li>0.5 to 0.7 — answer, with a disclaimer.</li>
+    <li>0.5–0.7 — answer with a disclaimer.</li>
     <li>&lt; 0.5 — hand it to a human expert.</li>
   </ul>
   <p>
@@ -571,7 +571,7 @@ text = re.sub(r"\s+", " ", text).strip()</code></pre>
   <h2>Fix #6 — Every Expert Answer Becomes Part of the Brain</h2>
 
   <p>
-    When a question escalates and a human expert resolves it, that whole Q+A is embedded back into the knowledge base — as one un-chunked node, tagged <code>expert_answer</code>, written in the user's actual language. The next time a farmer asks something similar in dialect, the closest match isn't a generic doc anymore. It's an expert answer to a real farmer's real question, in the same register the farmer types in.
+    When an expert resolves an escalated question, that whole Q+A is embedded back into the knowledge base — one un-chunked node, tagged <code>expert_answer</code>, in the user's actual language. The next time a farmer asks something similar in dialect, the closest match isn't a generic doc. It's an expert answer to a real question, in the same register.
   </p>
   <p>
     Most of the dialect knowledge in my retriever wasn't there on day one. The system grew it, one escalation at a time.
@@ -580,7 +580,7 @@ text = re.sub(r"\s+", " ", text).strip()</code></pre>
   <h2>What Actually Mattered</h2>
 
   <p>
-    Arabic isn't English with different letters. What users type is rarely what your docs say, and the gap is where most RAG systems fail silently. The fixes above are small. Together, they took retrieval from almost-nothing to usable.
+    Arabic isn't English with different letters. What users type is rarely what your docs say, and that gap is where RAG quietly fails. The fixes above are small. Together they took retrieval from almost-nothing to usable.
   </p>
 
   <div class="callout">

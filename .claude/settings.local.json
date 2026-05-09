@@ -10,7 +10,9 @@
       "WebFetch(domain:python.plainenglish.io)",
       "WebFetch(domain:envelope.dev)",
       "WebFetch(domain:medium.com)",
-      "Bash(start *)"
+      "Bash(start *)",
+      "PowerShell($h = Get-Content 'D:\\\\1MT\\\\portfolio-abdelkerim\\\\blog\\\\arabic-rag.html' -Raw; $start = $h.IndexOf\\('<article class=\"article\">'\\); $end = $h.IndexOf\\('</article>'\\); $body = $h.Substring\\($start, $end - $start\\); $text = [regex]::Replace\\($body, '<[^>]+>', ' '\\); $text = [regex]::Replace\\($text, '\\\\s+', ' '\\); $words = \\($text.Trim\\(\\) -split ' ' | Where-Object { $_ -match '\\\\S' }\\).Count; Write-Output \\('Article body words: ' + $words\\))",
+      "Bash(git *)"
     ]
   }
 }
