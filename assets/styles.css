@@ -44,6 +44,22 @@ body {
 a { text-decoration:none; color:inherit; }
 em { font-style:italic; }
 
+.flag {
+  display: inline-block;
+  width: 18px; height: 13px;
+  vertical-align: -2px;
+  margin-right: 6px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(240,236,228,.06);
+  object-fit: cover;
+}
+[data-theme="light"] .flag { box-shadow: 0 0 0 1px rgba(15,31,58,.08); }
+.flag-inline {
+  width: 16px; height: 12px;
+  margin: 0 4px;
+  vertical-align: -1px;
+}
+
 /* ─────────────────────────────────────
    GRAIN
 ───────────────────────────────────── */
