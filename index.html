@@ -95,6 +95,7 @@
       <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
   </div>
+  <button class="nav-burger" aria-label="Open menu"><span></span><span></span><span></span></button>
 </nav>
 
 <section id="hero">
@@ -159,6 +160,46 @@
 <section class="sec">
   <div class="sec-inner">
     <div class="sec-head r">
+      <span class="sec-label">/ Latest writing</span>
+      <h2 class="sec-title">From the field</h2>
+    </div>
+    <div class="writing-list">
+      <a class="w-row r" href="/blog/pip-poetry-uv.html">
+        <span class="w-num">002</span>
+        <div>
+          <div class="w-title">I Used Pip for Years. Poetry for Teams. Then Uv Showed Up.</div>
+          <div class="w-desc">An honest comparison of pip, poetry, and uv from a working AI engineer. Written plainly, in five minutes.</div>
+          <div class="w-tags">
+            <span class="w-tag">Python</span>
+            <span class="w-tag">Tooling</span>
+            <span class="w-tag">AI Stack</span>
+          </div>
+        </div>
+        <div class="w-status"><div class="w-dot"></div>5 min read</div>
+      </a>
+      <a class="w-row r" href="/blog/arabic-rag.html">
+        <span class="w-num">003</span>
+        <div>
+          <div class="w-title">Arabic Broke My RAG. Here's What Saved It.</div>
+          <div class="w-desc">Six small fixes that turned a broken Arabic-dialect chatbot into something usable. From a real production deployment.</div>
+          <div class="w-tags">
+            <span class="w-tag">RAG</span>
+            <span class="w-tag">Arabic NLP</span>
+            <span class="w-tag">Production AI</span>
+          </div>
+        </div>
+        <div class="w-status"><div class="w-dot"></div>3 min read</div>
+      </a>
+    </div>
+    <div class="r" style="margin-top:48px; text-align:center;">
+      <a class="btn" href="/writing">All writing <span>↗</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-inner">
+    <div class="sec-head r">
       <span class="sec-label">/ What's here</span>
       <h2 class="sec-title">Explore the site</h2>
     </div>
@@ -211,5 +252,6 @@
 </footer>
 
 <script src="/assets/main.js" defer></script>
+<button id="btt" aria-label="Back to top">↑</button>
 </body>
 </html>

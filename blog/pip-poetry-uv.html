@@ -29,6 +29,7 @@
 <link rel="stylesheet" href="/assets/comments.css">
 </head>
 <body>
+<div id="reading-bar"></div>
 
 <nav>
   <a class="n-brand" href="/">
@@ -46,6 +47,7 @@
       <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
   </div>
+  <button class="nav-burger" aria-label="Open menu"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- ── BLOG HERO ── -->
@@ -199,12 +201,27 @@ ruff  = "^0.3"</code></pre>
 </section>
 <script src="/assets/comments.js" defer></script>
 
+<div class="blog-nav">
+  <a class="blog-nav-prev" href="/blog/rag-in-production.html">
+    <span class="blog-nav-dir">← Previous</span>
+    <span class="blog-nav-title">RAG in Production: What Nobody Tells You</span>
+  </a>
+  <a class="blog-nav-next" href="/blog/arabic-rag.html">
+    <span class="blog-nav-dir">Next →</span>
+    <span class="blog-nav-title">Arabic Broke My RAG. Here's What Saved It.</span>
+  </a>
+</div>
+
 <div class="blog-footer">
   <div class="blog-footer-cta">More <em>writing</em> soon.</div>
+  <div class="blog-share">
+    <a class="blog-share-btn" href="https://twitter.com/intent/tweet?text=I+Used+Pip+for+Years.+Poetry+for+Teams.+Then+Uv+Showed+Up.&url=https%3A%2F%2Fabdelkerimdassi.com%2Fblog%2Fpip-poetry-uv.html" target="_blank" rel="noopener">Share on X ↗</a>
+    <a class="blog-share-btn" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fabdelkerimdassi.com%2Fblog%2Fpip-poetry-uv.html&title=I+Used+Pip+for+Years.+Poetry+for+Teams.+Then+Uv+Showed+Up." target="_blank" rel="noopener">LinkedIn ↗</a>
+    <button class="blog-share-btn share-copy">Copy link</button>
+  </div>
   <div class="blog-footer-links">
     <a href="/writing">← Writing</a>
     <a href="https://github.com/Abdelkerim-Dassi" target="_blank" rel="noopener">GitHub ↗</a>
-    <a href="https://linkedin.com/in/abdelkerim-dassi/" target="_blank" rel="noopener">LinkedIn ↗</a>
     <a href="mailto:abdelkerimdassi@gmail.com">Email ↗</a>
   </div>
 </div>
@@ -218,6 +235,7 @@ ruff  = "^0.3"</code></pre>
   </div>
 </footer>
 
+<button id="btt" aria-label="Back to top">↑</button>
 <script src="/assets/main.js" defer></script>
 <script>
 (function(){

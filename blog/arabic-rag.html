@@ -29,6 +29,7 @@
 <link rel="stylesheet" href="/assets/comments.css">
 </head>
 <body>
+<div id="reading-bar"></div>
 
 <nav>
   <a class="n-brand" href="/">
@@ -46,6 +47,7 @@
       <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
   </div>
+  <button class="nav-burger" aria-label="Open menu"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- ── BLOG HERO ── -->
@@ -191,12 +193,27 @@ text = re.sub(r"\s+", " ", text).strip()</code></pre>
 </section>
 <script src="/assets/comments.js" defer></script>
 
+<div class="blog-nav">
+  <a class="blog-nav-prev" href="/blog/pip-poetry-uv.html">
+    <span class="blog-nav-dir">← Previous</span>
+    <span class="blog-nav-title">I Used Pip for Years. Poetry for Teams. Then Uv Showed Up.</span>
+  </a>
+  <span class="blog-nav-next" style="background:var(--bg);padding:36px 40px;display:flex;flex-direction:column;gap:10px;justify-content:flex-end;text-align:right;">
+    <span class="blog-nav-dir">All writing →</span>
+    <a class="blog-nav-title" href="/writing" style="text-decoration:none;">Writing index</a>
+  </span>
+</div>
+
 <div class="blog-footer">
   <div class="blog-footer-cta">More <em>writing</em> soon.</div>
+  <div class="blog-share">
+    <a class="blog-share-btn" href="https://twitter.com/intent/tweet?text=Arabic+Broke+My+RAG.+Here%E2%80%99s+What+Saved+It.&url=https%3A%2F%2Fabdelkerimdassi.com%2Fblog%2Farabic-rag.html" target="_blank" rel="noopener">Share on X ↗</a>
+    <a class="blog-share-btn" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fabdelkerimdassi.com%2Fblog%2Farabic-rag.html&title=Arabic+Broke+My+RAG" target="_blank" rel="noopener">LinkedIn ↗</a>
+    <button class="blog-share-btn share-copy">Copy link</button>
+  </div>
   <div class="blog-footer-links">
     <a href="/writing">← Writing</a>
     <a href="https://github.com/Abdelkerim-Dassi" target="_blank" rel="noopener">GitHub ↗</a>
-    <a href="https://linkedin.com/in/abdelkerim-dassi/" target="_blank" rel="noopener">LinkedIn ↗</a>
     <a href="mailto:abdelkerimdassi@gmail.com">Email ↗</a>
   </div>
 </div>
@@ -210,6 +227,7 @@ text = re.sub(r"\s+", " ", text).strip()</code></pre>
   </div>
 </footer>
 
+<button id="btt" aria-label="Back to top">↑</button>
 <script src="/assets/main.js" defer></script>
 <script>
 (function(){
