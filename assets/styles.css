@@ -949,6 +949,58 @@ footer {
 }
 
 /* ─────────────────────────────────────
+   ABOUT PAGE
+───────────────────────────────────── */
+.about-cols {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 80px;
+  align-items: flex-start;
+}
+.about-h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px, 5vw, 56px);
+  letter-spacing: .02em; line-height: .95;
+  color: var(--paper);
+  margin: 18px 0 32px;
+}
+.about-p {
+  font-size: 15px; line-height: 2;
+  color: rgba(240,236,228,.55);
+  margin-bottom: 22px;
+}
+.about-p strong { font-weight: 400; color: rgba(240,236,228,.85); }
+.about-photo {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 16px;
+  position: sticky; top: 100px;
+}
+.about-img {
+  width: 100%; max-width: 260px;
+  border-radius: 2px;
+  border: 1px solid rgba(240,236,228,.1);
+  object-fit: cover;
+  aspect-ratio: 1;
+}
+.about-photo-caption {
+  font-size: 10px; letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(240,236,228,.28);
+  text-align: center;
+}
+
+[data-theme="light"] .about-p { color: rgba(15,29,61,.72); }
+[data-theme="light"] .about-p strong { color: rgba(15,29,61,.9); }
+[data-theme="light"] .about-img { border-color: rgba(15,29,61,.1); }
+[data-theme="light"] .about-photo-caption { color: rgba(15,29,61,.4); }
+
+@media (max-width:860px) {
+  .about-cols { grid-template-columns: 1fr; gap: 40px; }
+  .about-photo { position: static; flex-direction: row; align-items: center; gap: 20px; }
+  .about-img { width: 80px; max-width: 80px; border-radius: 50%; }
+}
+
+/* ─────────────────────────────────────
    AVAILABILITY BADGE (Contact)
 ───────────────────────────────────── */
 .avail-strip {
@@ -1019,6 +1071,11 @@ footer {
   transition: transform .4s cubic-bezier(.23,1,.32,1), color .3s;
 }
 .page-card:hover .pc-arr { transform: translate(5px,-5px); color: var(--accent); }
+
+/* 5-card layout: 3 top + 2 bottom */
+.pages-grid-5 { grid-template-columns: repeat(3, 1fr); }
+.pages-grid-5 .page-card:nth-child(4),
+.pages-grid-5 .page-card:nth-child(5) { grid-column: span 1; }
 
 [data-theme="light"] .pages-grid { background: rgba(15,29,61,.06); }
 [data-theme="light"] .page-card { background: var(--bg); }
@@ -1170,6 +1227,7 @@ footer {
   .contact-cols { grid-template-columns:1fr; gap:40px; }
   .pull-quote { padding: 64px 24px; }
   .pages-grid { grid-template-columns: 1fr; }
+  .pages-grid-5 { grid-template-columns: 1fr; }
   .page-card { padding: 32px 24px; }
   .rec-grid { grid-template-columns:1fr; }
   .rec-card { padding:32px 24px; }
