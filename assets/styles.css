@@ -949,6 +949,71 @@ footer {
 }
 
 /* ─────────────────────────────────────
+   PAGE NAVIGATION CARDS (Home)
+───────────────────────────────────── */
+.pages-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
+  background: var(--line);
+}
+.page-card {
+  background: var(--bg);
+  padding: 44px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: background .35s;
+}
+.page-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(240,236,228,.028);
+  transform: scaleY(0); transform-origin: bottom;
+  transition: transform .55s cubic-bezier(.23,1,.32,1);
+}
+.page-card:hover::before { transform: scaleY(1); }
+.page-card > * { position: relative; z-index: 1; }
+
+.pc-num {
+  font-size: 11px; letter-spacing: .12em;
+  color: rgba(240,236,228,.25);
+}
+.pc-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(42px, 5vw, 72px);
+  line-height: .88; letter-spacing: .02em;
+  color: var(--paper);
+  transition: transform .45s cubic-bezier(.23,1,.32,1);
+}
+.page-card:hover .pc-name { transform: translateX(8px); }
+
+.pc-desc {
+  font-size: 14px;
+  color: rgba(240,236,228,.42);
+  line-height: 1.65; letter-spacing: .02em;
+  max-width: 340px;
+}
+.pc-arr {
+  margin-top: auto;
+  padding-top: 24px;
+  font-size: 20px;
+  color: rgba(240,236,228,.22);
+  transition: transform .4s cubic-bezier(.23,1,.32,1), color .3s;
+}
+.page-card:hover .pc-arr { transform: translate(5px,-5px); color: var(--accent); }
+
+[data-theme="light"] .pages-grid { background: rgba(15,29,61,.06); }
+[data-theme="light"] .page-card { background: var(--bg); }
+[data-theme="light"] .page-card::before { background: rgba(176,125,53,.055); }
+[data-theme="light"] .pc-num { color: var(--accent); opacity: .55; }
+[data-theme="light"] .pc-desc { color: rgba(15,29,61,.6); }
+[data-theme="light"] .pc-arr { color: rgba(15,29,61,.25); }
+[data-theme="light"] .page-card:hover .pc-arr { color: var(--accent); }
+
+/* ─────────────────────────────────────
    SCROLL REVEAL
 ───────────────────────────────────── */
 .r {
@@ -1008,6 +1073,8 @@ footer {
   .w-num { display:none; }
   .contact-cols { grid-template-columns:1fr; gap:40px; }
   .pull-quote { padding: 64px 24px; }
+  .pages-grid { grid-template-columns: 1fr; }
+  .page-card { padding: 32px 24px; }
   .rec-grid { grid-template-columns:1fr; }
   .rec-card { padding:32px 24px; }
   .activity-card { padding:24px 20px; }

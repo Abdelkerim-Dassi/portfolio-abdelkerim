@@ -644,58 +644,26 @@ footer {
 
 </article>
 
-<!-- ── COMMENTS & REACTIONS ── -->
-<style>
-  .comments-section {
-    border-top: 1px solid var(--line);
-    padding: 64px 48px;
-    max-width: 760px;
-    margin: 0 auto;
-  }
-  .comments-head { margin-bottom: 28px; }
-  .comments-label {
-    font-size: 10px; letter-spacing: .18em;
-    text-transform: uppercase; color: var(--accent);
-    display: block; margin-bottom: 14px;
-  }
-  .comments-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(28px, 4vw, 40px);
-    letter-spacing: .02em; color: var(--paper);
-    font-weight: 400; line-height: 1; margin-bottom: 12px;
-  }
-  .comments-sub {
-    font-size: 13px; color: rgba(240,236,228,.5);
-    line-height: 1.7;
-  }
-  [data-theme="light"] .comments-sub { color: rgba(28,25,18,.55); }
-  .comments-sub a { color: var(--accent); border-bottom: 1px solid rgba(200,169,126,.3); }
-  .giscus-wrap { margin-top: 8px; }
-  @media (max-width: 860px) { .comments-section { padding: 40px 24px; } }
-</style>
-<section class="comments-section">
+<!-- ── COMMENTS (self-hosted) ── -->
+<link rel="stylesheet" href="/assets/comments.css">
+<section class="comments-section" data-comments="rag-in-production">
   <div class="comments-head">
     <span class="comments-label">/ Have a take?</span>
-    <h3 class="comments-title">Comments &amp; reactions</h3>
-    <p class="comments-sub">Sign in with GitHub to drop a comment or a reaction — reactions work as quick ratings, no comment required. Powered by <a href="https://giscus.app/" target="_blank" rel="noopener">Giscus</a>.</p>
+    <h3 class="comments-title">Comments</h3>
+    <p class="comments-sub">No sign-in, no tracking. Just type your name and your thoughts. Be civil.</p>
   </div>
-  <div class="giscus-wrap">
-    <script src="https://giscus.app/client.js"
-            data-repo="Abdelkerim-Dassi/portfolio-abdelkerim"
-            data-repo-id="R_kgDORrWERg"
-            data-category="Comments"
-            data-category-id="DIC_kwDORrWERs4C8tj7"
-            data-mapping="pathname"
-            data-strict="0"
-            data-reactions-enabled="1"
-            data-emit-metadata="0"
-            data-input-position="bottom"
-            data-theme="preferred_color_scheme"
-            data-lang="en"
-            crossorigin="anonymous"
-            async></script>
-  </div>
+  <div class="comments-list"><div class="comments-loading">Loading…</div></div>
+  <form class="comments-form" novalidate>
+    <input type="text" name="name" class="comments-input" placeholder="Your name" required maxlength="40" autocomplete="name">
+    <textarea name="body" class="comments-textarea" placeholder="What's your take?" required minlength="5" maxlength="2000"></textarea>
+    <input type="text" name="hp" class="comments-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="comments-form-actions">
+      <span class="comments-status"></span>
+      <button type="submit" class="comments-submit">Post comment</button>
+    </div>
+  </form>
 </section>
+<script src="/assets/comments.js" defer></script>
 
 <!-- ── BLOG FOOTER ── -->
 <div class="blog-footer">
