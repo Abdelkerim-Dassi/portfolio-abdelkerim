@@ -230,6 +230,23 @@ nav {
 .btn span { transition: transform .3s; }
 .btn:hover span { transform: translate(3px,-3px); }
 
+/* Larger variant — used in the home "Where to next" routes */
+.btn-lg {
+  padding: 22px 36px;
+  font-size: 12px;
+  letter-spacing: .2em;
+}
+.home-routes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+@media (max-width: 600px) {
+  .home-routes { flex-direction: column; align-items: stretch; }
+  .home-routes .btn { justify-content: space-between; }
+}
+
 .h-border { position:absolute; bottom:0; left:48px; right:48px; height:1px; background:var(--line); }
 
 /* ─────────────────────────────────────
