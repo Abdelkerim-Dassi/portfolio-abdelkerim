@@ -82,13 +82,15 @@
   color: var(--paper);
   margin: 72px 0 28px;
   line-height: 1.05;
+  border-left: 2px solid var(--accent);
+  padding-left: 16px;
 }
 
 .article h3 {
   font-family: 'Bebas Neue', sans-serif;
   font-size: clamp(20px, 2.5vw, 28px);
   letter-spacing: .02em;
-  color: rgba(240,236,228,.8);
+  color: var(--t2);
   margin: 48px 0 20px;
   line-height: 1.1;
 }
@@ -187,11 +189,12 @@
    CALLOUT BOX
 ───────────────────────────────────── */
 .callout {
-  background: rgba(200,169,126,.06);
-  border: 1px solid rgba(200,169,126,.15);
+  background: rgba(200,169,126,.05);
+  border: 1px solid rgba(200,169,126,.12);
+  border-left: none;
   padding: 24px 28px;
   margin: 32px 0;
-  border-radius: 2px;
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 .callout-label {
   font-family: 'Bebas Neue', sans-serif;

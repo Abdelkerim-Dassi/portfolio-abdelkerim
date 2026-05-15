@@ -13,6 +13,10 @@
   --accent:  #c8a97e;
   --teal:    #00c9a7;
   --glow:    rgba(200,169,126,.12);
+  --t1:      rgba(240,236,228,1.00);
+  --t2:      rgba(240,236,228,.55);
+  --t3:      rgba(240,236,228,.38);
+  --t4:      rgba(240,236,228,.18);
 }
 
 [data-theme="light"] {
@@ -179,9 +183,21 @@ nav {
   font-size:clamp(80px,14vw,200px);
   line-height:.88; letter-spacing:-.01em;
 }
+.h-name::after {
+  content: '';
+  display: block;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent) 0%, rgba(200,169,126,0) 100%);
+  margin-top: 20px;
+  animation: heroRule .9s .2s cubic-bezier(.23,1,.32,1) forwards;
+}
+@keyframes heroRule {
+  to { width: 72px; }
+}
 
 .h-sub {
-  margin-top:28px;
+  margin-top:8px;
   display:flex; align-items:flex-end; justify-content:space-between;
   gap:32px;
   flex-wrap:wrap;
@@ -415,10 +431,18 @@ nav {
   padding: 22px 0;
   border-bottom: 1px solid var(--line);
   position:relative;
-  transition: padding-left .35s cubic-bezier(.23,1,.32,1);
+  overflow: hidden;
   color: inherit;
 }
-.skill-row:hover { padding-left: 12px; }
+.skill-row::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(200,169,126,.04);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .55s cubic-bezier(.23,1,.32,1);
+}
+.skill-row:hover::before { transform: scaleX(1); }
 .skill-name {
   font-size: 16px; color: var(--paper);
   letter-spacing:.01em;
@@ -444,7 +468,7 @@ nav {
 }
 .skill-row:hover .skill-arr { color:var(--accent); transform: translate(3px,-3px); }
 .skill-row.no-link { cursor: default; }
-.skill-row.no-link:hover { padding-left: 0; }
+.skill-row.no-link::before { display: none; }
 .skill-row.no-link .skill-arr { display: none; }
 
 /* ─────────────────────────────────────
