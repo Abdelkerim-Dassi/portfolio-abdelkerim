@@ -952,87 +952,74 @@ footer {
    ABOUT PAGE
 ───────────────────────────────────── */
 
-/* Hero */
-.about-hero {
-  min-height: 60vh;
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding: 160px 48px 64px;
-  border-bottom: 1px solid var(--line);
-}
-.about-hero-inner {
+/* Hero: page-head + photo split */
+.about-ph-grid {
   display: grid;
-  grid-template-columns: 160px 1fr;
-  gap: 48px;
+  grid-template-columns: 1fr 280px;
+  gap: 72px;
+  align-items: end;
+}
+.about-ph-photo {
+  margin: 0;
+  align-self: stretch;
+  display: flex;
   align-items: flex-end;
 }
-.about-hero-img {
-  width: 140px; height: 140px;
-  border-radius: 2px;
-  border: 1px solid rgba(240,236,228,.1);
+.about-ph-photo img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
   object-fit: cover;
-  flex-shrink: 0;
+  object-position: center top;
+  border: 1px solid var(--line);
+  display: block;
 }
-.about-hero-name {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(52px, 8vw, 96px);
-  line-height: .9; letter-spacing: -.01em;
-  color: var(--paper);
-  margin: 14px 0 20px;
-}
-.about-hero-bio {
-  font-size: 15px; line-height: 1.75;
-  color: rgba(240,236,228,.5);
-  max-width: 520px;
-}
-.about-hero-bio em { font-family: 'Libre Baskerville', serif; color: var(--accent); }
 
-/* Quick-facts card grid */
-.about-facts {
+/* Identity mosaic */
+.about-mosaic {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2px;
   background: var(--line);
 }
-.fact-card {
+.about-mosaic-cell {
   background: var(--bg);
-  padding: 32px 36px;
-  display: flex; flex-direction: column; gap: 6px;
+  padding: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   transition: background .35s;
 }
-.fact-card:hover { background: rgba(240,236,228,.03); }
-.fact-label {
+.about-mosaic-cell:hover { background: rgba(240,236,228,.025); }
+.am-wide { grid-column: span 2; }
+.am-label {
   font-size: 9px; letter-spacing: .22em;
   text-transform: uppercase;
-  color: rgba(240,236,228,.3);
+  color: var(--accent);
 }
-.fact-val {
+.am-big {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(20px, 2.5vw, 28px);
+  font-size: clamp(22px, 2.8vw, 34px);
   letter-spacing: .03em;
   color: var(--paper);
-  line-height: 1.1;
+  line-height: 1.05;
 }
-.fact-sub {
-  font-size: 12px;
-  color: rgba(240,236,228,.38);
-  line-height: 1.5;
+.am-detail {
+  font-size: 13px;
+  color: rgba(240,236,228,.42);
+  line-height: 1.65;
 }
 
-[data-theme="light"] .about-hero { background: linear-gradient(160deg, #b5cfee 0%, #d8e6f5 100%); border-color: rgba(15,29,61,.10); }
-[data-theme="light"] .about-hero-img { border-color: rgba(15,29,61,.12); }
-[data-theme="light"] .about-hero-bio { color: rgba(15,29,61,.7); }
-[data-theme="light"] .about-facts { background: rgba(15,29,61,.06); }
-[data-theme="light"] .fact-card { background: var(--bg); }
-[data-theme="light"] .fact-card:hover { background: rgba(176,125,53,.04); }
-[data-theme="light"] .fact-label { color: rgba(15,29,61,.4); }
-[data-theme="light"] .fact-sub { color: rgba(15,29,61,.5); }
+[data-theme="light"] .about-ph-photo img { border-color: rgba(15,29,61,.12); }
+[data-theme="light"] .about-mosaic { background: rgba(15,29,61,.07); }
+[data-theme="light"] .about-mosaic-cell { background: var(--bg); }
+[data-theme="light"] .about-mosaic-cell:hover { background: rgba(176,125,53,.04); }
+[data-theme="light"] .am-detail { color: rgba(15,29,61,.5); }
 
 @media (max-width:860px) {
-  .about-hero { padding: 110px 24px 48px; min-height: 50vh; }
-  .about-hero-inner { grid-template-columns: 80px 1fr; gap: 24px; align-items: center; }
-  .about-hero-img { width: 72px; height: 72px; border-radius: 50%; }
-  .about-facts { grid-template-columns: repeat(2, 1fr); }
-  .fact-card { padding: 24px 20px; }
+  .about-ph-grid { grid-template-columns: 1fr; }
+  .about-ph-photo { display: none; }
+  .about-mosaic { grid-template-columns: 1fr; }
+  .am-wide { grid-column: span 1; }
 }
 
 /* ─────────────────────────────────────
@@ -1169,6 +1156,89 @@ footer {
 [data-theme="light"] .nav-burger:hover { color: var(--paper); border-color: rgba(15,29,61,.35); }
 [data-theme="light"] #btt { background: var(--bg2); border-color: rgba(15,29,61,.14); color: rgba(15,29,61,.5); }
 [data-theme="light"] #btt:hover { color: var(--paper); border-color: rgba(15,29,61,.35); }
+
+/* ─────────────────────────────────────
+   ABOUT — JCI SECTION
+───────────────────────────────────── */
+.jci-wrap {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 0 72px;
+  align-items: start;
+}
+
+.jci-photos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.jci-photo {
+  overflow: hidden;
+  background: var(--line);
+  position: relative;
+}
+.jci-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  filter: grayscale(18%);
+  transition: transform .7s cubic-bezier(.23,1,.32,1), filter .5s;
+}
+.jci-photo:hover img { transform: scale(1.04); filter: grayscale(0%); }
+.jci-photo--main {
+  grid-column: 1 / -1;
+  aspect-ratio: 16 / 10;
+}
+.jci-photo--sm { aspect-ratio: 4 / 3; }
+
+.jci-content { padding-top: 4px; }
+.jci-org {
+  font-size: 11px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--accent);
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 16px;
+}
+.jci-org::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+.jci-headline {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(32px, 4vw, 52px);
+  letter-spacing: .02em; line-height: .95;
+  color: var(--paper);
+  margin-bottom: 28px;
+}
+.jci-text {
+  font-size: 15px; line-height: 1.9;
+  color: rgba(240,236,228,.55);
+  margin-bottom: 22px;
+}
+.jci-text strong { font-weight: 400; color: rgba(240,236,228,.85); }
+.jci-text em { font-family: 'Libre Baskerville', serif; color: var(--accent); }
+
+.jci-stats {
+  display: flex; gap: 40px;
+  margin-top: 36px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.jci-stat-n {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 44px; letter-spacing: -.02em;
+  color: var(--paper); line-height: 1; display: block;
+}
+.jci-stat-n sup { font-size: 20px; color: var(--accent); vertical-align: top; margin-top: 8px; display: inline-block; }
+.jci-stat-l {
+  font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase; color: rgba(240,236,228,.4);
+  margin-top: 6px; display: block;
+}
+
+[data-theme="light"] .jci-text { color: rgba(15,29,61,.7); }
+[data-theme="light"] .jci-text strong { color: rgba(15,29,61,.92); }
+[data-theme="light"] .jci-stat-l { color: rgba(15,29,61,.5); }
+
+@media (max-width: 860px) {
+  .jci-wrap { grid-template-columns: 1fr; gap: 40px 0; }
+  .jci-content { padding-top: 0; }
+}
 
 /* ─────────────────────────────────────
    SITE NAV ROWS (Home — Explore)
