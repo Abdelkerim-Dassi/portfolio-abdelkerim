@@ -100,51 +100,6 @@
   }, { passive: true });
 })();
 
-/* ── TABLE OF CONTENTS ── */
-(function () {
-  const article = document.querySelector('.article');
-  if (!article) return;
-  const headings = article.querySelectorAll('h2');
-  if (headings.length < 3) return;
-
-  headings.forEach(h => {
-    if (!h.id) {
-      h.id = h.textContent.trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9؀-ۿ]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-    }
-  });
-
-  const items = Array.from(headings).map(h =>
-    `<a class="toc-link" href="#${h.id}">${h.textContent.trim()}</a>`
-  ).join('');
-
-  const toc = document.createElement('nav');
-  toc.className = 'toc';
-  toc.innerHTML = `<div class="toc-label">Contents</div><div class="toc-inner">${items}</div>`;
-  article.before(toc);
-
-  const mobileToc = document.createElement('details');
-  mobileToc.className = 'toc-mobile';
-  mobileToc.innerHTML = `<summary class="toc-mobile-label">Jump to section ↓</summary>${items}`;
-  article.before(mobileToc);
-
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        [toc, mobileToc].forEach(el => {
-          el.querySelectorAll('.toc-link').forEach(l => l.classList.remove('active'));
-          const active = el.querySelector(`.toc-link[href="#${e.target.id}"]`);
-          if (active) active.classList.add('active');
-        });
-      }
-    });
-  }, { rootMargin: '-15% 0px -65% 0px' });
-
-  headings.forEach(h => io.observe(h));
-})();
-
 /* ── SHARE COPY LINK ── */
 (function () {
   document.querySelectorAll('.share-copy').forEach(btn => {
