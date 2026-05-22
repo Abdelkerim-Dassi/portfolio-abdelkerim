@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -36,9 +36,10 @@
     <img class="nav-avatar" src="/assets/avatar.jpg" alt="Abdelkerim Dassi">
     <span class="n-logo">A.DASSI</span>
   </a>
-  <div class="n-links">
+  <div class="n-links" id="primary-nav">
     <a href="/">Home</a>
     <a href="/work">Work</a>
+    <a href="/stack">Stack</a>
     <a href="/writing">Writing</a>
     <a href="/contact">Contact</a>
     <button class="theme-toggle" aria-label="Toggle theme">
@@ -46,7 +47,7 @@
       <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
   </div>
-  <button class="nav-burger" aria-label="Open menu"><span></span><span></span><span></span></button>
+  <button class="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- ── BLOG HERO ── -->
@@ -56,6 +57,10 @@
   <p class="blog-subtitle">
     Beyond basics — <em>chunking strategies, retrieval quality, re-ranking</em>, and the subtle failures that kill accuracy in real deployments. Written from 3 production systems.
   </p>
+  <button class="listen-btn" id="listen-btn" aria-label="Listen to this article">
+    <span class="l-icon" id="l-icon">▶</span>
+    <span class="l-text" id="l-text">Listen to this article</span>
+  </button>
   <div class="blog-tags">
     <span class="blog-tag">RAG</span>
     <span class="blog-tag">LLMs</span>
@@ -289,10 +294,10 @@
 <script src="/assets/comments.js" defer></script>
 
 <div class="blog-nav">
-  <span class="blog-nav-prev" style="background:var(--bg);padding:36px 40px;display:flex;flex-direction:column;gap:10px;">
+  <a class="blog-nav-prev" href="/writing">
     <span class="blog-nav-dir">← All writing</span>
-    <a class="blog-nav-title" href="/writing" style="text-decoration:none;">Writing index</a>
-  </span>
+    <span class="blog-nav-title">Writing index</span>
+  </a>
   <a class="blog-nav-next" href="/blog/pip-poetry-uv.html">
     <span class="blog-nav-dir">Next →</span>
     <span class="blog-nav-title">I Used Pip for Years. Poetry for Teams. Then Uv Showed Up.</span>

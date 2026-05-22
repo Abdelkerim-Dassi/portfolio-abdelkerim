@@ -1,7 +1,11 @@
 /* ── THEME TOGGLE ── */
 (function () {
   const saved = localStorage.getItem('theme');
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  if (saved === 'light' || saved === 'dark') {
+    document.documentElement.setAttribute('data-theme', saved);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
 
   document.querySelectorAll('.theme-toggle').forEach(b => {
     b.addEventListener('click', () => {
@@ -63,20 +67,55 @@
 /* ── MOBILE NAV DRAWER ── */
 (function () {
   const burger = document.querySelector('.nav-burger');
-  if (!burger) return;
-  burger.addEventListener('click', () => document.body.classList.toggle('nav-open'));
+  const drawer = document.getElementById('primary-nav');
+  if (!burger || !drawer) return;
+
+  let lastFocus = null;
+
+  function open() {
+    lastFocus = document.activeElement;
+    document.body.classList.add('nav-open');
+    burger.setAttribute('aria-expanded', 'true');
+    drawer.setAttribute('aria-modal', 'true');
+    const first = drawer.querySelector('a, button');
+    if (first) first.focus();
+  }
+  function close() {
+    document.body.classList.remove('nav-open');
+    burger.setAttribute('aria-expanded', 'false');
+    drawer.removeAttribute('aria-modal');
+    if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+  }
+  function isOpen() {
+    return document.body.classList.contains('nav-open');
+  }
+
+  burger.addEventListener('click', () => { isOpen() ? close() : open(); });
+
   document.addEventListener('click', e => {
-    if (document.body.classList.contains('nav-open') &&
-        !e.target.closest('.n-links') &&
-        !e.target.closest('.nav-burger')) {
-      document.body.classList.remove('nav-open');
+    if (isOpen() && !e.target.closest('.n-links') && !e.target.closest('.nav-burger')) {
+      close();
     }
   });
+
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') document.body.classList.remove('nav-open');
+    if (!isOpen()) return;
+    if (e.key === 'Escape') { close(); return; }
+    if (e.key === 'Tab') {
+      const focusables = drawer.querySelectorAll('a, button');
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    }
   });
-  document.querySelectorAll('.n-links a').forEach(a => {
-    a.addEventListener('click', () => document.body.classList.remove('nav-open'));
+
+  drawer.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => { if (isOpen()) close(); });
   });
 })();
 
@@ -95,7 +134,8 @@
   const bar = document.getElementById('reading-bar');
   if (!bar) return;
   window.addEventListener('scroll', () => {
-    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    const denom = document.body.scrollHeight - window.innerHeight;
+    const pct = denom > 0 ? (window.scrollY / denom) * 100 : 0;
     bar.style.width = Math.min(pct, 100) + '%';
   }, { passive: true });
 })();
@@ -112,6 +152,61 @@
       });
     });
   });
+})();
+
+/* ── LISTEN TO ARTICLE ── */
+(function () {
+  const btn  = document.getElementById('listen-btn');
+  const icon = document.getElementById('l-icon');
+  const text = document.getElementById('l-text');
+  if (!btn) return;
+  if (!('speechSynthesis' in window)) { btn.style.display = 'none'; return; }
+  const synth = window.speechSynthesis;
+
+  function buildText() {
+    const title = document.querySelector('.blog-title');
+    const parts = [];
+    if (title) parts.push(title.innerText.replace(/\s+/g, ' ').trim());
+    document.querySelectorAll('.article h2, .article h3, .article p, .article li, .article blockquote p, .callout p').forEach(el => {
+      const t = el.innerText.replace(/\s+/g, ' ').trim();
+      if (t) parts.push(t);
+    });
+    return parts.join('. ');
+  }
+
+  let utter = null, state = 'idle';
+
+  function setState(next) {
+    state = next;
+    if (state === 'playing')      { btn.classList.add('playing');    icon.textContent = '❚❚'; text.textContent = 'Pause'; }
+    else if (state === 'paused')  { btn.classList.add('playing');    icon.textContent = '▶';  text.textContent = 'Resume'; }
+    else                          { btn.classList.remove('playing'); icon.textContent = '▶';  text.textContent = 'Listen to this article'; }
+  }
+
+  function start() {
+    synth.cancel();
+    utter = new SpeechSynthesisUtterance(buildText());
+    utter.rate = 1.0; utter.pitch = 1.0;
+    const voices = synth.getVoices();
+    const preferred = voices.find(v => /en(-|_)?(US|GB)/i.test(v.lang) && /Google|Natural|Enhanced/i.test(v.name))
+                   || voices.find(v => /^en/i.test(v.lang));
+    if (preferred) utter.voice = preferred;
+    utter.onend = utter.onerror = () => setState('idle');
+    synth.speak(utter);
+    setState('playing');
+  }
+
+  btn.addEventListener('click', () => {
+    if (state === 'idle')           start();
+    else if (state === 'playing') { synth.pause();  setState('paused'); }
+    else if (state === 'paused')  { synth.resume(); setState('playing'); }
+  });
+
+  if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = () => {};
+  }
+
+  window.addEventListener('beforeunload', () => synth.cancel());
 })();
 
 /* ── GITHUB CONTRIBUTION GRAPH ── */
