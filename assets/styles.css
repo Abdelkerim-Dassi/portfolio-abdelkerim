@@ -1335,12 +1335,13 @@ footer {
 /* ─────────────────────────────────────
    SCROLL REVEAL
 ───────────────────────────────────── */
-.r {
+/* hidden state only applies when JS is running (html.js set inline in <head>) */
+.js .r {
   opacity:0; transform:translateY(28px);
   transition:opacity .9s cubic-bezier(.23,1,.32,1),
               transform .9s cubic-bezier(.23,1,.32,1);
 }
-.r.on { opacity:1; transform:none; }
+.js .r.on { opacity:1; transform:none; }
 
 /* ─────────────────────────────────────
    THEME TOGGLE
