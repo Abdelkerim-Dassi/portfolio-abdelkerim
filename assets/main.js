@@ -1,12 +1,6 @@
 /* ── THEME TOGGLE ── */
+/* initial theme is applied by the inline head script (pre-paint, no flash) */
 (function () {
-  const saved = localStorage.getItem('theme');
-  if (saved === 'light' || saved === 'dark') {
-    document.documentElement.setAttribute('data-theme', saved);
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', 'light');
-  }
-
   document.querySelectorAll('.theme-toggle').forEach(b => {
     b.addEventListener('click', () => {
       const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
@@ -138,6 +132,27 @@
     const pct = denom > 0 ? (window.scrollY / denom) * 100 : 0;
     bar.style.width = Math.min(pct, 100) + '%';
   }, { passive: true });
+})();
+
+/* ── CODE COPY BUTTONS ── */
+(function () {
+  if (!navigator.clipboard) return;
+  document.querySelectorAll('.article pre').forEach(pre => {
+    const btn = document.createElement('button');
+    btn.className = 'code-copy';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code to clipboard');
+    btn.addEventListener('click', () => {
+      const code = pre.querySelector('code');
+      navigator.clipboard.writeText((code || pre).innerText).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
 })();
 
 /* ── SHARE COPY LINK ── */
@@ -352,4 +367,133 @@
   } else {
     load();
   }
+})();
+
+/* ── ASK MY AI WIDGET ── */
+(function () {
+  // not on print-focused pages
+  if (document.body.classList.contains('no-ask')) return;
+
+  const SUGGESTIONS = [
+    'What has he shipped in production?',
+    'Does he know Arabic NLP?',
+    'Is he available for freelance work?',
+  ];
+
+  const root = document.createElement('div');
+  root.id = 'ask-root';
+  root.innerHTML = `
+    <button id="ask-fab" aria-haspopup="dialog" aria-expanded="false">
+      <span class="ask-fab-dot"></span><span class="ask-fab-label">Ask my AI</span>
+    </button>
+    <section id="ask-panel" role="dialog" aria-modal="false" aria-label="Ask my AI" hidden>
+      <header class="ask-head">
+        <div>
+          <div class="ask-eyebrow">Grounded in this site</div>
+          <div class="ask-title">Ask my <em>AI</em></div>
+        </div>
+        <button class="ask-close" aria-label="Close">×</button>
+      </header>
+      <div class="ask-msgs" aria-live="polite"></div>
+      <div class="ask-chips"></div>
+      <form class="ask-form">
+        <input class="ask-input" type="text" maxlength="500" placeholder="Ask about my work, stack, writing…" aria-label="Your question">
+        <button class="ask-send" type="submit" aria-label="Send">→</button>
+      </form>
+      <div class="ask-note">Answers come from Claude, grounded in this site — double-check anything important.</div>
+    </section>`;
+  document.body.appendChild(root);
+
+  const fab = root.querySelector('#ask-fab');
+  const panel = root.querySelector('#ask-panel');
+  const msgs = root.querySelector('.ask-msgs');
+  const chips = root.querySelector('.ask-chips');
+  const form = root.querySelector('.ask-form');
+  const input = root.querySelector('.ask-input');
+  const send = root.querySelector('.ask-send');
+
+  let history = [];
+  try { history = JSON.parse(sessionStorage.getItem('ask-history') || '[]'); } catch (e) {}
+
+  function persist() {
+    try { sessionStorage.setItem('ask-history', JSON.stringify(history.slice(-12))); } catch (e) {}
+  }
+
+  function addMsg(role, text) {
+    const el = document.createElement('div');
+    el.className = 'ask-msg ask-' + role;
+    el.textContent = text;
+    msgs.appendChild(el);
+    msgs.scrollTop = msgs.scrollHeight;
+    return el;
+  }
+
+  function renderChips() {
+    chips.innerHTML = '';
+    if (history.length) return;
+    SUGGESTIONS.forEach(q => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ask-chip';
+      b.textContent = q;
+      b.addEventListener('click', () => { input.value = q; form.requestSubmit(); });
+      chips.appendChild(b);
+    });
+  }
+
+  function open() {
+    panel.hidden = false;
+    fab.setAttribute('aria-expanded', 'true');
+    root.classList.add('ask-open');
+    if (!msgs.children.length) {
+      if (history.length) history.forEach(m => addMsg(m.role, m.content));
+      else addMsg('assistant', "Hi — I'm the AI on this site. I know Abdelkerim's work, stack, and writing. What do you want to know?");
+    }
+    renderChips();
+    input.focus();
+  }
+  function close() {
+    panel.hidden = true;
+    fab.setAttribute('aria-expanded', 'false');
+    root.classList.remove('ask-open');
+  }
+
+  fab.addEventListener('click', () => (panel.hidden ? open() : close()));
+  root.querySelector('.ask-close').addEventListener('click', close);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) close(); });
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const q = input.value.trim();
+    if (!q || send.disabled) return;
+    input.value = '';
+    chips.innerHTML = '';
+    addMsg('user', q);
+    history.push({ role: 'user', content: q });
+    send.disabled = true;
+    const pending = addMsg('assistant', '…');
+    pending.classList.add('ask-pending');
+    try {
+      const r = await fetch('/api/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: q, history: history.slice(-7, -1) }),
+      });
+      const data = await r.json().catch(() => ({}));
+      pending.classList.remove('ask-pending');
+      if (r.ok && data.answer) {
+        pending.textContent = data.answer;
+        history.push({ role: 'assistant', content: data.answer });
+        persist();
+      } else {
+        pending.textContent = data.error || "Something went wrong — email abdelkerimdassi@gmail.com instead.";
+      }
+    } catch (err) {
+      pending.classList.remove('ask-pending');
+      pending.textContent = "Couldn't reach the assistant — check your connection or email abdelkerimdassi@gmail.com.";
+    } finally {
+      send.disabled = false;
+      input.focus();
+    }
+  });
 })();

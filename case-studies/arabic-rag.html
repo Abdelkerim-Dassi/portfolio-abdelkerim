@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Study: Arabic RAG for Farmers — Abdelkerim Dassi</title>
+<meta name="description" content="How a RAG assistant that answered farmers in Egyptian Arabic went from near-zero retrieval to production — normalization, dialect rewriting, hybrid search, and an expert feedback loop.">
+<meta name="author" content="Abdelkerim Dassi">
+<link rel="canonical" href="https://abdelkerimdassi.com/case-studies/arabic-rag">
+<link rel="icon" type="image/jpeg" href="/assets/avatar.jpg">
+<link rel="apple-touch-icon" href="/assets/avatar.jpg">
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://abdelkerimdassi.com/case-studies/arabic-rag">
+<meta property="og:title" content="Case Study: Arabic RAG for Farmers">
+<meta property="og:description" content="From near-zero retrieval to production — a dialect-aware RAG pipeline for agriculture, built end to end.">
+<meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-arabic-rag.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Abdelkerim Dassi">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Case Study: Arabic RAG for Farmers">
+<meta name="twitter:description" content="From near-zero retrieval to production — a dialect-aware RAG pipeline for agriculture.">
+<meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-arabic-rag.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:ital,wght@0,200;0,300;0,400;1,300&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t)}else if(matchMedia("(prefers-color-scheme: light)").matches){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
+<link rel="alternate" type="application/rss+xml" title="Abdelkerim Dassi — Writing" href="/feed.xml">
+<link rel="stylesheet" href="/assets/styles.css?v=6">
+<style>
+  .cs-wrap { max-width: 920px; margin: 0 auto; padding: 150px 24px 40px; }
+  .cs-eyebrow { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .cs-eyebrow::before { content: ""; width: 40px; height: 1px; background: var(--accent); }
+  .cs-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(44px, 7.5vw, 92px); line-height: .95; }
+  .cs-title em { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: .6em; color: var(--accent); }
+  .cs-lede { margin-top: 26px; font-size: 17px; line-height: 1.75; color: var(--t2); max-width: 62ch; }
+
+  .cs-facts { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 56px 0; }
+  .cs-fact { padding: 22px 18px 22px 0; }
+  .cs-fact + .cs-fact { border-left: 1px solid var(--line); padding-left: 22px; }
+  .cs-fact-k { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--t3); margin-bottom: 8px; }
+  .cs-fact-v { font-size: 14px; line-height: 1.5; color: var(--t1); }
+  @media (max-width: 720px) { .cs-facts { grid-template-columns: 1fr 1fr; } .cs-fact:nth-child(3) { border-left: none; padding-left: 0; } .cs-fact { border-top: 1px solid var(--line); } .cs-fact:nth-child(-n+2) { border-top: none; } }
+
+  .cs-sec { margin: 64px 0; }
+  .cs-h { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; margin-bottom: 22px; display: flex; align-items: baseline; gap: 18px; }
+  .cs-h .n { font-size: 15px; color: var(--accent); font-family: 'Archivo', sans-serif; letter-spacing: .15em; }
+  .cs-p { font-size: 15.5px; line-height: 1.85; color: var(--t2); max-width: 68ch; margin-bottom: 18px; }
+  .cs-p b { color: var(--paper); font-weight: 400; }
+  .cs-quote { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 19px; line-height: 1.7; color: var(--accent); border-left: 2px solid var(--accent); padding-left: 26px; margin: 34px 0; max-width: 56ch; }
+
+  /* pipeline diagram */
+  .cs-pipe { margin: 36px 0 8px; max-width: 620px; }
+  .cs-step { display: grid; grid-template-columns: 44px 1fr; gap: 0 20px; position: relative; padding-bottom: 30px; }
+  .cs-step::before { content: ""; position: absolute; left: 21px; top: 44px; bottom: 4px; width: 1px; background: var(--dim); }
+  .cs-step:last-child::before { display: none; }
+  .cs-step-n { width: 44px; height: 44px; border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--accent); background: var(--bg); }
+  .cs-step-t { font-size: 14.5px; padding-top: 3px; }
+  .cs-step-d { font-size: 13px; color: var(--t3); margin-top: 4px; line-height: 1.6; max-width: 52ch; }
+
+  .cs-outcomes { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 30px; }
+  .cs-out { background: var(--bg); padding: 26px; }
+  .cs-out-v { font-family: 'Bebas Neue', sans-serif; font-size: 38px; color: var(--accent); line-height: 1; }
+  .cs-out-k { font-size: 12.5px; color: var(--t3); margin-top: 10px; line-height: 1.55; }
+  @media (max-width: 600px) { .cs-outcomes { grid-template-columns: 1fr; } }
+
+  .cs-cta { border-top: 1px solid var(--line); margin-top: 72px; padding-top: 44px; display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; }
+  .cs-cta-txt { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 19px; color: var(--t2); }
+</style>
+</head>
+<body>
+
+<div id="reading-bar"></div>
+
+<nav>
+  <a class="n-brand" href="/">
+    <img class="nav-avatar" src="/assets/avatar.jpg" alt="Abdelkerim Dassi">
+    <span class="n-logo">A.DASSI</span>
+  </a>
+  <div class="n-links" id="primary-nav">
+    <a href="/">Home</a>
+    <a href="/work">Work</a>
+    <a href="/stack">Stack</a>
+    <a href="/writing">Writing</a>
+    <a href="/contact">Contact</a>
+    <button class="theme-toggle" aria-label="Toggle theme">
+      <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <button class="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="cs-wrap">
+
+  <header class="r">
+    <div class="cs-eyebrow">Case study · Production AI</div>
+    <h1 class="cs-title">A RAG that answers farmers<br><em>in their own dialect.</em></h1>
+    <p class="cs-lede">
+      An agriculture advisory assistant for Egypt. Users type Egyptian Arabic on their phones;
+      the knowledge base is written in Modern Standard Arabic. On day one, retrieval found almost
+      nothing. This is how it became something I'm willing to put in front of farmers.
+    </p>
+  </header>
+
+  <div class="cs-facts r">
+    <div class="cs-fact"><div class="cs-fact-k">Sector</div><div class="cs-fact-v">Agriculture advisory · Egypt</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">My role</div><div class="cs-fact-v">AI Engineer — pipeline end to end</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Stack</div><div class="cs-fact-v">RAG · pgvector · Postgres FTS · GPT-4o rewriting</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Status</div><div class="cs-fact-v">In production</div></div>
+  </div>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">01</span>The problem</h2>
+    <p class="cs-p">
+      RAG looks like magic in English demos. Drop in PDFs, retrieve, prompt the model, done.
+      This one had to answer questions like <b>"how do I water my courgette in summer"</b> — typed
+      as <b>ازاى اروى الكوسة فى الصيف؟</b> — against documentation written in formal Arabic.
+      The same word arrives with different alif shapes, with or without diacritics, with stray
+      RTL marks from a phone keyboard. Dialect sits on top of all of that.
+    </p>
+    <p class="cs-p">
+      Most embedding models, even multilingual ones, can't tell that the dialect question and the
+      MSA documentation mean the same thing. <b>Day-one retrieval came back almost empty.</b>
+    </p>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">02</span>The constraint that shaped everything</h2>
+    <p class="cs-p">
+      In agriculture, a wrong pesticide dose can kill a crop — or worse. The system could not be
+      allowed to guess confidently. That single constraint drove the confidence architecture:
+      every answer is scored twice, and anything uncertain goes to a human expert instead of the model.
+    </p>
+    <blockquote class="cs-quote">"The 'I don't know, let me get someone' path isn't a fallback. It's a feature."</blockquote>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">03</span>The pipeline</h2>
+    <div class="cs-pipe">
+      <div class="cs-step">
+        <div class="cs-step-n">1</div>
+        <div><div class="cs-step-t">Normalize the query — never the docs</div>
+        <div class="cs-step-d">Strip diacritics, tatweel, RTL marks; unify alif variants. Ta-marbuta stays — it carries meaning in technical Arabic. The knowledge base is left untouched so the exact words farmers search for survive.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">2</div>
+        <div><div class="cs-step-t">Rewrite dialect into MSA — with frozen nouns</div>
+        <div class="cs-step-d">A few-shot GPT-4o call converts Egyptian colloquial to MSA, explicitly told not to touch crop names, pesticide names, doses, dates, units. Rewrites are cached; on failure the system falls back to the original query and merges both result sets.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">3</div>
+        <div><div class="cs-step-t">Hybrid retrieval with the Arabic tokenizer</div>
+        <div class="cs-step-d">pgvector for semantics, Postgres full-text for keywords — merged by node with max score. Switching Postgres FTS to the Arabic config was a one-line change that did more for recall than any prompt edit.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">4</div>
+        <div><div class="cs-step-t">Recalibrated similarity thresholds</div>
+        <div class="cs-step-d">English-tuned 0.7 cosine thresholds rejected nearly every correct Arabic match (real values: 0.20–0.45). A 20-query benchmark across Arabic, French, and English set an empirical floor and ceiling, remapped to a 0–1 confidence.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">5</div>
+        <div><div class="cs-step-t">Two-signal confidence, three outcomes</div>
+        <div class="cs-step-d">The LLM reports its own confidence; retrieval similarity is the safety net. High → answer. Medium → answer with disclaimer. Low → escalate to a human agronomist.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">6</div>
+        <div><div class="cs-step-t">Every expert answer becomes part of the brain</div>
+        <div class="cs-step-d">Resolved escalations are embedded back into the knowledge base as single nodes, tagged and kept in the user's own language and register. The system grows its dialect knowledge one escalation at a time.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">04</span>The outcome</h2>
+    <p class="cs-p">
+      Retrieval went from <b>almost nothing on day one</b> to a system in production in front of real
+      farmers — without a single Arabic-specific embedding model. The wins came from a pipeline of
+      cheap, honest steps, not a magic model. And because of the feedback loop, most of the dialect
+      knowledge in the retriever today wasn't there at launch: the system taught itself.
+    </p>
+    <div class="cs-outcomes">
+      <div class="cs-out"><div class="cs-out-v">~0 → usable</div><div class="cs-out-k">Day-one retrieval recall vs. production — measured on a 20-query multilingual benchmark</div></div>
+      <div class="cs-out"><div class="cs-out-v">3 paths</div><div class="cs-out-k">Answer / answer-with-disclaimer / human expert — no confident guessing on crop-critical advice</div></div>
+      <div class="cs-out"><div class="cs-out-v">6 fixes</div><div class="cs-out-k">Normalization, dialect rewriting, hybrid search, recalibration, dual confidence, feedback loop</div></div>
+      <div class="cs-out"><div class="cs-out-v">Self-growing</div><div class="cs-out-k">Every expert escalation is embedded back — the knowledge base improves with use</div></div>
+    </div>
+  </section>
+
+  <section class="cs-sec r">
+    <p class="cs-p">
+      Want the engineering detail — the actual normalization rules, the rewriter prompt design,
+      the threshold numbers? It's all in the long-form write-up:
+      <a href="/blog/arabic-rag" style="color:var(--accent)">Arabic Broke My RAG. Here's What Saved It.</a>
+    </p>
+  </section>
+
+  <div class="cs-cta r">
+    <span class="cs-cta-txt">Have a messy, non-English, real-world RAG problem?</span>
+    <a class="btn btn-accent" href="/contact">Let's talk <span>↗</span></a>
+  </div>
+
+</div>
+
+<footer>
+  <span class="ft-l">© 2026 Abdelkerim Dassi — Tunis, Tunisia</span>
+  <div class="ft-r">
+    <a href="/resume">Resume</a>
+    <a href="https://github.com/Abdelkerim-Dassi" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://linkedin.com/in/abdelkerim-dassi/" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="mailto:abdelkerimdassi@gmail.com">Email</a>
+  </div>
+</footer>
+
+<script src="/assets/main.js?v=5" defer></script>
+<button id="btt" aria-label="Back to top">↑</button>
+</body>
+</html>

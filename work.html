@@ -15,19 +15,22 @@
 <meta property="og:url" content="https://abdelkerimdassi.com/work">
 <meta property="og:title" content="Work — Abdelkerim Dassi">
 <meta property="og:description" content="AI engineering work history, projects, and a map of where I've shipped — Abdelkerim Dassi.">
-<meta property="og:image" content="https://abdelkerimdassi.com/assets/avatar.jpg">
+<meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:site_name" content="Abdelkerim Dassi">
 
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Work — Abdelkerim Dassi">
 <meta name="twitter:description" content="AI engineering work history, projects, and a map of where I've shipped.">
-<meta name="twitter:image" content="https://abdelkerimdassi.com/assets/avatar.jpg">
+<meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:ital,wght@0,200;0,300;0,400;1,300&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-<script>document.documentElement.classList.add("js");</script>
+<script>document.documentElement.classList.add("js");try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t)}else if(matchMedia("(prefers-color-scheme: light)").matches){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
+<link rel="alternate" type="application/rss+xml" title="Abdelkerim Dassi — Writing" href="/feed.xml">
 <link rel="stylesheet" href="/assets/styles.css?v=6">
 </head>
 <body>
@@ -183,6 +186,13 @@
       <h2 class="sec-title">Projects</h2>
     </div>
 
+    <a class="proj-row r" href="/case-studies/arabic-rag">
+      <span class="p-num">★</span>
+      <div><div class="p-name">Arabic RAG for Farmers — Case Study</div><div class="p-sub">Dialect-aware RAG · hybrid search · expert feedback loop · in production</div></div>
+      <div class="p-metric">Deep dive</div>
+      <span class="p-arr">→</span>
+    </a>
+
     <a class="proj-row r" href="https://github.com/Abdelkerim-Dassi/RAG-SpringAI" target="_blank" rel="noopener">
       <span class="p-num">01</span>
       <div><div class="p-name">RAG with Spring AI</div><div class="p-sub">Spring AI · MCP · Java · RAG</div></div>
@@ -330,6 +340,7 @@
 <footer>
   <span class="ft-l">© 2026 Abdelkerim Dassi — Tunis, Tunisia</span>
   <div class="ft-r">
+    <a href="/resume">Resume</a>
     <a href="https://github.com/Abdelkerim-Dassi" target="_blank" rel="noopener">GitHub</a>
     <a href="https://linkedin.com/in/abdelkerim-dassi/" target="_blank" rel="noopener">LinkedIn</a>
     <a href="mailto:abdelkerimdassi@gmail.com">Email</a>
@@ -337,7 +348,7 @@
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script src="/assets/main.js?v=4" defer></script>
+<script src="/assets/main.js?v=5" defer></script>
 <script>
 (function () {
   const el = document.getElementById('map');
