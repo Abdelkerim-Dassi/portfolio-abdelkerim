@@ -400,7 +400,7 @@
         <input class="ask-input" type="text" maxlength="500" placeholder="Ask about my work, stack, writing…" aria-label="Your question">
         <button class="ask-send" type="submit" aria-label="Send">→</button>
       </form>
-      <div class="ask-note">Answers come from Claude, grounded in this site — double-check anything important.</div>
+      <div class="ask-note">AI answers grounded in this site — double-check anything important.</div>
     </section>`;
   document.body.appendChild(root);
 

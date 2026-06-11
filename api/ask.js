@@ -1,7 +1,7 @@
 import { kv } from '@vercel/kv';
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 
-const MODEL = process.env.ASK_MODEL || 'claude-opus-4-8';
+const MODEL = process.env.ASK_MODEL || 'gpt-4o-mini';
 
 const SITE_KNOWLEDGE = `
 You are the AI assistant on abdelkerimdassi.com, the portfolio of Abdelkerim Dassi.
@@ -105,7 +105,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'method not allowed' });
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.OPENAI_API_KEY) {
     return res.status(503).json({ error: 'assistant is offline right now — email me instead' });
   }
 
@@ -144,25 +144,23 @@ export default async function handler(req, res) {
       return res.status(429).json({ error: "the assistant is very popular today — it'll be back tomorrow. Email me meanwhile!" });
     }
 
-    const client = new Anthropic();
-    const response = await client.messages.create({
+    const client = new OpenAI();
+    const response = await client.chat.completions.create({
       model: MODEL,
-      max_tokens: 600,
-      system: [
-        { type: 'text', text: SITE_KNOWLEDGE, cache_control: { type: 'ephemeral' } },
+      max_completion_tokens: 600,
+      messages: [
+        { role: 'system', content: SITE_KNOWLEDGE },
+        ...history,
+        { role: 'user', content: question },
       ],
-      messages: [...history, { role: 'user', content: question }],
     });
 
-    if (response.stop_reason === 'refusal') {
+    const choice = response.choices[0];
+    if (choice?.message?.refusal) {
       return res.status(200).json({ answer: "I'd rather not answer that one — try asking about Abdelkerim's work, stack, or writing." });
     }
 
-    const answer = response.content
-      .filter(b => b.type === 'text')
-      .map(b => b.text)
-      .join('')
-      .trim();
+    const answer = (choice?.message?.content ?? '').trim();
 
     if (!answer) {
       return res.status(200).json({ answer: "I came up empty on that — ask me about Abdelkerim's experience, projects, or articles." });
@@ -170,7 +168,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ answer });
   } catch (err) {
-    if (err instanceof Anthropic.RateLimitError || err instanceof Anthropic.OverloadedError) {
+    if (err instanceof OpenAI.RateLimitError) {
       return res.status(429).json({ error: 'the assistant is overloaded — try again in a minute' });
     }
     console.error('ask handler error', err);
