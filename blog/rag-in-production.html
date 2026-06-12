@@ -30,7 +30,7 @@
 <script>document.documentElement.classList.add("js");try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t)}else if(matchMedia("(prefers-color-scheme: light)").matches){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
 <link rel="alternate" type="application/rss+xml" title="Abdelkerim Dassi — Writing" href="/feed.xml">
 <link rel="stylesheet" href="/assets/styles.css?v=7">
-<link rel="stylesheet" href="/assets/blog.css?v=2">
+<link rel="stylesheet" href="/assets/blog.css?v=3">
 <link rel="stylesheet" href="/assets/comments.css">
 </head>
 <body>
@@ -77,6 +77,11 @@
 
 <!-- ── ARTICLE ── -->
 <article class="article">
+
+  <figure class="blog-photo">
+    <img src="/assets/blog/rag-in-production.jpg" alt="Rows of server racks stretching across the CERN data centre hall" width="1280" height="853" fetchpriority="high">
+    <figcaption>Production means racks, not notebooks — the CERN data centre · <a href="https://commons.wikimedia.org/w/index.php?curid=10282772" target="_blank" rel="noopener">photo: Hugo van Meijeren, CC BY-SA 3.0</a></figcaption>
+  </figure>
 
   <p>
     Everyone writes about RAG. The tutorials make it look easy: embed your documents, throw them into a vector database, wire up an LLM, done. Ship it.

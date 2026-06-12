@@ -186,6 +186,21 @@
 }
 
 /* ─────────────────────────────────────
+   LEAD PHOTO
+───────────────────────────────────── */
+.blog-photo { margin: 0 0 56px; }
+.blog-photo img {
+  width: 100%; height: auto; display: block;
+  border: 1px solid var(--line);
+}
+.blog-photo figcaption {
+  font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--t4); text-align: right; margin-top: 10px;
+}
+.blog-photo figcaption a { color: var(--t3); }
+.blog-photo figcaption a:hover { color: var(--accent); }
+
+/* ─────────────────────────────────────
    INLINE FIGURES (SVG diagrams)
 ───────────────────────────────────── */
 .blog-figure { margin: 48px 0; }

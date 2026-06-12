@@ -30,7 +30,7 @@
 <script>document.documentElement.classList.add("js");try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t)}else if(matchMedia("(prefers-color-scheme: light)").matches){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
 <link rel="alternate" type="application/rss+xml" title="Abdelkerim Dassi — Writing" href="/feed.xml">
 <link rel="stylesheet" href="/assets/styles.css?v=7">
-<link rel="stylesheet" href="/assets/blog.css?v=2">
+<link rel="stylesheet" href="/assets/blog.css?v=3">
 <link rel="stylesheet" href="/assets/comments.css">
 </head>
 <body>
@@ -76,6 +76,11 @@
 
 <!-- ── ARTICLE ── -->
 <article class="article">
+
+  <figure class="blog-photo">
+    <img src="/assets/blog/arabic-rag.jpg" alt="A farmer in a dark galabeya walking a narrow dirt path through green farmland under date palms" width="1280" height="853" fetchpriority="high">
+    <figcaption>The users this system serves — farmland, date palms, and questions typed in dialect · <a href="https://commons.wikimedia.org/w/index.php?curid=164266559" target="_blank" rel="noopener">photo: Myousry6666, CC BY-SA 4.0</a></figcaption>
+  </figure>
 
   <p>
     RAG looks like magic in English demos. You drop in PDFs, retrieve, prompt the model, and it talks. I shipped one in Egyptian Arabic for an agriculture use case. On day one, retrieval came back almost empty. Users typed dialect on their phones; my docs were in Modern Standard Arabic. The English playbook didn't survive them.
