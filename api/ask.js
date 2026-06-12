@@ -17,7 +17,7 @@ Abdelkerim Dassi — AI Engineer. Builds production RAG, LLM agents, and Spring 
 Based in Tunis, Tunisia; remote-friendly. In AI since 2021 (started while in engineering school).
 Works across the Gulf and MEA, and recently with a first US client.
 Languages: Arabic (native), French, English — he teaches in all three.
-Currently: AVAILABLE for consulting and senior AI/ML roles.
+Currently: AVAILABLE for consulting and AI/ML roles.
 
 # Current roles
 - AI Engineer at 1morething Ventures (Sharjah, UAE, hybrid), Jan 2026–present. Leads AI delivery
