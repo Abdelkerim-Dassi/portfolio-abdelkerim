@@ -127,21 +127,26 @@ export default async function handler(req, res) {
         })).filter(m => m.content)
       : [];
 
-    const ip = ipFrom(req);
-    // burst limit: 8 questions / 10 min per IP
-    const burstKey = `ask:rl:${ip}`;
-    const burst = await kv.incr(burstKey);
-    if (burst === 1) await kv.expire(burstKey, 600);
-    if (burst > 8) {
-      return res.status(429).json({ error: 'easy there — give it a few minutes and ask again' });
-    }
-    // global daily cap so a bad day can't run up the bill
-    const day = new Date().toISOString().slice(0, 10);
-    const globalKey = `ask:global:${day}`;
-    const globalCount = await kv.incr(globalKey);
-    if (globalCount === 1) await kv.expire(globalKey, 90000);
-    if (globalCount > 400) {
-      return res.status(429).json({ error: "the assistant is very popular today — it'll be back tomorrow. Email me meanwhile!" });
+    // rate limits live in KV; if no store is connected, run without them
+    try {
+      const ip = ipFrom(req);
+      // burst limit: 8 questions / 10 min per IP
+      const burstKey = `ask:rl:${ip}`;
+      const burst = await kv.incr(burstKey);
+      if (burst === 1) await kv.expire(burstKey, 600);
+      if (burst > 8) {
+        return res.status(429).json({ error: 'easy there — give it a few minutes and ask again' });
+      }
+      // global daily cap so a bad day can't run up the bill
+      const day = new Date().toISOString().slice(0, 10);
+      const globalKey = `ask:global:${day}`;
+      const globalCount = await kv.incr(globalKey);
+      if (globalCount === 1) await kv.expire(globalKey, 90000);
+      if (globalCount > 400) {
+        return res.status(429).json({ error: "the assistant is very popular today — it'll be back tomorrow. Email me meanwhile!" });
+      }
+    } catch (kvErr) {
+      console.warn('ask: KV unavailable, skipping rate limits', kvErr?.message);
     }
 
     const client = new OpenAI();
