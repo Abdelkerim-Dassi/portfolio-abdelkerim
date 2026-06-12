@@ -30,7 +30,7 @@
 <script>document.documentElement.classList.add("js");try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t)}else if(matchMedia("(prefers-color-scheme: light)").matches){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
 <link rel="alternate" type="application/rss+xml" title="Abdelkerim Dassi — Writing" href="/feed.xml">
 <link rel="stylesheet" href="/assets/styles.css?v=6">
-<link rel="stylesheet" href="/assets/blog.css?v=1">
+<link rel="stylesheet" href="/assets/blog.css?v=2">
 <link rel="stylesheet" href="/assets/comments.css">
 </head>
 <body>
@@ -92,6 +92,47 @@
   </p>
 
   <hr>
+
+  <figure class="blog-figure">
+    <svg viewBox="0 0 720 240" role="img" aria-label="Architecture diagram of a production RAG system. Ingestion row: raw documents go through structure-aware chunking into a vector store. Query row: a user query with metadata filters runs hybrid search combining vectors, BM25 and reciprocal rank fusion, a cross-encoder re-ranks twenty candidates down to five, and the LLM answers with source links. Re-ranking lifted answer quality from 72 to 89 percent.">
+      <defs>
+        <marker id="fig-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0 0L8 4L0 8z" class="fig-arrowhead"/>
+        </marker>
+      </defs>
+      <text class="fig-ta" x="40" y="8">INGESTION — WHERE 80% OF QUALITY IS DECIDED</text>
+      <rect class="fig-box" x="40" y="16" width="160" height="52"/>
+      <text class="fig-t1" x="120" y="38" text-anchor="middle">RAW DOCS</text>
+      <text class="fig-t3" x="120" y="55" text-anchor="middle">PDF · MD · HTML · 100K+</text>
+      <line class="fig-line" x1="200" y1="42" x2="276" y2="42" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="280" y="16" width="160" height="52"/>
+      <text class="fig-t1" x="360" y="38" text-anchor="middle">CHUNKING</text>
+      <text class="fig-t3" x="360" y="55" text-anchor="middle">structure-aware + overlap</text>
+      <line class="fig-line" x1="440" y1="42" x2="516" y2="42" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="520" y="16" width="160" height="52"/>
+      <text class="fig-t1" x="600" y="38" text-anchor="middle">VECTOR STORE</text>
+      <text class="fig-t3" x="600" y="55" text-anchor="middle">embeddings + metadata</text>
+      <path class="fig-line fig-dash" d="M600 68 V102 H265 V134" marker-end="url(#fig-arrow)"/>
+      <text class="fig-ta" x="0" y="130">QUERY TIME</text>
+      <rect class="fig-box" x="0" y="138" width="150" height="56"/>
+      <text class="fig-t1" x="75" y="161" text-anchor="middle">USER QUERY</text>
+      <text class="fig-t3" x="75" y="179" text-anchor="middle">+ metadata filters</text>
+      <line class="fig-line" x1="150" y1="166" x2="186" y2="166" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="190" y="138" width="150" height="56"/>
+      <text class="fig-t1" x="265" y="161" text-anchor="middle">HYBRID SEARCH</text>
+      <text class="fig-t3" x="265" y="179" text-anchor="middle">vector + BM25 + RRF</text>
+      <line class="fig-line" x1="340" y1="166" x2="376" y2="166" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box-accent" x="380" y="138" width="150" height="56"/>
+      <text class="fig-t1" x="455" y="161" text-anchor="middle">RE-RANK</text>
+      <text class="fig-ta" x="455" y="179" text-anchor="middle">CROSS-ENCODER · 20 → 5</text>
+      <line class="fig-line" x1="530" y1="166" x2="566" y2="166" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="570" y="138" width="150" height="56"/>
+      <text class="fig-t1" x="645" y="161" text-anchor="middle">ANSWER</text>
+      <text class="fig-t3" x="645" y="179" text-anchor="middle">LLM + source links</text>
+      <text class="fig-t3" x="360" y="226" text-anchor="middle">RE-RANKING ALONE LIFTED ANSWER QUALITY <tspan class="fig-ta">72% → 89%</tspan></text>
+    </svg>
+    <figcaption>The shape all three production systems converged on</figcaption>
+  </figure>
 
   <h2>The Document Ingestion Trap</h2>
 
@@ -333,7 +374,7 @@
   </div>
 </footer>
 
-<script src="/assets/main.js?v=5" defer></script>
+<script src="/assets/main.js?v=6" defer></script>
 <button id="btt" aria-label="Back to top">↑</button>
 </body>
 </html>

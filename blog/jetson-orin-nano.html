@@ -30,7 +30,7 @@
 <script>document.documentElement.classList.add("js");try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t)}else if(matchMedia("(prefers-color-scheme: light)").matches){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
 <link rel="alternate" type="application/rss+xml" title="Abdelkerim Dassi — Writing" href="/feed.xml">
 <link rel="stylesheet" href="/assets/styles.css?v=6">
-<link rel="stylesheet" href="/assets/blog.css?v=1">
+<link rel="stylesheet" href="/assets/blog.css?v=2">
 <link rel="stylesheet" href="/assets/comments.css">
 </head>
 <body>
@@ -95,6 +95,38 @@
   <p>
     Pull a live H.265 camera stream. Decode it on the <strong>NVDEC</strong> hardware — the CPU never touches the pixels. Run a YOLO detector as a <strong>TensorRT</strong> engine through <strong>DeepStream</strong>. Track every object across frames. Turn detections into real events.
   </p>
+
+  <figure class="blog-figure">
+    <svg viewBox="0 0 720 136" role="img" aria-label="Diagram of the on-device vision pipeline: an RTSP camera stream is decoded by NVDEC hardware, run through a TensorRT YOLO engine inside DeepStream, tracked across frames, and turned into events — all on the Jetson.">
+      <defs>
+        <marker id="fig-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0 0L8 4L0 8z" class="fig-arrowhead"/>
+        </marker>
+      </defs>
+      <rect class="fig-box" x="0" y="18" width="120" height="56"/>
+      <text class="fig-t1" x="60" y="42" text-anchor="middle">RTSP CAMERA</text>
+      <text class="fig-t3" x="60" y="60" text-anchor="middle">live H.265</text>
+      <line class="fig-line" x1="120" y1="46" x2="146" y2="46" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="150" y="18" width="120" height="56"/>
+      <text class="fig-t1" x="210" y="42" text-anchor="middle">NVDEC</text>
+      <text class="fig-t3" x="210" y="60" text-anchor="middle">hw decode</text>
+      <line class="fig-line" x1="270" y1="46" x2="296" y2="46" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box-accent" x="300" y="18" width="120" height="56"/>
+      <text class="fig-t1" x="360" y="42" text-anchor="middle">TENSORRT YOLO</text>
+      <text class="fig-ta" x="360" y="60" text-anchor="middle">DEEPSTREAM</text>
+      <line class="fig-line" x1="420" y1="46" x2="446" y2="46" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="450" y="18" width="120" height="56"/>
+      <text class="fig-t1" x="510" y="42" text-anchor="middle">TRACKER</text>
+      <text class="fig-t3" x="510" y="60" text-anchor="middle">object IDs</text>
+      <line class="fig-line" x1="570" y1="46" x2="596" y2="46" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="600" y="18" width="120" height="56"/>
+      <text class="fig-t1" x="660" y="42" text-anchor="middle">EVENTS</text>
+      <text class="fig-t3" x="660" y="60" text-anchor="middle">alerts out</text>
+      <path class="fig-line" d="M0 96 v8 M0 100 h720 M720 96 v8"/>
+      <text class="fig-t3" x="360" y="126" text-anchor="middle">ALL ON-DEVICE · 1080P @ 15–18 FPS · NO CLOUD ROUND-TRIP</text>
+    </svg>
+    <figcaption>One graph, end to end — the video never leaves the box</figcaption>
+  </figure>
   <p>
     Live camera in, alert out. All local. The video never leaves the box.
   </p>
@@ -211,6 +243,6 @@
 </footer>
 
 <button id="btt" aria-label="Back to top">↑</button>
-<script src="/assets/main.js?v=5" defer></script>
+<script src="/assets/main.js?v=6" defer></script>
 </body>
 </html>

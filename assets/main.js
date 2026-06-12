@@ -460,6 +460,7 @@
 
   fab.addEventListener('click', () => (panel.hidden ? open() : close()));
   root.querySelector('.ask-close').addEventListener('click', close);
+  document.querySelectorAll('[data-ask-open]').forEach(el => el.addEventListener('click', open));
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) close(); });
 
   form.addEventListener('submit', async e => {
