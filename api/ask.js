@@ -3,7 +3,7 @@ import OpenAI from 'openai';
 
 const MODEL = process.env.ASK_MODEL || 'gpt-4o-mini';
 // spend guards — worst case ~$0.0005/question, so 1800/month stays under $1/month
-const BURST_CAP = Number(process.env.ASK_BURST_CAP || 8);       // per IP / 10 min
+const VISITOR_DAILY_CAP = Number(process.env.ASK_VISITOR_DAILY_CAP || 10); // per IP / day
 const DAILY_CAP = Number(process.env.ASK_DAILY_CAP || 60);      // global / day
 const MONTHLY_CAP = Number(process.env.ASK_MONTHLY_CAP || 1800); // global / calendar month
 
@@ -134,15 +134,15 @@ export default async function handler(req, res) {
     // rate limits live in KV; if no store is connected, run without them
     try {
       const ip = ipFrom(req);
-      // burst limit: 8 questions / 10 min per IP
-      const burstKey = `ask:rl:${ip}`;
-      const burst = await kv.incr(burstKey);
-      if (burst === 1) await kv.expire(burstKey, 600);
-      if (burst > BURST_CAP) {
-        return res.status(429).json({ error: 'easy there — give it a few minutes and ask again' });
+      const day = new Date().toISOString().slice(0, 10);
+      // per-visitor daily allowance
+      const visitorKey = `ask:rl:${ip}:${day}`;
+      const visitorCount = await kv.incr(visitorKey);
+      if (visitorCount === 1) await kv.expire(visitorKey, 90000);
+      if (visitorCount > VISITOR_DAILY_CAP) {
+        return res.status(429).json({ error: "you've used today's questions — come back tomorrow, or just email me!" });
       }
       // global daily cap so a bad day can't run up the bill
-      const day = new Date().toISOString().slice(0, 10);
       const globalKey = `ask:global:${day}`;
       const globalCount = await kv.incr(globalKey);
       if (globalCount === 1) await kv.expire(globalKey, 90000);
