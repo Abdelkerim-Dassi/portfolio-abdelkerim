@@ -2,9 +2,10 @@ import { kv } from '@vercel/kv';
 import OpenAI from 'openai';
 
 const MODEL = process.env.ASK_MODEL || 'gpt-4o-mini';
-// spend guards — at ~$0.0004/question the daily cap bounds worst-case cost to ~$0.10/day
-const BURST_CAP = Number(process.env.ASK_BURST_CAP || 8);   // per IP / 10 min
-const DAILY_CAP = Number(process.env.ASK_DAILY_CAP || 250); // global / day
+// spend guards — worst case ~$0.0005/question, so 1800/month stays under $1/month
+const BURST_CAP = Number(process.env.ASK_BURST_CAP || 8);       // per IP / 10 min
+const DAILY_CAP = Number(process.env.ASK_DAILY_CAP || 60);      // global / day
+const MONTHLY_CAP = Number(process.env.ASK_MONTHLY_CAP || 1800); // global / calendar month
 
 const SITE_KNOWLEDGE = `
 You are the AI assistant on abdelkerimdassi.com, the portfolio of Abdelkerim Dassi.
@@ -148,6 +149,14 @@ export default async function handler(req, res) {
       if (globalCount > DAILY_CAP) {
         return res.status(429).json({ error: "the assistant is very popular today — it'll be back tomorrow. Email me meanwhile!" });
       }
+      // hard monthly budget cap
+      const month = day.slice(0, 7);
+      const monthKey = `ask:month:${month}`;
+      const monthCount = await kv.incr(monthKey);
+      if (monthCount === 1) await kv.expire(monthKey, 3200000); // ~37 days
+      if (monthCount > MONTHLY_CAP) {
+        return res.status(429).json({ error: "the assistant hit its monthly budget — email me instead, I reply within a day!" });
+      }
     } catch (kvErr) {
       console.warn('ask: KV unavailable, skipping rate limits', kvErr?.message);
     }
@@ -155,7 +164,7 @@ export default async function handler(req, res) {
     const client = new OpenAI();
     const response = await client.chat.completions.create({
       model: MODEL,
-      max_completion_tokens: 600,
+      max_completion_tokens: 400,
       messages: [
         { role: 'system', content: SITE_KNOWLEDGE },
         ...history,
