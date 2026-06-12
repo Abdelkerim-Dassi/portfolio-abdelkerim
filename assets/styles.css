@@ -1180,7 +1180,7 @@ footer {
 ───────────────────────────────────── */
 #btt {
   position: fixed;
-  bottom: 32px; right: 32px;
+  bottom: 92px; right: 32px;
   width: 34px; height: 34px;
   border-radius: 50%;
   border: 1px solid rgba(240,236,228,.18);
@@ -1409,7 +1409,7 @@ footer {
     z-index: 190;
   }
   .nav-avatar { width:26px; height:26px; }
-  #btt { bottom: 20px; right: 20px; }
+  #btt { bottom: 82px; right: 25px; }
   #hero { padding:0 24px 40px; }
   .page-head { padding: 110px 24px 56px; }
   .sec-inner { padding:72px 24px; }
@@ -1598,7 +1598,7 @@ footer {
 /* ─────────────────────────────────────
    ASK MY AI WIDGET
 ───────────────────────────────────── */
-#ask-root { position: fixed; left: 26px; bottom: 26px; z-index: 300; font-family: 'Archivo', sans-serif; }
+#ask-root { position: fixed; right: 26px; bottom: 26px; z-index: 300; font-family: 'Archivo', sans-serif; display: flex; justify-content: flex-end; }
 #ask-fab {
   display: flex; align-items: center; gap: 10px;
   background: var(--bg2); color: var(--paper);
@@ -1613,7 +1613,7 @@ footer {
 @keyframes askpulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
 #ask-panel[hidden] { display: none; }
 #ask-panel {
-  position: absolute; left: 0; bottom: 62px;
+  position: absolute; right: 0; bottom: 62px;
   width: min(380px, calc(100vw - 52px));
   display: flex; flex-direction: column;
   background: var(--bg2); border: 1px solid var(--line);
@@ -1652,7 +1652,7 @@ footer {
 .ask-send:disabled { color: var(--t4); cursor: wait; }
 .ask-note { font-size: 9.5px; letter-spacing: .04em; color: var(--t4); padding: 8px 22px 12px; border-top: 1px solid var(--line); }
 @media (max-width: 600px) {
-  #ask-root { left: 18px; bottom: 18px; }
+  #ask-root { right: 18px; bottom: 18px; }
   .ask-fab-label { display: none; }
   #ask-fab { padding: 14px; }
   #ask-fab::after { content: "AI"; font-size: 14px; letter-spacing: 1px; }
