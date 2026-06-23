@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Abdelkerim Dassi — Writing</title>
+    <title>Abdelkerim Dassi · Writing</title>
     <link>https://abdelkerimdassi.com/writing</link>
-    <description>Notes from the field — RAG, LLMs, and production AI. No benchmarks, no hype: what actually broke and what fixed it.</description>
+    <description>Notes from the field: RAG, LLMs, and production AI. No benchmarks, no hype: what actually broke and what fixed it.</description>
     <language>en</language>
     <atom:link href="https://abdelkerimdassi.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
@@ -11,14 +11,14 @@
       <link>https://abdelkerimdassi.com/blog/jetson-orin-nano</link>
       <guid>https://abdelkerimdassi.com/blog/jetson-orin-nano</guid>
       <pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate>
-      <description>A full DeepStream + TensorRT vision pipeline on a palm-sized $250 box — and the traps that cost me a week. Edge AI from a real deployment.</description>
+      <description>A full DeepStream + TensorRT vision pipeline on a palm-sized $250 box, and the traps that cost me a week. Edge AI from a real deployment.</description>
     </item>
     <item>
       <title>Arabic Broke My RAG. Here's What Saved It.</title>
       <link>https://abdelkerimdassi.com/blog/arabic-rag</link>
       <guid>https://abdelkerimdassi.com/blog/arabic-rag</guid>
       <pubDate>Sun, 10 May 2026 00:00:00 GMT</pubDate>
-      <description>I shipped a chatbot in Egyptian Arabic. The first day, retrieval found almost nothing — until I changed six small things. From a real production deployment.</description>
+      <description>I shipped a chatbot in Egyptian Arabic. The first day, retrieval found almost nothing, until I changed six small things. From a real production deployment.</description>
     </item>
     <item>
       <title>I Used Pip for Years. Poetry for Teams. Then Uv Showed Up.</title>
@@ -32,7 +32,7 @@
       <link>https://abdelkerimdassi.com/blog/rag-in-production</link>
       <guid>https://abdelkerimdassi.com/blog/rag-in-production</guid>
       <pubDate>Sun, 15 Mar 2026 00:00:00 GMT</pubDate>
-      <description>Beyond basics — chunking strategies, retrieval quality, re-ranking, and the subtle failures that kill accuracy in real deployments. Written from 3 production systems.</description>
+      <description>Beyond basics: chunking strategies, retrieval quality, re-ranking, and the subtle failures that kill accuracy in real deployments. Written from 3 production systems.</description>
     </item>
   </channel>
 </rss>

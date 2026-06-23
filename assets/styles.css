@@ -234,7 +234,7 @@ nav {
 .btn span { transition: transform .3s; }
 .btn:hover span { transform: translate(3px,-3px); }
 
-/* Larger variant — used in the home "Where to next" routes */
+/* Larger variant, used in the home "Where to next" routes */
 .btn-lg {
   padding: 22px 36px;
   font-size: 12px;
@@ -351,7 +351,7 @@ nav {
 }
 .exp-row:hover .e-bullets li { color:rgba(240,236,228,.7); }
 .e-bullets li::before {
-  content:'—'; position:absolute; left:0;
+  content:'–'; position:absolute; left:0;
   color:rgba(240,236,228,.25); font-size:13px; top:1px;
 }
 .e-bullets li b { font-weight:300; color:rgba(240,236,228,.92); }
@@ -662,7 +662,7 @@ footer {
 .ft-r a:hover { color:var(--accent); }
 
 /* ─────────────────────────────────────
-   WORLD MAP (Leaflet — Where I've shipped)
+   WORLD MAP (Leaflet · Where I've shipped)
 ───────────────────────────────────── */
 .map-wrap {
   border: 1px solid var(--line);
@@ -1203,7 +1203,7 @@ footer {
 [data-theme="light"] #btt:hover { color: var(--paper); border-color: rgba(15,29,61,.35); }
 
 /* ─────────────────────────────────────
-   ABOUT — JCI SECTION
+   ABOUT · JCI SECTION
 ───────────────────────────────────── */
 .jci-wrap {
   display: grid;
@@ -1286,7 +1286,7 @@ footer {
 }
 
 /* ─────────────────────────────────────
-   SITE NAV ROWS (Home — Explore)
+   SITE NAV ROWS (Home · Explore)
 ───────────────────────────────────── */
 .site-nav-row {
   display: grid;

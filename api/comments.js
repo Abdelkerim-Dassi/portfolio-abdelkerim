@@ -83,7 +83,7 @@ export default async function handler(req, res) {
       const rlKey = `rl:${ip}`;
       const exists = await kv.get(rlKey);
       if (exists) {
-        return res.status(429).json({ error: 'easy there — wait a minute and try again' });
+        return res.status(429).json({ error: 'easy there, wait a minute and try again' });
       }
       await kv.set(rlKey, 1, { ex: 60 });
 

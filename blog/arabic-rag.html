@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:ital,wght@0,200;0,300;0,400;1,300&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add("js");try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t)}else if(matchMedia("(prefers-color-scheme: light)").matches){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
-<link rel="alternate" type="application/rss+xml" title="Abdelkerim Dassi — Writing" href="/feed.xml">
+<link rel="alternate" type="application/rss+xml" title="Abdelkerim Dassi · Writing" href="/feed.xml">
 <link rel="stylesheet" href="/assets/styles.css?v=7">
 <link rel="stylesheet" href="/assets/blog.css?v=3">
 <link rel="stylesheet" href="/assets/comments.css">
@@ -60,7 +60,7 @@
   <div class="blog-meta">May 2026 · 3 min read</div>
   <h1 class="blog-title">Arabic Broke<br>My RAG. Here's<br>What Saved It.</h1>
   <p class="blog-subtitle">
-    I shipped a chatbot in <em>Egyptian Arabic</em>. The first day, retrieval found almost nothing — until I changed six small things.
+    I shipped a chatbot in <em>Egyptian Arabic</em>. The first day, retrieval found almost nothing, until I changed six small things.
   </p>
   <button class="listen-btn" id="listen-btn" aria-label="Listen to this article">
     <span class="l-icon" id="l-icon">▶</span>
@@ -79,7 +79,7 @@
 
   <figure class="blog-photo">
     <img src="/assets/blog/arabic-rag.jpg" alt="A farmer in a dark galabeya walking a narrow dirt path through green farmland under date palms" width="1280" height="853" fetchpriority="high">
-    <figcaption>The users this system serves — farmland, date palms, and questions typed in dialect</figcaption>
+    <figcaption>The users this system serves: farmland, date palms, and questions typed in dialect</figcaption>
   </figure>
 
   <p>
@@ -90,7 +90,7 @@
   </p>
 
   <figure class="blog-figure">
-    <svg viewBox="0 0 720 252" role="img" aria-label="Diagram of the Arabic query pipeline: a dialect query is normalized, rewritten into Modern Standard Arabic, run through hybrid search, and scored for confidence — which routes to a direct answer, an answer with disclaimer, or a human expert whose answer is re-embedded into the knowledge base.">
+    <svg viewBox="0 0 720 252" role="img" aria-label="Diagram of the Arabic query pipeline: a dialect query is normalized, rewritten into Modern Standard Arabic, run through hybrid search, and scored for confidence, which routes to a direct answer, an answer with disclaimer, or a human expert whose answer is re-embedded into the knowledge base.">
       <defs>
         <marker id="fig-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
           <path d="M0 0L8 4L0 8z" class="fig-arrowhead"/>
@@ -132,9 +132,9 @@
       <text class="fig-t1" x="600" y="170" text-anchor="middle">HUMAN EXPERT</text>
       <text class="fig-t3" x="600" y="187" text-anchor="middle">&lt; 0.5</text>
       <path class="fig-line-accent fig-dash" d="M600 198 V224 H148" marker-end="url(#fig-arrow)"/>
-      <text class="fig-ta" x="374" y="244" text-anchor="middle">FIX 6 — EXPERT ANSWERS RE-EMBEDDED INTO THE KNOWLEDGE BASE</text>
+      <text class="fig-ta" x="374" y="244" text-anchor="middle">FIX 6 · EXPERT ANSWERS RE-EMBEDDED INTO THE KNOWLEDGE BASE</text>
     </svg>
-    <figcaption>A dialect query's journey — six small fixes between the farmer and the answer</figcaption>
+    <figcaption>A dialect query's journey: six small fixes between the farmer and the answer</figcaption>
   </figure>
 
   <hr>
@@ -145,7 +145,7 @@
     Arabic users don't type the same way. The same word can carry different alif shapes (ٱ, آ, إ, أ), diacritics or no diacritics, stray RTL marks from a keyboard. Dialect is a separate problem on top: the dictionary form your docs use and what a farmer types on WhatsApp are often very different. Most embedding models, even multilingual ones, can't tell that <em>"how do I water my courgette in summer"</em> and <code>ازاى اروى الكوسة فى الصيف؟</code> mean the same thing.
   </p>
 
-  <h2>Fix #1 — Normalize the Query, Not the Docs</h2>
+  <h2>Fix #1: Normalize the Query, Not the Docs</h2>
 
   <p>
     The simplest win came first. On every incoming query I strip diacritics, the tatweel character, RTL marks, and unify the alif variants into a single <code>ا</code>. Ya folds into maqsura. One thing I deliberately leave alone: ta-marbuta. It carries meaning in technical Arabic, and stripping it muddied real distinctions.
@@ -159,7 +159,7 @@ text = re.sub(r"[ٱآإأ]", "ا", text)
 text = re.sub(r"ي", "ى", text)
 text = re.sub(r"\s+", " ", text).strip()</code></pre>
 
-  <h2>Fix #2 — Rewrite Dialect Into MSA, but Freeze the Nouns</h2>
+  <h2>Fix #2: Rewrite Dialect Into MSA, but Freeze the Nouns</h2>
 
   <p>
     Normalization fixes spelling, not dialect. So before retrieval, I send the query through a small GPT-4o call with a few-shot prompt that rewrites Egyptian colloquial into MSA.
@@ -172,10 +172,10 @@ text = re.sub(r"\s+", " ", text).strip()</code></pre>
     The trick most people miss is in the prompt itself: tell the model <strong>what not to touch</strong>. Crop names, pesticide names, fertilizer names, varieties, numbers, dates, and units stay verbatim. If GPT "translates" a courgette name, your knowledge base will never match it.
   </p>
   <p>
-    A few details earned their keep. I pass the <em>original</em>, unnormalized query into the rewriter — register cues live in the spelling. I cache rewrites by the normalized form, so dialect variants share a slot. I cache failures too. I fail open: if the rewriter dies, retrieval falls back to the original. Then I run both versions and merge by max score.
+    A few details earned their keep. I pass the <em>original</em>, unnormalized query into the rewriter; register cues live in the spelling. I cache rewrites by the normalized form, so dialect variants share a slot. I cache failures too. I fail open: if the rewriter dies, retrieval falls back to the original. Then I run both versions and merge by max score.
   </p>
 
-  <h2>Fix #3 — Hybrid Search With the Arabic Tokenizer</h2>
+  <h2>Fix #3: Hybrid Search With the Arabic Tokenizer</h2>
 
   <p>
     Vector search alone misses crop names. BM25 alone misses dialect paraphrases. Together they cover both. I use pgvector for the semantic side and Postgres full-text for the keyword side, merged by node ID with the higher score winning.
@@ -184,36 +184,36 @@ text = re.sub(r"\s+", " ", text).strip()</code></pre>
     The catch is small but vicious: Postgres' default full-text config tokenizes English. On Arabic it produces nonsense. You have to switch to the Arabic full-text config explicitly. That one line did more for recall than any prompt change.
   </p>
 
-  <h2>Fix #4 — Recalibrate Your Similarity Scores</h2>
+  <h2>Fix #4: Recalibrate Your Similarity Scores</h2>
 
   <p>
     Multilingual embeddings don't score Arabic the way they score English. The 0.7 threshold I trusted from English projects rejected almost every correct Arabic match. Real cosine values for relevant Arabic chunks were landing between 0.20 and 0.45.
   </p>
   <p>
-    So I built a small benchmark — 20 queries, half in-scope agriculture, half off-topic, across Arabic, French, and English. Then I picked an empirical floor (<code>0.15</code>) and ceiling (<code>0.50</code>) from what I was actually seeing, and remapped raw cosine into a 0–1 confidence score. Threshold sits at raw <code>0.30</code>.
+    So I built a small benchmark: 20 queries, half in-scope agriculture, half off-topic, across Arabic, French, and English. Then I picked an empirical floor (<code>0.15</code>) and ceiling (<code>0.50</code>) from what I was actually seeing, and remapped raw cosine into a 0–1 confidence score. Threshold sits at raw <code>0.30</code>.
   </p>
 
-  <h2>Fix #5 — Confidence Is Two Questions, Not One</h2>
+  <h2>Fix #5: Confidence Is Two Questions, Not One</h2>
 
   <p>
-    I ask the LLM to return its own confidence inside its JSON answer — <code>{"answer": "...", "confidence": 0.XX}</code>. That's the primary signal. I keep <code>max_similarity</code> from retrieval as a safety net for when the JSON is malformed, or when the model is hallucinating its own certainty.
+    I ask the LLM to return its own confidence inside its JSON answer: <code>{"answer": "...", "confidence": 0.XX}</code>. That's the primary signal. I keep <code>max_similarity</code> from retrieval as a safety net for when the JSON is malformed, or when the model is hallucinating its own certainty.
   </p>
   <p>
     Three buckets:
   </p>
   <ul>
-    <li>≥ 0.7 — answer directly.</li>
-    <li>0.5–0.7 — answer with a disclaimer.</li>
-    <li>&lt; 0.5 — hand it to a human expert.</li>
+    <li>≥ 0.7: answer directly.</li>
+    <li>0.5–0.7: answer with a disclaimer.</li>
+    <li>&lt; 0.5: hand it to a human expert.</li>
   </ul>
   <p>
     In agriculture, a wrong dose can kill a crop. The "I don't know, let me get someone" path isn't a fallback. It's a feature.
   </p>
 
-  <h2>Fix #6 — Every Expert Answer Becomes Part of the Brain</h2>
+  <h2>Fix #6: Every Expert Answer Becomes Part of the Brain</h2>
 
   <p>
-    When an expert resolves an escalated question, that whole Q+A is embedded back into the knowledge base — one un-chunked node, tagged <code>expert_answer</code>, in the user's actual language. The next time a farmer asks something similar in dialect, the closest match isn't a generic doc. It's an expert answer to a real question, in the same register.
+    When an expert resolves an escalated question, that whole Q+A is embedded back into the knowledge base: one un-chunked node, tagged <code>expert_answer</code>, in the user's actual language. The next time a farmer asks something similar in dialect, the closest match isn't a generic doc. It's an expert answer to a real question, in the same register.
   </p>
   <p>
     Most of the dialect knowledge in my retriever wasn't there on day one. The system grew it, one escalation at a time.
@@ -227,7 +227,7 @@ text = re.sub(r"\s+", " ", text).strip()</code></pre>
 
   <div class="callout">
     <div class="callout-label">The Quiet Truth</div>
-    <p>No Arabic-specific embedding solved this for me. What worked was a small pipeline of cheap, honest steps — query normalization, dialect rewriting that respects nouns, hybrid search with the right tokenizer, recalibrated thresholds, two-source confidence, and a feedback loop. No magic model.</p>
+    <p>No Arabic-specific embedding solved this for me. What worked was a small pipeline of cheap, honest steps: query normalization, dialect rewriting that respects nouns, hybrid search with the right tokenizer, recalibrated thresholds, two-source confidence, and a feedback loop. No magic model.</p>
   </div>
 
 </article>
@@ -278,7 +278,7 @@ text = re.sub(r"\s+", " ", text).strip()</code></pre>
 </div>
 
 <footer>
-  <span class="ft-l">© 2026 Abdelkerim Dassi — Tunis, Tunisia</span>
+  <span class="ft-l">© 2026 Abdelkerim Dassi · Tunis, Tunisia</span>
   <div class="ft-r">
     <a href="/resume">Resume</a>
     <a href="https://github.com/Abdelkerim-Dassi" target="_blank" rel="noopener">GitHub</a>

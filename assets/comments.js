@@ -33,7 +33,7 @@
 
   function render(comments) {
     if (!comments.length) {
-      list.innerHTML = '<div class="comments-empty">No comments yet — be the first.</div>';
+      list.innerHTML = '<div class="comments-empty">No comments yet. Be the first.</div>';
       return;
     }
     list.innerHTML = comments.map(c => {
@@ -96,7 +96,7 @@
         return;
       }
       form.reset();
-      setStatus('Thanks — posted.', 'ok');
+      setStatus('Thanks, posted.', 'ok');
       await load();
       setTimeout(() => setStatus(''), 2500);
     } catch (e) {

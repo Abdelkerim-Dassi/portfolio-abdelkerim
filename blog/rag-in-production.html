@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAG in Production: What Nobody Tells You — Abdelkerim Dassi</title>
-<meta name="description" content="Beyond basics — chunking strategies, retrieval quality, re-ranking, and the subtle failures that kill accuracy in real RAG deployments.">
+<title>RAG in Production: What Nobody Tells You · Abdelkerim Dassi</title>
+<meta name="description" content="Beyond basics: chunking strategies, retrieval quality, re-ranking, and the subtle failures that kill accuracy in real RAG deployments.">
 <meta name="author" content="Abdelkerim Dassi">
 <link rel="canonical" href="https://abdelkerimdassi.com/blog/rag-in-production">
 <link rel="icon" type="image/jpeg" href="/assets/avatar.jpg">
@@ -12,8 +12,8 @@
 
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://abdelkerimdassi.com/blog/rag-in-production">
-<meta property="og:title" content="RAG in Production: What Nobody Tells You — Abdelkerim Dassi">
-<meta property="og:description" content="Beyond basics — chunking strategies, retrieval quality, re-ranking, and the subtle failures that kill accuracy in real RAG deployments.">
+<meta property="og:title" content="RAG in Production: What Nobody Tells You · Abdelkerim Dassi">
+<meta property="og:description" content="Beyond basics: chunking strategies, retrieval quality, re-ranking, and the subtle failures that kill accuracy in real RAG deployments.">
 <meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-rag-in-production.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -21,14 +21,14 @@
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="RAG in Production: What Nobody Tells You">
-<meta name="twitter:description" content="Beyond basics — chunking, retrieval quality, re-ranking, and the subtle failures that kill accuracy in real deployments.">
+<meta name="twitter:description" content="Beyond basics: chunking, retrieval quality, re-ranking, and the subtle failures that kill accuracy in real deployments.">
 <meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-rag-in-production.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:ital,wght@0,200;0,300;0,400;1,300&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add("js");try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t)}else if(matchMedia("(prefers-color-scheme: light)").matches){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
-<link rel="alternate" type="application/rss+xml" title="Abdelkerim Dassi — Writing" href="/feed.xml">
+<link rel="alternate" type="application/rss+xml" title="Abdelkerim Dassi · Writing" href="/feed.xml">
 <link rel="stylesheet" href="/assets/styles.css?v=7">
 <link rel="stylesheet" href="/assets/blog.css?v=3">
 <link rel="stylesheet" href="/assets/comments.css">
@@ -60,7 +60,7 @@
   <div class="blog-meta">March 2026 · 8 min read</div>
   <h1 class="blog-title">RAG in Production:<br>What Nobody Tells You</h1>
   <p class="blog-subtitle">
-    Beyond basics — <em>chunking strategies, retrieval quality, re-ranking</em>, and the subtle failures that kill accuracy in real deployments. Written from 3 production systems.
+    Beyond basics: <em>chunking strategies, retrieval quality, re-ranking</em>, and the subtle failures that kill accuracy in real deployments. Written from 3 production systems.
   </p>
   <button class="listen-btn" id="listen-btn" aria-label="Listen to this article">
     <span class="l-icon" id="l-icon">▶</span>
@@ -79,18 +79,18 @@
 <article class="article">
 
   <figure class="blog-photo">
-    <img src="/assets/blog/rag_in_prod.jpg" alt="Illustration of a RAG production pipeline — from notebook demos through chunking, retrieval quality and re-ranking to accurate answers" width="1024" height="559" fetchpriority="high">
-    <figcaption>From notebook demo to real deployment — the parts the tutorials skip</figcaption>
+    <img src="/assets/blog/rag_in_prod.jpg" alt="Illustration of a RAG production pipeline: from notebook demos through chunking, retrieval quality and re-ranking to accurate answers" width="1024" height="559" fetchpriority="high">
+    <figcaption>From notebook demo to real deployment: the parts the tutorials skip</figcaption>
   </figure>
 
   <p>
     Everyone writes about RAG. The tutorials make it look easy: embed your documents, throw them into a vector database, wire up an LLM, done. Ship it.
   </p>
   <p>
-    I believed that too — until I had to build RAG systems that <strong>actually worked in production</strong>. Not demos. Not notebooks. Systems where real users asked unpredictable questions, where wrong answers had consequences, and where "it works most of the time" wasn't good enough.
+    I believed that too, until I had to build RAG systems that <strong>actually worked in production</strong>. Not demos. Not notebooks. Systems where real users asked unpredictable questions, where wrong answers had consequences, and where "it works most of the time" wasn't good enough.
   </p>
   <p>
-    Over the past two years, I've built and shipped three production RAG systems — an <strong>AI-powered documentation assistant</strong> deployed on AWS with Kubernetes, a <strong>parliamentary speech analysis platform</strong> processing 100K+ documents, and a <strong>QHSE AI assistant</strong> built with Spring AI and MCP. Each one taught me things no tutorial ever mentioned.
+    Over the past two years, I've built and shipped three production RAG systems: an <strong>AI-powered documentation assistant</strong> deployed on AWS with Kubernetes, a <strong>parliamentary speech analysis platform</strong> processing 100K+ documents, and a <strong>QHSE AI assistant</strong> built with Spring AI and MCP. Each one taught me things no tutorial ever mentioned.
   </p>
   <p>
     This is what I wish someone had told me before I started.
@@ -105,7 +105,7 @@
           <path d="M0 0L8 4L0 8z" class="fig-arrowhead"/>
         </marker>
       </defs>
-      <text class="fig-ta" x="40" y="8">INGESTION — WHERE 80% OF QUALITY IS DECIDED</text>
+      <text class="fig-ta" x="40" y="8">INGESTION · WHERE 80% OF QUALITY IS DECIDED</text>
       <rect class="fig-box" x="40" y="16" width="160" height="52"/>
       <text class="fig-t1" x="120" y="38" text-anchor="middle">RAW DOCS</text>
       <text class="fig-t3" x="120" y="55" text-anchor="middle">PDF · MD · HTML · 100K+</text>
@@ -142,7 +142,7 @@
   <h2>The Document Ingestion Trap</h2>
 
   <p>
-    The first system I built was a documentation assistant — a chatbot that could answer questions about internal project documentation. The stack was Python, Weaviate as the vector store, and AWS SageMaker for the LLM. The deployment ran on <strong>EKS with Docker containers</strong>, orchestrated through a CI/CD pipeline.
+    The first system I built was a documentation assistant: a chatbot that could answer questions about internal project documentation. The stack was Python, Weaviate as the vector store, and AWS SageMaker for the LLM. The deployment ran on <strong>EKS with Docker containers</strong>, orchestrated through a CI/CD pipeline.
   </p>
   <p>
     The prototype took two weeks. Getting it production-ready took three months.
@@ -157,33 +157,33 @@
     Every tutorial says "split your documents into chunks of ~500 tokens." This advice is technically correct and practically useless.
   </p>
   <p>
-    In the documentation assistant, project docs had nested structures — specs with subsections referencing other subsections, tables that only made sense with their headers, code blocks that lost meaning when cut in half. A naive recursive text splitter destroyed all of this context.
+    In the documentation assistant, project docs had nested structures: specs with subsections referencing other subsections, tables that only made sense with their headers, code blocks that lost meaning when cut in half. A naive recursive text splitter destroyed all of this context.
   </p>
   <p>
     What actually worked:
   </p>
   <ul>
-    <li><strong>Structure-aware chunking</strong> — parsing the document format first (Markdown headers, HTML sections, PDF layout) and chunking along semantic boundaries, not token counts</li>
-    <li><strong>Overlapping windows with metadata</strong> — 15-20% overlap between chunks, with parent section titles injected as metadata so the retriever could score relevance against the broader context</li>
-    <li><strong>Table preservation</strong> — tables were extracted whole and stored as separate chunks with a "table" type flag, never split across rows</li>
-    <li><strong>Small chunks for retrieval, large chunks for generation</strong> — the "parent-child" pattern, where you embed small granular chunks but retrieve the larger parent when a match is found</li>
+    <li><strong>Structure-aware chunking</strong>: parsing the document format first (Markdown headers, HTML sections, PDF layout) and chunking along semantic boundaries, not token counts</li>
+    <li><strong>Overlapping windows with metadata</strong>: 15-20% overlap between chunks, with parent section titles injected as metadata so the retriever could score relevance against the broader context</li>
+    <li><strong>Table preservation</strong>: tables were extracted whole and stored as separate chunks with a "table" type flag, never split across rows</li>
+    <li><strong>Small chunks for retrieval, large chunks for generation</strong>: the "parent-child" pattern, where you embed small granular chunks but retrieve the larger parent when a match is found</li>
   </ul>
 
   <div class="callout">
     <div class="callout-label">Lesson Learned</div>
-    <p>If your retrieval accuracy is bad, don't tune your prompt or swap your LLM. Fix your chunking first. I've seen 20-30% accuracy improvements just from better chunking — more than any prompt engineering ever delivered.</p>
+    <p>If your retrieval accuracy is bad, don't tune your prompt or swap your LLM. Fix your chunking first. I've seen 20-30% accuracy improvements just from better chunking, more than any prompt engineering ever delivered.</p>
   </div>
 
   <h2>The Retrieval Quality Problem</h2>
 
   <p>
-    The second system — a parliamentary RAG platform — forced me to confront retrieval quality at scale. We had <strong>100,000+ parliamentary speeches</strong> that citizens could query in natural language. The topic classification pipeline hit 95% accuracy, but the RAG component initially struggled.
+    The second system, a parliamentary RAG platform, forced me to confront retrieval quality at scale. We had <strong>100,000+ parliamentary speeches</strong> that citizens could query in natural language. The topic classification pipeline hit 95% accuracy, but the RAG component initially struggled.
   </p>
   <p>
     The problem was deceptively simple: <strong>semantic similarity is not the same as relevance</strong>.
   </p>
   <p>
-    A citizen asking "What did parliament say about healthcare reform in 2023?" would get semantically similar results — speeches that <em>mentioned</em> healthcare — but not the most <em>relevant</em> ones. The actual policy debates, the key votes, the turning-point speeches were buried under dozens of tangential mentions.
+    A citizen asking "What did parliament say about healthcare reform in 2023?" would get semantically similar results (speeches that <em>mentioned</em> healthcare) but not the most <em>relevant</em> ones. The actual policy debates, the key votes, the turning-point speeches were buried under dozens of tangential mentions.
   </p>
 
   <h3>Hybrid Search Saved Us</h3>
@@ -192,12 +192,12 @@
     Pure vector search wasn't enough. Pure keyword search (BM25) wasn't enough either. The breakthrough came from <strong>combining both</strong>:
   </p>
   <ul>
-    <li><strong>Vector search</strong> caught semantic intent — understanding that "healthcare reform" relates to "medical policy changes"</li>
-    <li><strong>BM25 keyword search</strong> caught exact terminology — specific bill numbers, politician names, legal terms that embeddings often blur</li>
+    <li><strong>Vector search</strong> caught semantic intent: understanding that "healthcare reform" relates to "medical policy changes"</li>
+    <li><strong>BM25 keyword search</strong> caught exact terminology: specific bill numbers, politician names, legal terms that embeddings often blur</li>
     <li><strong>Reciprocal Rank Fusion</strong> merged the two result sets, giving us significantly better recall than either approach alone</li>
   </ul>
   <p>
-    At the scale of 100K+ documents, I also learned that <strong>metadata filtering is not optional</strong>. Date ranges, document types, speaker roles, parliamentary sessions — these filters happen before the vector search, dramatically reducing the search space and improving both speed and relevance.
+    At the scale of 100K+ documents, I also learned that <strong>metadata filtering is not optional</strong>. Date ranges, document types, speaker roles, parliamentary sessions: these filters happen before the vector search, dramatically reducing the search space and improving both speed and relevance.
   </p>
 
   <h2>Re-Ranking: The Hidden Multiplier</h2>
@@ -222,7 +222,7 @@
   </blockquote>
 
   <p>
-    The accuracy improvement was striking. On our internal evaluation set, re-ranking lifted answer quality from roughly 72% to 89% — measured by human evaluation of "did this answer the question correctly and completely."
+    The accuracy improvement was striking. On our internal evaluation set, re-ranking lifted answer quality from roughly 72% to 89%, measured by human evaluation of "did this answer the question correctly and completely."
   </p>
 
   <h2>The Failures Nobody Talks About</h2>
@@ -246,7 +246,7 @@
     Users ask questions your knowledge base simply cannot answer. A naive RAG system will retrieve the "least irrelevant" chunks and hallucinate an answer anyway.
   </p>
   <p>
-    The solution that worked: a <strong>relevance threshold on retrieval scores</strong>. If the best chunk scores below a calibrated threshold, the system responds with "I don't have enough information to answer this" instead of guessing. Calibrating that threshold per-domain took experimentation — too high and you reject valid queries, too low and you let garbage through.
+    The solution that worked: a <strong>relevance threshold on retrieval scores</strong>. If the best chunk scores below a calibrated threshold, the system responds with "I don't have enough information to answer this" instead of guessing. Calibrating that threshold per-domain took experimentation: too high and you reject valid queries, too low and you let garbage through.
   </p>
 
   <h3>3. The Stale Knowledge Problem</h3>
@@ -255,7 +255,7 @@
     Documents get updated. Regulations change. New speeches get published. Your vector store doesn't know this unless you tell it.
   </p>
   <p>
-    In the QHSE platform (built with <strong>Spring AI, MCP, and Groq</strong>), I implemented an incremental ingestion pipeline — documents were versioned, and updates triggered re-embedding of only the changed sections. Deletes were handled through metadata-based invalidation, not full re-indexing.
+    In the QHSE platform (built with <strong>Spring AI, MCP, and Groq</strong>), I implemented an incremental ingestion pipeline: documents were versioned, and updates triggered re-embedding of only the changed sections. Deletes were handled through metadata-based invalidation, not full re-indexing.
   </p>
 
   <h3>4. The Multi-Hop Question</h3>
@@ -270,18 +270,18 @@
   <h2>Infrastructure Lessons from AWS</h2>
 
   <p>
-    The documentation assistant ran on <strong>AWS EKS</strong> — Kubernetes-managed containers with SageMaker endpoints for the LLM. Here's what I learned about running RAG in the cloud:
+    The documentation assistant ran on <strong>AWS EKS</strong>: Kubernetes-managed containers with SageMaker endpoints for the LLM. Here's what I learned about running RAG in the cloud:
   </p>
   <ul>
-    <li><strong>Separate your embedding service from your generation service</strong> — they have completely different scaling profiles. Embedding is CPU/GPU-bound and bursty during ingestion. Generation is latency-sensitive and scales with user traffic</li>
-    <li><strong>Vector database sizing matters more than you think</strong> — Weaviate's memory footprint grows linearly with the number of vectors. We underestimated this initially and hit OOM kills in production. Plan for 2-3x your expected index size</li>
-    <li><strong>Cache aggressively</strong> — identical or near-identical queries are more common than you'd expect. A simple query hash cache with a 1-hour TTL cut our SageMaker inference costs significantly</li>
-    <li><strong>S3 as the source of truth</strong> — raw documents lived in S3, processed chunks in the vector store. If the vector store corrupted or needed re-indexing, we could always rebuild from S3. This saved us twice</li>
+    <li><strong>Separate your embedding service from your generation service</strong>: they have completely different scaling profiles. Embedding is CPU/GPU-bound and bursty during ingestion. Generation is latency-sensitive and scales with user traffic</li>
+    <li><strong>Vector database sizing matters more than you think</strong>: Weaviate's memory footprint grows linearly with the number of vectors. We underestimated this initially and hit OOM kills in production. Plan for 2-3x your expected index size</li>
+    <li><strong>Cache aggressively</strong>: identical or near-identical queries are more common than you'd expect. A simple query hash cache with a 1-hour TTL cut our SageMaker inference costs significantly</li>
+    <li><strong>S3 as the source of truth</strong>: raw documents lived in S3, processed chunks in the vector store. If the vector store corrupted or needed re-indexing, we could always rebuild from S3. This saved us twice</li>
   </ul>
 
   <div class="callout">
     <div class="callout-label">Architecture Tip</div>
-    <p>Your vector database is a derived store, not a primary store. Treat it like a cache that can be rebuilt. Keep your raw documents and processing metadata somewhere durable. When — not if — you need to re-index with a new embedding model or different chunking strategy, you'll be glad you did.</p>
+    <p>Your vector database is a derived store, not a primary store. Treat it like a cache that can be rebuilt. Keep your raw documents and processing metadata somewhere durable. When (not if) you need to re-index with a new embedding model or different chunking strategy, you'll be glad you did.</p>
   </div>
 
   <h2>Evaluation: The Hardest Part</h2>
@@ -293,9 +293,9 @@
     What I've settled on is a <strong>three-layer evaluation</strong>:
   </p>
   <ul>
-    <li><strong>Retrieval quality</strong> — given a question, are the right chunks in the top-5? Measured by recall@5 against a manually curated test set. This is the most important metric and the one most people skip</li>
-    <li><strong>Answer quality</strong> — given the right chunks, does the LLM produce a correct answer? This isolates generation from retrieval. Measured by human evaluation on a sample</li>
-    <li><strong>End-to-end quality</strong> — given a question, is the final answer correct? This is what users experience. Measured by a combination of automated checks and periodic human review</li>
+    <li><strong>Retrieval quality</strong>: given a question, are the right chunks in the top-5? Measured by recall@5 against a manually curated test set. This is the most important metric and the one most people skip</li>
+    <li><strong>Answer quality</strong>: given the right chunks, does the LLM produce a correct answer? This isolates generation from retrieval. Measured by human evaluation on a sample</li>
+    <li><strong>End-to-end quality</strong>: given a question, is the final answer correct? This is what users experience. Measured by a combination of automated checks and periodic human review</li>
   </ul>
   <p>
     The critical insight: <strong>if retrieval is broken, nothing downstream can fix it</strong>. I've seen teams spend weeks tuning prompts when the real problem was that the right documents weren't being retrieved in the first place. Always debug from retrieval upward.
@@ -307,20 +307,20 @@
     If I were starting a new RAG system tomorrow, here's what I'd change:
   </p>
   <ul>
-    <li><strong>Start with evaluation, not with building</strong> — create your test set of 50-100 question/answer pairs before writing a single line of pipeline code. Every design decision should be measured against this set</li>
-    <li><strong>Invest in chunking early</strong> — spend a week on chunking strategy before touching retrieval or generation. The ROI is enormous</li>
-    <li><strong>Hybrid search from day one</strong> — don't start with pure vector search thinking you'll "add BM25 later." The architectural assumptions are different</li>
-    <li><strong>Build the feedback loop first</strong> — instrument your system to capture which answers users found helpful and which they didn't. This data is gold for iterating</li>
-    <li><strong>Keep your LLM swappable</strong> — I've switched LLMs mid-project twice. Abstract the generation layer so you can swap models without rewiring your pipeline</li>
+    <li><strong>Start with evaluation, not with building</strong>: create your test set of 50-100 question/answer pairs before writing a single line of pipeline code. Every design decision should be measured against this set</li>
+    <li><strong>Invest in chunking early</strong>: spend a week on chunking strategy before touching retrieval or generation. The ROI is enormous</li>
+    <li><strong>Hybrid search from day one</strong>: don't start with pure vector search thinking you'll "add BM25 later." The architectural assumptions are different</li>
+    <li><strong>Build the feedback loop first</strong>: instrument your system to capture which answers users found helpful and which they didn't. This data is gold for iterating</li>
+    <li><strong>Keep your LLM swappable</strong>: I've switched LLMs mid-project twice. Abstract the generation layer so you can swap models without rewiring your pipeline</li>
   </ul>
 
   <hr>
 
   <p>
-    RAG is not a solved problem. It's an <em>engineering discipline</em> — one that requires as much attention to data quality, infrastructure, and evaluation as it does to the AI itself. The tutorials get you 20% of the way there. The remaining 80% is what happens when real users meet real documents in production.
+    RAG is not a solved problem. It's an <em>engineering discipline</em>, one that requires as much attention to data quality, infrastructure, and evaluation as it does to the AI itself. The tutorials get you 20% of the way there. The remaining 80% is what happens when real users meet real documents in production.
   </p>
   <p>
-    That 80% is where the actual work — and the actual value — lives.
+    That 80% is where the actual work (and the actual value) lives.
   </p>
 
 </article>
@@ -370,7 +370,7 @@
 </div>
 
 <footer>
-  <span class="ft-l">© 2026 Abdelkerim Dassi — Tunis, Tunisia</span>
+  <span class="ft-l">© 2026 Abdelkerim Dassi · Tunis, Tunisia</span>
   <div class="ft-r">
     <a href="/resume">Resume</a>
     <a href="https://github.com/Abdelkerim-Dassi" target="_blank" rel="noopener">GitHub</a>

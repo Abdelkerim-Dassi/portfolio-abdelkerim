@@ -127,7 +127,7 @@
   line-height: 1.85;
 }
 .article li::before {
-  content: '—';
+  content: '–';
   position: absolute; left: 0;
   color: var(--accent);
   font-size: 12px;

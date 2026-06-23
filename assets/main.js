@@ -1,4 +1,4 @@
-/* ── THEME TOGGLE ── */
+/* · THEME TOGGLE · */
 /* initial theme is applied by the inline head script (pre-paint, no flash) */
 (function () {
   document.querySelectorAll('.theme-toggle').forEach(b => {
@@ -11,7 +11,7 @@
   });
 })();
 
-/* ── ACTIVE NAV LINK ── */
+/* · ACTIVE NAV LINK · */
 (function () {
   const path = location.pathname.replace(/\/$/, '') || '/';
   document.querySelectorAll('.n-links a').forEach(a => {
@@ -24,7 +24,7 @@
   });
 })();
 
-/* ── SCROLL REVEAL ── */
+/* · SCROLL REVEAL · */
 (function () {
   const els = document.querySelectorAll('.r');
   if (!els.length) return;
@@ -51,14 +51,14 @@
   els.forEach(el => io.observe(el));
 })();
 
-/* ── FOOTER YEAR ── */
+/* · FOOTER YEAR · */
 (function () {
   document.querySelectorAll('.ft-l').forEach(el => {
     el.textContent = el.textContent.replace(/\d{4}/, new Date().getFullYear());
   });
 })();
 
-/* ── MOBILE NAV DRAWER ── */
+/* · MOBILE NAV DRAWER · */
 (function () {
   const burger = document.querySelector('.nav-burger');
   const drawer = document.getElementById('primary-nav');
@@ -113,7 +113,7 @@
   });
 })();
 
-/* ── BACK TO TOP ── */
+/* · BACK TO TOP · */
 (function () {
   const btn = document.getElementById('btt');
   if (!btn) return;
@@ -123,7 +123,7 @@
   btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 })();
 
-/* ── READING PROGRESS BAR ── */
+/* · READING PROGRESS BAR · */
 (function () {
   const bar = document.getElementById('reading-bar');
   if (!bar) return;
@@ -134,7 +134,7 @@
   }, { passive: true });
 })();
 
-/* ── CODE COPY BUTTONS ── */
+/* · CODE COPY BUTTONS · */
 (function () {
   if (!navigator.clipboard) return;
   document.querySelectorAll('.article pre').forEach(pre => {
@@ -155,7 +155,7 @@
   });
 })();
 
-/* ── SHARE COPY LINK ── */
+/* · SHARE COPY LINK · */
 (function () {
   document.querySelectorAll('.share-copy').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -169,7 +169,7 @@
   });
 })();
 
-/* ── LISTEN TO ARTICLE ── */
+/* · LISTEN TO ARTICLE · */
 (function () {
   const btn  = document.getElementById('listen-btn');
   const icon = document.getElementById('l-icon');
@@ -224,7 +224,7 @@
   window.addEventListener('beforeunload', () => synth.cancel());
 })();
 
-/* ── GITHUB CONTRIBUTION GRAPH ── */
+/* · GITHUB CONTRIBUTION GRAPH · */
 (function () {
   const root = document.getElementById('gh-chart');
   if (!root) return;
@@ -342,7 +342,7 @@
 
     if (totalEl && cached.total) {
       const t = cached.total.lastYear ?? Object.values(cached.total)[0];
-      if (t != null) totalEl.textContent = `${t.toLocaleString()} contributions in the last year — synced live from GitHub.`;
+      if (t != null) totalEl.textContent = `${t.toLocaleString()} contributions in the last year, synced live from GitHub.`;
     }
   }
 
@@ -369,7 +369,7 @@
   }
 })();
 
-/* ── ASK MY AI WIDGET ── */
+/* · ASK MY AI WIDGET · */
 (function () {
   // not on print-focused pages
   if (document.body.classList.contains('no-ask')) return;
@@ -400,7 +400,7 @@
         <input class="ask-input" type="text" maxlength="500" placeholder="Ask about my work, stack, writing…" aria-label="Your question">
         <button class="ask-send" type="submit" aria-label="Send">→</button>
       </form>
-      <div class="ask-note">AI answers grounded in this site — double-check anything important.</div>
+      <div class="ask-note">AI answers grounded in this site; double-check anything important.</div>
     </section>`;
   document.body.appendChild(root);
 
@@ -447,7 +447,7 @@
     root.classList.add('ask-open');
     if (!msgs.children.length) {
       if (history.length) history.forEach(m => addMsg(m.role, m.content));
-      else addMsg('assistant', "Hi — I'm the AI on this site. I know Abdelkerim's work, stack, and writing. What do you want to know?");
+      else addMsg('assistant', "Hi, I'm the AI on this site. I know Abdelkerim's work, stack, and writing. What do you want to know?");
     }
     renderChips();
     input.focus();
@@ -487,11 +487,11 @@
         history.push({ role: 'assistant', content: data.answer });
         persist();
       } else {
-        pending.textContent = data.error || "Something went wrong — email abdelkerimdassi@gmail.com instead.";
+        pending.textContent = data.error || "Something went wrong. Email abdelkerimdassi@gmail.com instead.";
       }
     } catch (err) {
       pending.classList.remove('ask-pending');
-      pending.textContent = "Couldn't reach the assistant — check your connection or email abdelkerimdassi@gmail.com.";
+      pending.textContent = "Couldn't reach the assistant. Check your connection or email abdelkerimdassi@gmail.com.";
     } finally {
       send.disabled = false;
       input.focus();
