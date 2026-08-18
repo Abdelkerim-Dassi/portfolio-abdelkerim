@@ -37,18 +37,37 @@
     el.dataset.d = i * 80;
   });
 
+  function reveal(el) {
+    el.style.transitionDelay = parseFloat(el.dataset.d || 0) + 'ms';
+    el.classList.add('on');
+  }
+
+  // no observer support → show everything rather than leave the page blank
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(el => el.classList.add('on'));
+    return;
+  }
+
+  // threshold 0 + small bottom margin: a fixed-ratio threshold is unreachable
+  // for elements taller than the viewport (mobile single-column stacks)
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        const d = parseFloat(e.target.dataset.d || 0);
-        e.target.style.transitionDelay = d + 'ms';
-        e.target.classList.add('on');
-        io.unobserve(e.target);
-      }
+      if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); }
     });
-  }, { threshold: 0.07 });
+  }, { threshold: 0, rootMargin: '0px 0px -48px 0px' });
 
   els.forEach(el => io.observe(el));
+
+  // failsafe: never leave on-screen content hidden
+  function sweep() {
+    els.forEach(el => {
+      if (el.classList.contains('on')) return;
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) { reveal(el); io.unobserve(el); }
+    });
+  }
+  window.addEventListener('load', () => setTimeout(sweep, 400));
+  window.addEventListener('pageshow', e => { if (e.persisted) sweep(); });
 })();
 
 /* · FOOTER YEAR · */
@@ -157,6 +176,7 @@
 
 /* · SHARE COPY LINK · */
 (function () {
+  if (!navigator.clipboard) return;
   document.querySelectorAll('.share-copy').forEach(btn => {
     btn.addEventListener('click', () => {
       navigator.clipboard.writeText(location.href).then(() => {

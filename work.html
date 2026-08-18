@@ -31,7 +31,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <script>document.documentElement.classList.add("js");try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t)}else if(matchMedia("(prefers-color-scheme: light)").matches){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
 <link rel="alternate" type="application/rss+xml" title="Abdelkerim Dassi: Writing" href="/feed.xml">
-<link rel="stylesheet" href="/assets/styles.css?v=7">
+<link rel="stylesheet" href="/assets/styles.css?v=8">
 </head>
 <body>
 
@@ -60,7 +60,7 @@
   <p class="page-lede">I started in AI in <em>2021</em>, while still in engineering school. Spent four years stacking internships and freelance gigs alongside my degree (Esprit, early 2025), then went full-time. Today I lead AI at <em>1morething Ventures</em> out of Sharjah, teach a few bootcamp cohorts on the side, and just picked up my first US client.</p>
 </header>
 
-<section id="map" class="sec">
+<section id="reach" class="sec">
   <div class="sec-inner">
     <div class="sec-head r">
       <span class="sec-label">01 · Reach</span>
@@ -348,7 +348,7 @@
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script src="/assets/main.js?v=6" defer></script>
+<script src="/assets/main.js?v=7" defer></script>
 <script>
 (function () {
   const el = document.getElementById('map');
@@ -360,6 +360,8 @@
     minZoom: 2,
     maxZoom: 7,
     scrollWheelZoom: false,
+    dragging: !L.Browser.mobile, // one-finger swipe scrolls the page, not the map
+    tapHold: false,
     worldCopyJump: true,
   });
 

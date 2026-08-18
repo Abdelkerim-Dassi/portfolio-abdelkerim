@@ -169,6 +169,7 @@ nav {
 ───────────────────────────────────── */
 #hero {
   height:100vh; min-height:560px;
+  height:100svh;
   display:flex; flex-direction:column; justify-content:flex-end;
   padding:0 48px 56px;
   position:relative; overflow:hidden;
@@ -1378,16 +1379,16 @@ footer {
   .n-links {
     position: fixed; top: 0; right: 0;
     height: 100vh; width: min(280px, 82vw);
+    height: 100dvh;
     background: var(--bg2);
     border-left: 1px solid var(--line);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     flex-direction: column;
     align-items: flex-start;
     padding: 76px 32px 40px;
     gap: 0;
     transform: translateX(110%);
-    transition: transform .4s cubic-bezier(.23,1,.32,1);
+    visibility: hidden;
+    transition: transform .4s cubic-bezier(.23,1,.32,1), visibility 0s .4s;
     z-index: 200;
     overflow-y: auto;
   }
@@ -1396,21 +1397,28 @@ footer {
     padding: 18px 0;
     border-bottom: 1px solid var(--line);
     width: 100%;
-    color: rgba(240,236,228,.55);
+    color: rgba(240,236,228,.82);
   }
   .n-links .theme-toggle { margin-top: 28px; align-self: flex-start; }
-  body.nav-open .n-links { transform: translateX(0); }
+  body.nav-open .n-links {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform .4s cubic-bezier(.23,1,.32,1), visibility 0s;
+  }
+  body.nav-open { overflow: hidden; }
+  /* scrim must stay below nav (z-index 100): the drawer lives inside nav's
+     stacking context, so anything above 100 here would paint over it */
   body.nav-open::after {
     content: '';
     position: fixed; inset: 0;
     background: rgba(0,0,0,.55);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
-    z-index: 190;
+    z-index: 90;
   }
   .nav-avatar { width:26px; height:26px; }
   #btt { bottom: 82px; right: 25px; }
-  #hero { padding:0 24px 40px; }
+  #hero { padding:0 24px 96px; }
   .page-head { padding: 110px 24px 56px; }
   .sec-inner { padding:72px 24px; }
   .sec-inner.tight { padding: 56px 24px; }
@@ -1460,6 +1468,9 @@ footer {
 [data-theme="light"] .n-logo:hover { color:var(--paper); }
 [data-theme="light"] .n-links a { color:rgba(15,29,61,.5); }
 [data-theme="light"] .n-links a:hover { color:var(--paper); }
+@media (max-width:860px) {
+  [data-theme="light"] .n-links a { color: rgba(15,29,61,.75); }
+}
 [data-theme="light"] .nav-avatar { border-color:rgba(15,29,61,.12); }
 
 [data-theme="light"] #hero { background:linear-gradient(160deg, #b5cfee 0%, #d8e6f5 70%, #e8f0f9 100%); }
@@ -1565,13 +1576,6 @@ footer {
 [data-theme="light"] .ft-r a:hover { color:var(--accent); }
 
 /* ─────────────────────────────────────
-   VIEW TRANSITIONS (progressive enhancement)
-───────────────────────────────────── */
-@view-transition { navigation: auto; }
-::view-transition-old(root) { animation-duration: .22s; }
-::view-transition-new(root) { animation-duration: .22s; }
-
-/* ─────────────────────────────────────
    CODE COPY BUTTON
 ───────────────────────────────────── */
 .article pre { position: relative; }
@@ -1619,6 +1623,7 @@ footer {
   background: var(--bg2); border: 1px solid var(--line);
   box-shadow: 0 24px 60px rgba(0,0,0,.45);
   max-height: min(560px, calc(100vh - 140px));
+  max-height: min(560px, calc(100dvh - 140px));
 }
 .ask-head { display: flex; justify-content: space-between; align-items: flex-start; padding: 20px 22px 14px; border-bottom: 1px solid var(--line); }
 .ask-eyebrow { font-size: 9px; letter-spacing: .28em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
@@ -1641,7 +1646,7 @@ footer {
 .ask-form { display: flex; gap: 0; border-top: 1px solid var(--line); margin-top: 10px; }
 .ask-input {
   flex: 1; background: none; border: none; outline: none;
-  color: var(--paper); font-family: 'Archivo', sans-serif; font-size: 13.5px;
+  color: var(--paper); font-family: 'Archivo', sans-serif; font-size: 16px;
   padding: 15px 18px;
 }
 .ask-input::placeholder { color: var(--t3); }
@@ -1672,7 +1677,4 @@ footer {
     scroll-behavior: auto !important;
   }
   .r { opacity: 1 !important; transform: none !important; transition-delay: 0ms !important; }
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) { animation: none !important; }
 }

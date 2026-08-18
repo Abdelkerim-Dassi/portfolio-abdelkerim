@@ -87,7 +87,7 @@
   border: 1px solid var(--line);
   color: var(--paper);
   font-family: 'Archivo', sans-serif;
-  font-size: 14px;
+  font-size: 16px; /* ≥16px so iOS Safari doesn't auto-zoom on focus */
   padding: 12px 14px;
   border-radius: 3px;
   outline: none;
