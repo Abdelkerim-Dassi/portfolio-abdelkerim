@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--#include head-open-->
+<title>What a $250 Box Can Actually Do: Jetson Orin Nano · Abdelkerim Dassi</title>
+<meta name="description" content="A palm-sized $250 computer running a full DeepStream + TensorRT vision pipeline. And the traps that cost me a week. Edge AI from a real deployment, in three minutes.">
+<meta name="author" content="Abdelkerim Dassi">
+<link rel="canonical" href="https://abdelkerimdassi.com/blog/jetson-orin-nano">
+<!--#include head-icons-->
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://abdelkerimdassi.com/blog/jetson-orin-nano">
+<meta property="og:title" content="What a $250 Box Can Actually Do: Jetson Orin Nano">
+<meta property="og:description" content="A full DeepStream + TensorRT vision pipeline on a palm-sized box. And the traps that cost me a week.">
+<meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-jetson-orin-nano.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Abdelkerim Dassi">
+<meta property="article:published_time" content="2026-06-11T09:00:00Z">
+<meta property="article:author" content="Abdelkerim Dassi">
+<meta property="article:tag" content="Edge AI">
+<meta property="article:tag" content="NVIDIA Jetson">
+<meta property="article:tag" content="TensorRT">
+<meta property="article:tag" content="DeepStream">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="What a $250 Box Can Actually Do: Jetson Orin Nano">
+<meta name="twitter:description" content="A full DeepStream + TensorRT vision pipeline on a palm-sized box. And the traps that cost me a week.">
+<meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-jetson-orin-nano.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "What a $250 Box Can Actually Do: Jetson Orin Nano",
+  "description": "A palm-sized $250 computer running a full DeepStream + TensorRT vision pipeline. And the traps that cost me a week. Edge AI from a real deployment, in three minutes.",
+  "image": "https://abdelkerimdassi.com/assets/og/og-jetson-orin-nano.png",
+  "datePublished": "2026-06-11T09:00:00Z",
+  "dateModified": "2026-06-11T09:00:00Z",
+  "keywords": "Edge AI, NVIDIA Jetson, TensorRT, DeepStream",
+  "inLanguage": "en",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://abdelkerimdassi.com/blog/jetson-orin-nano"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Abdelkerim Dassi",
+    "url": "https://abdelkerimdassi.com"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Abdelkerim Dassi",
+    "url": "https://abdelkerimdassi.com"
+  }
+}
+</script>
+
+<!--#include head-close-->
+<link rel="stylesheet" href="/assets/blog.css">
+<link rel="stylesheet" href="/assets/comments.css">
+</head>
+<body>
+<div id="reading-bar"></div>
+
+<!--#include nav-->
+
+<main id="main">
+
+<!-- ── BLOG HERO ── -->
+<section class="blog-hero">
+  <div class="blog-meta"><time datetime="2026-06-11">June 2026</time> · 3 min read</div>
+  <h1 class="blog-title">What a $250 Box<br>Can Actually Do:<br>Jetson Orin Nano</h1>
+  <p class="blog-subtitle">
+    I burned a week finding this out <em>the hard way</em>. Here it is, so you don't have to.
+  </p>
+  <button class="listen-btn" id="listen-btn" aria-label="Listen to this article">
+    <span class="l-icon" id="l-icon">▶</span>
+    <span class="l-text" id="l-text">Listen to this article</span>
+  </button>
+  <div class="blog-tags">
+    <span class="blog-tag">Edge AI</span>
+    <span class="blog-tag">NVIDIA Jetson</span>
+    <span class="blog-tag">TensorRT</span>
+    <span class="blog-tag">DeepStream</span>
+  </div>
+  <div class="blog-border"></div>
+</section>
+
+<!-- ── ARTICLE ── -->
+<article class="article">
+
+  <figure class="blog-photo">
+    <picture>
+      <source type="image/webp" srcset="/assets/blog/jetson-640.webp 640w, /assets/blog/jetson-1024.webp 1024w" sizes="(max-width: 816px) calc(100vw - 96px), 624px">
+      <img src="/assets/blog/jetson.jpg" alt="NVIDIA Jetson Orin Nano developer kit: a compact black board with a cooling fan on top, USB ports, HDMI and Ethernet up front" width="1024" height="1024" fetchpriority="high" decoding="async">
+    </picture>
+    <figcaption>The Jetson Orin Nano dev kit: the whole computer is the size of your palm</figcaption>
+  </figure>
+
+  <p>
+    The Jetson Orin Nano (the Super dev kit, the $250 one) is a palm-sized AI computer. Integrated Ampere GPU. 8 GB shared memory. Around 67 TOPS. It runs on about the power of a phone charger.
+  </p>
+  <p>
+    No graphics card. No server. And it runs a full computer-vision pipeline on its own.
+  </p>
+
+  <hr>
+
+  <h2>The Pipeline It Runs</h2>
+
+  <p>
+    One graph, end to end, on the device:
+  </p>
+  <p>
+    Pull a live H.265 camera stream. Decode it on the <strong>NVDEC</strong> hardware: the CPU never touches the pixels. Run a YOLO detector as a <strong>TensorRT</strong> engine through <strong>DeepStream</strong>. Track every object across frames. Turn detections into real events.
+  </p>
+
+  <figure class="blog-figure">
+    <svg viewBox="0 0 720 136" role="img" aria-label="Diagram of the on-device vision pipeline: an RTSP camera stream is decoded by NVDEC hardware, run through a TensorRT YOLO engine inside DeepStream, tracked across frames, and turned into events, all on the Jetson.">
+      <defs>
+        <marker id="fig-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0 0L8 4L0 8z" class="fig-arrowhead"/>
+        </marker>
+      </defs>
+      <rect class="fig-box" x="0" y="18" width="120" height="56"/>
+      <text class="fig-t1" x="60" y="42" text-anchor="middle">RTSP CAMERA</text>
+      <text class="fig-t3" x="60" y="60" text-anchor="middle">live H.265</text>
+      <line class="fig-line" x1="120" y1="46" x2="146" y2="46" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="150" y="18" width="120" height="56"/>
+      <text class="fig-t1" x="210" y="42" text-anchor="middle">NVDEC</text>
+      <text class="fig-t3" x="210" y="60" text-anchor="middle">hw decode</text>
+      <line class="fig-line" x1="270" y1="46" x2="296" y2="46" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box-accent" x="300" y="18" width="120" height="56"/>
+      <text class="fig-t1" x="360" y="42" text-anchor="middle">TENSORRT YOLO</text>
+      <text class="fig-ta" x="360" y="60" text-anchor="middle">DEEPSTREAM</text>
+      <line class="fig-line" x1="420" y1="46" x2="446" y2="46" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="450" y="18" width="120" height="56"/>
+      <text class="fig-t1" x="510" y="42" text-anchor="middle">TRACKER</text>
+      <text class="fig-t3" x="510" y="60" text-anchor="middle">object IDs</text>
+      <line class="fig-line" x1="570" y1="46" x2="596" y2="46" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="600" y="18" width="120" height="56"/>
+      <text class="fig-t1" x="660" y="42" text-anchor="middle">EVENTS</text>
+      <text class="fig-t3" x="660" y="60" text-anchor="middle">alerts out</text>
+      <path class="fig-line" d="M0 96 v8 M0 100 h720 M720 96 v8"/>
+      <text class="fig-t3" x="360" y="126" text-anchor="middle">ALL ON-DEVICE · 1080P @ 15–18 FPS · NO CLOUD ROUND-TRIP</text>
+    </svg>
+    <figcaption>One graph, end to end: the video never leaves the box</figcaption>
+  </figure>
+  <p>
+    Live camera in, alert out. All local. The video never leaves the box.
+  </p>
+  <p>
+    That's the whole point. No cloud round-trip. No per-stream cloud bill. It keeps running through an internet outage.
+  </p>
+  <p>
+    I ran 1080p at ~15–18 FPS (detection, tracking, and event logic together) well inside its memory and power budget. This is production hardware, not a toy.
+  </p>
+
+  <h2>TensorRT: The Trick and the Trap</h2>
+
+  <p>
+    A <code>.engine</code> is a model compiled for <em>this exact chip</em>. That's where the speed comes from.
+  </p>
+  <p>
+    Two things bite you.
+  </p>
+  <p>
+    The first compile is slow. Minutes. On-device. The engine can't be prebuilt on your laptop; it has to be built on the Orin itself. So compile it once and cache it on the device's storage. If it lands somewhere ephemeral (a container layer, tmpfs) you recompile on every restart.
+  </p>
+  <p>
+    And TensorRT lies about memory. Mine kept failing to build ("1 MB free") while the box had gigabytes idle. The real cause: an unset build <strong>workspace size</strong>. Too small to fit one FP16 kernel. Set it to 2 GB. Built clean.
+  </p>
+
+  <pre><code>trtexec --onnx=yolo.onnx --fp16 \
+        --memPoolSize=workspace:2048 \
+        --saveEngine=yolo.engine</code></pre>
+
+  <p>
+    On this box, "out of memory" usually means the workspace cap, not your RAM.
+  </p>
+
+  <h2>The Edge Gotchas</h2>
+
+  <p>
+    <code>nvidia-smi</code> doesn't exist here. It's a Tegra GPU. Use <code>tegrastats</code> instead: <code>GR3D_FREQ</code> is your GPU load.
+  </p>
+  <p>
+    Builds split by architecture. The Jetson is arm64. Your laptop probably isn't. Anything touching CUDA, TensorRT, or codecs builds natively on the device. The rest cross-compiles with <code>buildx</code> and QEMU. A shared <code>:latest</code> tag must carry both architectures, or you break the other platform's pulls.
+  </p>
+  <p>
+    The plumbing eats your time, not the model. Force RTSP over TCP or fight a UDP/IPv6 quirk. Watch H.264 vs H.265. The detector was never the bottleneck.
+  </p>
+  <p>
+    The worst bug was silent. Two stages disagreed on the JSON shape between them. One dropped every message. Everything <em>looked</em> like it was running. Print the real payload. Don't trust what the schema should be.
+  </p>
+
+  <h2>The Takeaway</h2>
+
+  <p>
+    The Orin Nano runs a full DeepStream and TensorRT vision pipeline at the edge. Price of a mid-range phone. A few watts. The video stays put.
+  </p>
+
+  <div class="callout">
+    <div class="callout-label">The Quiet Truth</div>
+    <p>The model is the easy part. The hardware is ready. The work is everything wrapped around it: codecs, architectures, caches, payloads. Get that right and this little box runs the whole thing without breaking a sweat.</p>
+  </div>
+
+</article>
+
+<section class="comments-section" data-comments="jetson-orin-nano">
+  <div class="comments-head">
+    <span class="comments-label">/ Have a take?</span>
+    <h3 class="comments-title">Comments</h3>
+    <p class="comments-sub">No sign-in, no tracking. Just type your name and your thoughts. Be civil.</p>
+  </div>
+  <div class="comments-list" aria-live="polite" aria-busy="true"><div class="comments-loading">Loading…</div></div>
+  <form class="comments-form" novalidate>
+    <label class="vh" for="comment-name">Your name</label>
+    <input type="text" id="comment-name" name="name" class="comments-input" placeholder="Your name" required maxlength="40" autocomplete="name">
+    <label class="vh" for="comment-body">Your comment</label>
+    <textarea id="comment-body" name="body" class="comments-textarea" placeholder="What's your take?" required minlength="5" maxlength="2000"></textarea>
+    <input type="text" name="hp" class="comments-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="comments-form-actions">
+      <span class="comments-status" role="status" aria-live="polite"></span>
+      <button type="submit" class="comments-submit">Post comment</button>
+    </div>
+  </form>
+</section>
+<script src="/assets/comments.js" defer></script>
+
+<div class="blog-nav">
+  <a class="blog-nav-prev" href="/blog/arabic-rag">
+    <span class="blog-nav-dir">← Previous</span>
+    <span class="blog-nav-title">Arabic Broke My RAG. Here's What Saved It.</span>
+  </a>
+  <a class="blog-nav-next" href="/writing">
+    <span class="blog-nav-dir">All writing →</span>
+    <span class="blog-nav-title">Writing index</span>
+  </a>
+</div>
+
+<div class="blog-footer">
+  <div class="blog-footer-cta">More <em>writing</em> soon.</div>
+  <div class="blog-share">
+    <a class="blog-share-btn" href="https://twitter.com/intent/tweet?text=What+a+%24250+Box+Can+Actually+Do%3A+Jetson+Orin+Nano&url=https%3A%2F%2Fabdelkerimdassi.com%2Fblog%2Fjetson-orin-nano" target="_blank" rel="noopener">Share on X ↗</a>
+    <a class="blog-share-btn" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fabdelkerimdassi.com%2Fblog%2Fjetson-orin-nano&title=What+a+%24250+Box+Can+Actually+Do" target="_blank" rel="noopener">LinkedIn ↗</a>
+    <button class="blog-share-btn share-copy">Copy link</button>
+  </div>
+  <div class="blog-footer-links">
+    <a href="/writing">← Writing</a>
+    <a href="https://github.com/Abdelkerim-Dassi" target="_blank" rel="noopener">GitHub ↗</a>
+    <a href="mailto:abdelkerimdassi@gmail.com">Email ↗</a>
+  </div>
+</div>
+
+</main>
+
+<!--#include footer-->
+
+<!--#include scripts-->
+</body>
+</html>

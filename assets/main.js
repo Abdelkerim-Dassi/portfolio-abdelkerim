@@ -1,11 +1,17 @@
 /* · THEME TOGGLE · */
 /* initial theme is applied by the inline head script (pre-paint, no flash) */
 (function () {
+  const label = b => {
+    const light = document.documentElement.getAttribute('data-theme') === 'light';
+    b.setAttribute('aria-label', light ? 'Switch to dark theme' : 'Switch to light theme');
+  };
   document.querySelectorAll('.theme-toggle').forEach(b => {
+    label(b);
     b.addEventListener('click', () => {
       const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
+      label(b);
       window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: next } }));
     });
   });
@@ -352,6 +358,7 @@
     svg += `</g></svg>`;
 
     root.innerHTML = svg;
+    root.removeAttribute('role');   // the cells carry their own <title> tooltips
 
     if (legend) {
       legend.hidden = false;
@@ -371,13 +378,18 @@
   }
 
   async function load() {
+    // no cache-buster: this is an unofficial third-party API, let HTTP caching work
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 8000);
     try {
-      const res = await fetch(API + `&_=${Date.now()}`);
+      const res = await fetch(API, { signal: ctl.signal });
       if (!res.ok) throw new Error('http ' + res.status);
       cached = await res.json();
       render();
     } catch (e) {
       showError();
+    } finally {
+      clearTimeout(timer);
     }
   }
 
@@ -461,7 +473,10 @@
     });
   }
 
+  let lastFocus = null;
+
   function open() {
+    lastFocus = document.activeElement;
     panel.hidden = false;
     fab.setAttribute('aria-expanded', 'true');
     root.classList.add('ask-open');
@@ -476,6 +491,8 @@
     panel.hidden = true;
     fab.setAttribute('aria-expanded', 'false');
     root.classList.remove('ask-open');
+    const back = lastFocus && document.contains(lastFocus) ? lastFocus : fab;
+    if (typeof back.focus === 'function') back.focus();
   }
 
   fab.addEventListener('click', () => (panel.hidden ? open() : close()));
@@ -517,4 +534,10 @@
       input.focus();
     }
   });
+})();
+
+/* · PRINT RESUME · */
+(function () {
+  const btn = document.getElementById('print-cv');
+  if (btn) btn.addEventListener('click', () => window.print());
 })();

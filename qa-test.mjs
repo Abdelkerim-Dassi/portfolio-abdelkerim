@@ -18,13 +18,20 @@ const ctx = await browser.newContext({
 // ── per-page: console errors, failed requests, reveal animations, footer ──
 for (const path of PAGES) {
   const page = await ctx.newPage();
-  const errors = [], failedReqs = [];
+  const errors = [], failedReqs = [], apiSkipped = [];
   page.on('pageerror', e => errors.push(e.message));
-  page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
+  // `npm run preview` serves dist/ only — /api/* lives on Vercel, so a local
+  // run legitimately 404s there. Everything else is a real error.
+  const isLocal = BASE.includes('localhost');
+  // the URL is in the message location, not its text
+  const ignorable = m => isLocal && /\/api\//.test(m.location()?.url || '');
+  page.on('console', m => { if (m.type() === 'error' && !ignorable(m)) errors.push(m.text()); });
+  page.on('response', r => { if (r.status() === 404 && isLocal && r.url().includes('/api/')) apiSkipped.push(r.url()); });
   page.on('requestfailed', r => { if (!r.url().includes('linkedin')) failedReqs.push(`${r.url()} ${r.failure()?.errorText}`); });
   await page.goto(BASE + path, { waitUntil: 'networkidle', timeout: 45000 });
 
-  errors.length ? fail(`${path} JS/console errors`, errors.slice(0, 3).join(' | ')) : pass(`${path} no JS errors`);
+  errors.length ? fail(`${path} JS/console errors`, errors.slice(0, 3).join(' | '))
+                : pass(`${path} no JS errors${apiSkipped.length ? ` (${apiSkipped.length} /api call skipped locally)` : ''}`);
   failedReqs.length ? fail(`${path} failed requests`, failedReqs.slice(0, 3).join(' | ')) : pass(`${path} all requests ok`);
 
   // reveal: scroll through page, .r elements should get .on
@@ -248,6 +255,125 @@ for (const path of PAGES) {
   visible ? pass('mobile: /contact content visible') : fail('mobile: /contact content visible', '.contact-cols stuck at opacity 0');
   await page.close();
   await m375.close();
+}
+
+// ── structure: the defects an eyeball pass never catches ──
+{
+  const seenLinks = new Set();
+
+  for (const path of PAGES) {
+    const page = await ctx.newPage();
+    await page.goto(BASE + path, { waitUntil: 'domcontentloaded', timeout: 45000 });
+
+    const s = await page.evaluate(() => ({
+      h1: document.querySelectorAll('h1').length,
+      h1Text: document.querySelector('h1')?.innerText.trim().slice(0, 40) || '',
+      main: document.querySelectorAll('main#main').length,
+      skip: !!document.querySelector('.skip-link'),
+      title: document.title,
+      desc: document.querySelector('meta[name=description]')?.content || '',
+      canonical: document.querySelector('link[rel=canonical]')?.href || '',
+      og: document.querySelectorAll('meta[property^="og:"]').length,
+      // every internal href on the page, for the orphan check below
+      links: [...document.querySelectorAll('a[href^="/"]')]
+        .map(a => a.getAttribute('href').split('#')[0].replace(/\/$/, '') || '/'),
+      // headings must not skip a level
+      order: [...document.querySelectorAll('h1,h2,h3,h4')].map(h => +h.tagName[1]),
+    }));
+
+    s.links.forEach(l => seenLinks.add(l));
+
+    s.h1 === 1 ? pass(`${path} exactly one <h1> ("${s.h1Text}")`) : fail(`${path} <h1> count`, `found ${s.h1}`);
+    s.main === 1 ? pass(`${path} <main id="main"> landmark`) : fail(`${path} <main> landmark`, `found ${s.main}`);
+    s.skip ? pass(`${path} skip link`) : fail(`${path} skip link missing`);
+    s.title && s.desc ? pass(`${path} title + description`) : fail(`${path} metadata`, `title="${s.title}" desc=${s.desc.length}`);
+    s.canonical ? pass(`${path} canonical`) : fail(`${path} canonical missing`);
+    s.og >= 6 ? pass(`${path} open graph (${s.og} tags)`) : fail(`${path} open graph`, `only ${s.og}`);
+
+    let skipped = null;
+    for (let i = 1; i < s.order.length; i++) {
+      if (s.order[i] - s.order[i - 1] > 1) { skipped = `h${s.order[i - 1]} -> h${s.order[i]}`; break; }
+    }
+    skipped ? fail(`${path} heading order`, skipped) : pass(`${path} heading order`);
+
+    await page.close();
+  }
+
+  // an unlinked page is invisible no matter what the sitemap says
+  for (const path of PAGES) {
+    if (path === '/') continue;
+    seenLinks.has(path)
+      ? pass(`${path} reachable from in-site links`)
+      : fail(`${path} ORPHANED`, 'no page links to it');
+  }
+}
+
+// ── structured data on posts ──
+for (const path of PAGES.filter(p => p.startsWith('/blog/'))) {
+  const page = await ctx.newPage();
+  await page.goto(BASE + path, { waitUntil: 'domcontentloaded', timeout: 45000 });
+  const d = await page.evaluate(() => {
+    const ld = [...document.querySelectorAll('script[type="application/ld+json"]')]
+      .map(n => { try { return JSON.parse(n.textContent); } catch { return null; } }).filter(Boolean);
+    return {
+      post: ld.find(x => x['@type'] === 'BlogPosting') || null,
+      time: document.querySelector('time[datetime]')?.getAttribute('datetime') || '',
+      shareHtml: [...document.querySelectorAll('.blog-share-btn[href]')].some(a => (a.getAttribute('href') || '').includes('.html')),
+    };
+  });
+  d.post?.headline && d.post?.datePublished
+    ? pass(`${path} BlogPosting schema`)
+    : fail(`${path} BlogPosting schema missing/incomplete`);
+  /^\d{4}-\d{2}-\d{2}$/.test(d.time) ? pass(`${path} machine-readable date (${d.time})`) : fail(`${path} <time datetime>`, d.time || 'absent');
+  d.shareHtml ? fail(`${path} share URL points at .html`, 'splits link equity from canonical') : pass(`${path} share URL is canonical`);
+  await page.close();
+}
+
+// ── asset weight budget ──
+{
+  const page = await ctx.newPage();
+  const bytes = new Map();
+  page.on('response', async r => {
+    const len = Number(r.headers()['content-length'] || 0);
+    if (len) bytes.set(r.url(), len);
+  });
+  await page.goto(BASE + '/blog/arabic-rag', { waitUntil: 'networkidle', timeout: 45000 });
+
+  const BUDGET = 1_200_000;
+  const total = [...bytes.values()].reduce((a, b) => a + b, 0);
+  total <= BUDGET
+    ? pass(`/blog/arabic-rag transfer budget (${Math.round(total / 1024)} KB)`)
+    : fail('/blog/arabic-rag transfer budget', `${Math.round(total / 1024)} KB > ${BUDGET / 1024} KB`);
+
+  const heaviest = [...bytes].sort((a, b) => b[1] - a[1])[0];
+  heaviest && heaviest[1] <= 300_000
+    ? pass(`heaviest asset ${Math.round(heaviest[1] / 1024)} KB`)
+    : fail('single asset too heavy', `${heaviest?.[0].split('/').pop()} ${Math.round((heaviest?.[1] || 0) / 1024)} KB`);
+  await page.close();
+}
+
+// ── keyboard: tabbing must always show where you are ──
+{
+  const page = await ctx.newPage();
+  await page.goto(BASE + '/', { waitUntil: 'domcontentloaded', timeout: 45000 });
+
+  // :focus-visible responds to keyboard focus, so drive it with real Tab presses
+  const noRing = [];
+  for (let i = 0; i < 24; i++) {
+    await page.keyboard.press('Tab');
+    const r = await page.evaluate(() => {
+      const el = document.activeElement;
+      if (!el || el === document.body) return null;
+      const cs = getComputedStyle(el);
+      const ring = (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) > 0) || cs.boxShadow !== 'none';
+      return { ring, id: el.className || el.tagName };
+    });
+    if (r && !r.ring) noRing.push(r.id);
+  }
+  noRing.length === 0
+    ? pass('keyboard focus ring visible on every tab stop (24 stops)')
+    : fail('tab stops with no focus indicator', [...new Set(noRing)].slice(0, 4).join(', '));
+  await page.close();
 }
 
 await browser.close();

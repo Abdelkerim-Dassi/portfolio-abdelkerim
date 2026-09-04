@@ -114,6 +114,9 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: 'assistant is offline right now. Email me instead.' });
   }
 
+  // set once the visitor's daily allowance is spent, so a failure can refund it
+  let visitorKey = null;
+
   try {
     let body;
     try { body = await readBody(req); }
@@ -137,10 +140,11 @@ export default async function handler(req, res) {
       const ip = ipFrom(req);
       const day = new Date().toISOString().slice(0, 10);
       // per-visitor daily allowance
-      const visitorKey = `ask:rl:${ip}:${day}`;
+      visitorKey = `ask:rl:${ip}:${day}`;
       const visitorCount = await kv.incr(visitorKey);
       if (visitorCount === 1) await kv.expire(visitorKey, 90000);
       if (visitorCount > VISITOR_DAILY_CAP) {
+        visitorKey = null;   // cap already spent; nothing to refund
         return res.status(429).json({ error: "you've used today's questions. Come back tomorrow, or just email me!" });
       }
       // global daily cap so a bad day can't run up the bill
@@ -187,6 +191,9 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ answer });
   } catch (err) {
+    // the question never got answered — give the visitor their allowance back
+    if (visitorKey) { try { await kv.decr(visitorKey); } catch (_) {} }
+
     // OpenAI returns 429 for BOTH a real rate-limit spike AND an out-of-credit account.
     // They need different messages: one clears on its own, the other never does.
     if (err instanceof OpenAI.RateLimitError) {

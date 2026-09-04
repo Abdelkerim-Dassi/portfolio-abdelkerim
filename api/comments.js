@@ -1,4 +1,5 @@
 import { kv } from '@vercel/kv';
+import { timingSafeEqual } from 'node:crypto';
 
 const SLUG_RE = /^[a-z0-9-]{1,80}$/;
 const BANNED = [
@@ -6,6 +7,16 @@ const BANNED = [
   'free-bitcoin', 'pharmacy', 'replica-watch', 'binary-option',
 ];
 const URL_RE = /https?:\/\//gi;
+
+/** Constant-time compare so the admin token can't be probed byte by byte. */
+function tokenMatches(given, expected) {
+  if (!expected) return false;
+  const a = Buffer.from(String(given));
+  const b = Buffer.from(expected);
+  // timingSafeEqual throws on length mismatch; hash first so lengths always agree
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(a, b);
+}
 
 function ipFrom(req) {
   const fwd = req.headers['x-forwarded-for'];
@@ -103,7 +114,7 @@ export default async function handler(req, res) {
     if (req.method === 'DELETE') {
       const auth = req.headers.authorization || '';
       const token = auth.replace(/^Bearer\s+/i, '');
-      if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) {
+      if (!tokenMatches(token, process.env.ADMIN_TOKEN)) {
         return res.status(401).json({ error: 'unauthorized' });
       }
       const slug = req.query?.slug;

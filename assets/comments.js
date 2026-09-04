@@ -67,6 +67,8 @@
       render(data.comments || []);
     } catch (e) {
       list.innerHTML = '<div class="comments-error">Could not load comments. Try refreshing.</div>';
+    } finally {
+      list.setAttribute('aria-busy', 'false');
     }
   }
 

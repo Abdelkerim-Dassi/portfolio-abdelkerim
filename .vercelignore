@@ -1,0 +1,9 @@
+# Kept out of the deployment upload. Everything the build needs
+# (src/, partials/, assets/, build.mjs, api/) must NOT be listed here.
+She_Grows
+qa-test.mjs
+.agents
+skills-lock.json
+README.md
+dist
+serve.mjs

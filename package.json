@@ -2,6 +2,12 @@
   "name": "portfolio-abdelkerim",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "serve": "node serve.mjs",
+    "preview": "node build.mjs && node serve.mjs",
+    "qa": "node qa-test.mjs"
+  },
   "dependencies": {
     "@vercel/kv": "^2.0.0",
     "openai": "^6.42.0"
