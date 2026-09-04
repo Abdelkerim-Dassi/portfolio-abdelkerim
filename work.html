@@ -365,23 +365,33 @@
     worldCopyJump: true,
   });
 
-  const lightTiles = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
-  const darkTiles  = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-  const attrib = '&copy; <a href="https://openstreetmap.org/copyright">OSM</a> &middot; &copy; <a href="https://carto.com/attributions">CARTO</a>';
+  // Esri grey canvas basemaps: no API key, and a base + labels pair per theme.
+  // (CARTO retired anonymous access; its tiles come back stamped 'API KEY REQUIRED'.)
+  const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas';
+  const tiles = {
+    light: {
+      base:   ESRI + '/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+      labels: ESRI + '/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+    },
+    dark: {
+      base:   ESRI + '/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+      labels: ESRI + '/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+    },
+  };
+  const attrib = '&copy; <a href="https://www.esri.com">Esri</a> &middot; &copy; <a href="https://openstreetmap.org/copyright">OSM</a>';
 
   function currentTheme() {
     return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
   }
 
-  let layer = L.tileLayer(currentTheme() === 'light' ? lightTiles : darkTiles, {
-    attribution: attrib,
-    subdomains: 'abcd',
-    maxZoom: 12,
-  }).addTo(map);
+  const start = tiles[currentTheme()];
+  const baseLayer  = L.tileLayer(start.base,   { attribution: attrib, maxZoom: 16, zIndex: 1 }).addTo(map);
+  const labelLayer = L.tileLayer(start.labels, { maxZoom: 16, zIndex: 2 }).addTo(map);
 
   window.addEventListener('themechange', e => {
-    const next = e.detail.theme === 'light' ? lightTiles : darkTiles;
-    layer.setUrl(next);
+    const next = tiles[e.detail.theme === 'light' ? 'light' : 'dark'];
+    baseLayer.setUrl(next.base);
+    labelLayer.setUrl(next.labels);
   });
 
   const pinIcon = L.divIcon({
