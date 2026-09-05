@@ -49,6 +49,17 @@ body {
   transition: background .5s ease, color .5s ease;
 }
 
+/* ─────────────────────────────────────
+   NUMERALS
+   The site counts things everywhere — sections, rows, stats. Tabular figures
+   keep those columns aligned instead of drifting, so they read as a readout
+   rather than as decoration.
+───────────────────────────────────── */
+.p-num, .w-num, .snr-num, .pc-num, .st-n, .sec-label {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
 a { text-decoration:none; color:inherit; }
 em { font-style:italic; }
 
@@ -234,6 +245,28 @@ nav {
   to { width: 72px; }
 }
 
+/* The straight rule above stays as the fallback. Where masking is supported
+   it becomes a shallow ascent, traced left to right — the site's one
+   signature mark. Same token, same timing, same 2px weight. */
+@supports (mask-image: linear-gradient(#000,#000)) or (-webkit-mask-image: linear-gradient(#000,#000)) {
+  .h-name::after {
+    height: 26px;
+    width: 132px;
+    margin-top: 12px;
+    /* the fallback's gradient fades almost immediately; over a longer curve
+       the accent needs to carry further before it drops off */
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent) 38%, rgba(200,169,126,0) 100%);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 132 26'%3E%3Cpath d='M1 24 C 46 24 90 18 131 2' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 132 26'%3E%3Cpath d='M1 24 C 46 24 90 18 131 2' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%; -webkit-mask-repeat: no-repeat;
+            mask-size: 100% 100%;         mask-repeat: no-repeat;
+    /* width is fixed now, so the draw-on runs through clip-path instead */
+    clip-path: inset(0 100% 0 0);
+    animation-name: heroArc;
+  }
+  @keyframes heroArc { to { clip-path: inset(0 0 0 0); } }
+}
+
 .h-sub {
   margin-top:8px;
   display:flex; align-items:flex-end; justify-content:space-between;
@@ -269,6 +302,68 @@ nav {
 .btn:hover span { transform: translate(3px,-3px); }
 
 .h-border { position:absolute; bottom:0; left:48px; right:48px; height:1px; background:var(--line); }
+
+/* ── SKY (home hero, dark theme only) ──
+   Two parallax layers of pinpoints, drawn as tiled radial-gradients: no
+   canvas, no JS, no extra request. Both are animated on transform only, so
+   they composite instead of repainting, and both fade out before the name.
+   The stars are hidden in the light theme — it is a daytime sky down there. */
+#hero > * { position: relative; z-index: 1; }
+
+#hero::before, #hero::after {
+  content: '';
+  position: absolute;
+  inset: -8%;
+  z-index: 0;
+  pointer-events: none;
+  background-repeat: repeat;
+  background-size: 900px 700px;
+  will-change: transform;
+  /* content is bottom-aligned, so the sky clears out on the way down */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 38%, transparent 80%);
+          mask-image: linear-gradient(to bottom, #000 0%, #000 38%, transparent 80%);
+}
+
+/* far field: dimmer, smaller, slower */
+#hero::before {
+  background-image:
+    radial-gradient(1px 1px at  8% 12%, rgba(240,236,228,.42), transparent),
+    radial-gradient(1px 1px at 21% 34%, rgba(240,236,228,.30), transparent),
+    radial-gradient(1px 1px at 34%  7%, rgba(240,236,228,.38), transparent),
+    radial-gradient(1px 1px at 47% 22%, rgba(240,236,228,.26), transparent),
+    radial-gradient(1px 1px at 58% 41%, rgba(240,236,228,.34), transparent),
+    radial-gradient(1px 1px at 66% 11%, rgba(240,236,228,.28), transparent),
+    radial-gradient(1px 1px at 79% 29%, rgba(240,236,228,.40), transparent),
+    radial-gradient(1px 1px at 88% 16%, rgba(240,236,228,.24), transparent),
+    radial-gradient(1px 1px at 94% 38%, rgba(240,236,228,.32), transparent),
+    radial-gradient(1px 1px at 15% 52%, rgba(240,236,228,.26), transparent),
+    radial-gradient(1px 1px at 29% 63%, rgba(240,236,228,.30), transparent),
+    radial-gradient(1px 1px at 41% 49%, rgba(240,236,228,.22), transparent),
+    radial-gradient(1px 1px at 55% 68%, rgba(240,236,228,.28), transparent),
+    radial-gradient(1px 1px at 71% 57%, rgba(240,236,228,.24), transparent),
+    radial-gradient(1px 1px at 83% 71%, rgba(240,236,228,.30), transparent),
+    radial-gradient(1px 1px at  5% 44%, rgba(240,236,228,.26), transparent);
+  animation: skyFar 260s ease-in-out infinite alternate;
+}
+
+/* near field: brighter, larger, faster — one of them carries the accent */
+#hero::after {
+  background-image:
+    radial-gradient(1.6px 1.6px at 12% 24%, rgba(240,236,228,.62), transparent),
+    radial-gradient(1.6px 1.6px at 27%  9%, rgba(240,236,228,.50), transparent),
+    radial-gradient(1.6px 1.6px at 44% 33%, rgba(240,236,228,.58), transparent),
+    radial-gradient(2px   2px   at 68% 21%, rgba(200,169,126,.62), transparent),
+    radial-gradient(1.6px 1.6px at 74% 44%, rgba(240,236,228,.52), transparent),
+    radial-gradient(1.6px 1.6px at 86% 27%, rgba(240,236,228,.46), transparent),
+    radial-gradient(1.6px 1.6px at 19% 47%, rgba(240,236,228,.54), transparent),
+    radial-gradient(1.6px 1.6px at 52% 58%, rgba(240,236,228,.44), transparent),
+    radial-gradient(1.6px 1.6px at 92% 55%, rgba(240,236,228,.48), transparent);
+  animation: skyNear 180s ease-in-out infinite alternate;
+}
+
+/* `alternate` means these ease back the way they came — no loop snap */
+@keyframes skyFar  { to { transform: translate3d(-2.5%, 1.6%, 0); } }
+@keyframes skyNear { to { transform: translate3d(-5%,   3%,   0); } }
 
 /* ─────────────────────────────────────
    STATS STRIP
@@ -1049,6 +1144,13 @@ footer {
 }
 .about-mosaic-cell:hover { background: rgba(240,236,228,.025); }
 .am-wide { grid-column: span 2; }
+.am-full {
+  grid-column: span 3;
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+}
 .am-label {
   font-size: 9px; letter-spacing: .22em;
   text-transform: uppercase;
@@ -1078,6 +1180,7 @@ footer {
   .about-ph-photo { display: none; }
   .about-mosaic { grid-template-columns: 1fr; }
   .am-wide { grid-column: span 1; }
+  .am-full { grid-column: span 1; flex-direction: column; align-items: stretch; }
 }
 
 /* ─────────────────────────────────────
@@ -1398,6 +1501,7 @@ footer {
 [data-theme="light"] .nav-avatar { border-color:rgba(15,29,61,.12); }
 
 [data-theme="light"] #hero { background:linear-gradient(160deg, #b5cfee 0%, #d8e6f5 70%, #e8f0f9 100%); }
+[data-theme="light"] #hero::before, [data-theme="light"] #hero::after { display:none; }
 [data-theme="light"] .h-desc { color:rgba(15,29,61,.74); }
 [data-theme="light"] .h-desc em { color:var(--accent); }
 [data-theme="light"] .btn { color:rgba(15,29,61,.78); border-color:rgba(15,29,61,.60); }

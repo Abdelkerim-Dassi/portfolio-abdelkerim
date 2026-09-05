@@ -1,5 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="A. Dassi">
   <rect width="64" height="64" rx="12" fill="#0f1624"/>
+  <!-- orbit: drawn first so the A reads on top of it at 16px -->
+  <ellipse cx="32" cy="35" rx="25.5" ry="8.5"
+           transform="rotate(-20 32 35)"
+           fill="none" stroke="#c8a97e" stroke-opacity=".45" stroke-width="2.2"/>
   <path d="M32 13 L47 51 H39.5 L36.6 43 H27.4 L24.5 51 H17 Z M32 26.5 L29.2 35.5 H34.8 Z"
         fill="#c8a97e"/>
 </svg>
