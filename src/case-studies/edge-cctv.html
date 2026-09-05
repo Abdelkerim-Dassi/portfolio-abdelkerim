@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--#include head-open-->
+<title>Case Study: Edge CCTV Analytics · Abdelkerim Dassi</title>
+<meta name="description" content="Turning a retail chain's existing CCTV into a live operations layer, processed entirely on-site on NVIDIA Jetson so raw video never leaves the premises. DeepStream, TensorRT, RF-DETR, NvDCF tracking.">
+<meta name="author" content="Abdelkerim Dassi">
+<link rel="canonical" href="https://abdelkerimdassi.com/case-studies/edge-cctv">
+<!--#include head-icons-->
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://abdelkerimdassi.com/case-studies/edge-cctv">
+<meta property="og:title" content="Case Study: Edge CCTV Analytics">
+<meta property="og:description" content="Existing store cameras turned into a real-time operations layer, running on-device on NVIDIA Jetson. No raw video leaves the store.">
+<meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Abdelkerim Dassi">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Case Study: Edge CCTV Analytics">
+<meta name="twitter:description" content="Store cameras turned into a live operations layer, on-device on NVIDIA Jetson. No raw video leaves the store.">
+<meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
+
+<!--#include head-close-->
+<style>
+  .cs-wrap { max-width: 920px; margin: 0 auto; padding: 150px 24px 40px; }
+  .cs-eyebrow { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .cs-eyebrow::before { content: ""; width: 40px; height: 1px; background: var(--accent); }
+  .cs-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(44px, 7.5vw, 92px); line-height: .95; }
+  .cs-title em { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: .6em; color: var(--accent); }
+  .cs-lede { margin-top: 26px; font-size: 17px; line-height: 1.75; color: var(--t2); max-width: 62ch; }
+
+  .cs-facts { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 56px 0; }
+  .cs-fact { padding: 22px 18px 22px 0; }
+  .cs-fact + .cs-fact { border-left: 1px solid var(--line); padding-left: 22px; }
+  .cs-fact-k { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--t3); margin-bottom: 8px; }
+  .cs-fact-v { font-size: 14px; line-height: 1.5; color: var(--t1); }
+  @media (max-width: 720px) { .cs-facts { grid-template-columns: 1fr 1fr; } .cs-fact:nth-child(3) { border-left: none; padding-left: 0; } .cs-fact { border-top: 1px solid var(--line); } .cs-fact:nth-child(-n+2) { border-top: none; } }
+
+  .cs-sec { margin: 64px 0; }
+  .cs-h { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; margin-bottom: 22px; display: flex; align-items: baseline; gap: 18px; }
+  .cs-h .n { font-size: 15px; color: var(--accent); font-family: 'Archivo', sans-serif; letter-spacing: .15em; }
+  .cs-p { font-size: 15.5px; line-height: 1.85; color: var(--t2); max-width: 68ch; margin-bottom: 18px; }
+  .cs-p b { color: var(--paper); font-weight: 400; }
+  .cs-quote { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 19px; line-height: 1.7; color: var(--accent); border-left: 2px solid var(--accent); padding-left: 26px; margin: 34px 0; max-width: 56ch; }
+
+  /* pipeline diagram */
+  .cs-pipe { margin: 36px 0 8px; max-width: 620px; }
+  .cs-step { display: grid; grid-template-columns: 44px 1fr; gap: 0 20px; position: relative; padding-bottom: 30px; }
+  .cs-step::before { content: ""; position: absolute; left: 21px; top: 44px; bottom: 4px; width: 1px; background: var(--dim); }
+  .cs-step:last-child::before { display: none; }
+  .cs-step-n { width: 44px; height: 44px; border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--accent); background: var(--bg); }
+  .cs-step-t { font-size: 14.5px; padding-top: 3px; }
+  .cs-step-d { font-size: 13px; color: var(--t3); margin-top: 4px; line-height: 1.6; max-width: 52ch; }
+
+  .cs-outcomes { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 30px; }
+  .cs-out { background: var(--bg); padding: 26px; }
+  .cs-out-v { font-family: 'Bebas Neue', sans-serif; font-size: 38px; color: var(--accent); line-height: 1; }
+  .cs-out-k { font-size: 12.5px; color: var(--t3); margin-top: 10px; line-height: 1.55; }
+  @media (max-width: 600px) { .cs-outcomes { grid-template-columns: 1fr; } }
+
+  .cs-cta { border-top: 1px solid var(--line); margin-top: 72px; padding-top: 44px; display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; }
+  .cs-cta-txt { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 19px; color: var(--t2); }
+</style>
+</head>
+<body>
+
+<div id="reading-bar"></div>
+
+<!--#include nav-->
+
+<main id="main">
+
+<div class="cs-wrap">
+
+  <header class="r">
+    <div class="cs-eyebrow">Case study · Edge computer vision</div>
+    <h1 class="cs-title">Cameras that count,<br><em>video that never leaves.</em></h1>
+    <p class="cs-lede">
+      A coffee chain in Saudi Arabia already had CCTV in every store, and no answers from it.
+      This turns those existing cameras into a live operations layer: footfall, dwell, queue waits,
+      after-hours activity, PPE. Every frame is processed on a box sitting in the store, because
+      under Saudi PDPL, blurring a face is not anonymization.
+    </p>
+  </header>
+
+  <div class="cs-facts r">
+    <div class="cs-fact"><div class="cs-fact-k">Sector</div><div class="cs-fact-v">Retail operations · Saudi Arabia</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">My role</div><div class="cs-fact-v">AI lead · edge pipeline end to end</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Stack</div><div class="cs-fact-v">Jetson · DeepStream · TensorRT · RF-DETR · NvDCF</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Status</div><div class="cs-fact-v">Pilot</div></div>
+  </div>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">01</span>The problem</h2>
+    <p class="cs-p">
+      Every store in the chain already had cameras. They recorded, and that was all they did.
+      The questions the operations team actually had were simple ones: <b>how many people came in
+      this morning, how long did the queue get at noon, was anyone in the store after closing,
+      is the team wearing what they are supposed to be wearing.</b> Answering any of them meant
+      someone scrubbing footage, so nobody answered them.
+    </p>
+    <p class="cs-p">
+      The normal way to build this is to stream the cameras to the cloud and run the models there.
+      That option was closed before the first line of code.
+    </p>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">02</span>The constraint that shaped everything</h2>
+    <p class="cs-p">
+      Saudi PDPL treats video of identifiable people as personal data, and <b>blurring faces does not
+      count as true anonymization</b>: a blur is a transformation, not a guarantee, and the original
+      is still the thing you transmitted. So the raw frames could not go anywhere. Not to a cloud
+      GPU, not to a regional endpoint, not into a bucket for later.
+    </p>
+    <p class="cs-p">
+      That single fact inverts the usual architecture. Instead of moving the video to the compute,
+      the compute moves into the store, and the only thing allowed out is the conclusion.
+    </p>
+    <blockquote class="cs-quote">"Blurring a face is not anonymization. Once that is true, the video cannot leave the building, and every other decision follows from there."</blockquote>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">03</span>The pipeline</h2>
+    <div class="cs-pipe">
+      <div class="cs-step">
+        <div class="cs-step-n">1</div>
+        <div><div class="cs-step-t">Ingest the cameras that are already there</div>
+        <div class="cs-step-d">RTSP straight off the existing CCTV, decoded on the Jetson dedicated hardware decoder so the GPU is left free for inference. Nothing new goes into the ceiling, which is most of why a chain will actually say yes to a rollout.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">2</div>
+        <div><div class="cs-step-t">Detect with a model the product can legally ship</div>
+        <div class="cs-step-d">The detector was moved to RF-DETR, which is Apache-2.0. The popular alternatives carry copyleft terms that follow you into a commercial product, and a licensing problem discovered after deployment is not one you can patch. Here the license was a design input, not paperwork.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">3</div>
+        <div><div class="cs-step-t">Track, because detections alone say nothing</div>
+        <div class="cs-step-d">NvDCF multi-object tracking gives each person a stable identity across frames. A detection tells you a person is in frame; a track tells you it is the same person, moving, which is the only thing behaviour can be built on.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">4</div>
+        <div><div class="cs-step-t">Turn tracks into events with a config-driven rule engine</div>
+        <div class="cs-step-d">Zones and lines are defined per store, and the rules sitting on them produce footfall, dwell, queue wait, after-hours and PPE events. It is config rather than code, so onboarding the next store is a file, not a release.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">5</div>
+        <div><div class="cs-step-t">Send the conclusion, never the footage</div>
+        <div class="cs-step-d">Only structured events and small image crops leave the premises, into an isolated per-client cloud. The raw video stays on hardware the customer owns, which is what makes the system compliant rather than merely careful.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">04</span>The bug that was holding up three features</h2>
+    <p class="cs-p">
+      Counting looked finished long before it was right. The first implementation asked, every frame,
+      whether a person was <b>near the counting line</b>. That is the intuitive version, and it is
+      wrong in both directions: someone standing near the line gets counted again and again, and
+      someone walking briskly can be on one side in one frame and past it in the next, never
+      registering as near anything.
+    </p>
+    <p class="cs-p">
+      The fix was to stop looking at frames and start looking at the track. Take the segment between
+      a track previous position and its current one, and test whether <b>that segment intersects the
+      line</b>. One crossing per person, with a direction, and standing still produces nothing at all.
+      Three of the analytics features sat on top of that single primitive, so a geometry correction
+      in one place unblocked all three at once.
+    </p>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">05</span>Where it stands</h2>
+    <p class="cs-p">
+      The platform is <b>at pilot stage</b>, running on customer hardware. There are no accuracy or
+      throughput numbers on this page on purpose: they have not been measured yet, and a number
+      invented for a portfolio is worth less than admitting it does not exist. When the pilot
+      produces real ones, they will go here.
+    </p>
+    <div class="cs-outcomes">
+      <div class="cs-out"><div class="cs-out-v">0 frames</div><div class="cs-out-k">Raw video leaving the store. Structured events and small crops only, to an isolated per-client cloud</div></div>
+      <div class="cs-out"><div class="cs-out-v">Apache-2.0</div><div class="cs-out-k">Detector license, chosen so the commercial product carries no copyleft exposure</div></div>
+      <div class="cs-out"><div class="cs-out-v">5 events</div><div class="cs-out-k">Footfall, dwell, queue wait, after-hours and PPE, all from one on-device pipeline</div></div>
+      <div class="cs-out"><div class="cs-out-v">Existing CCTV</div><div class="cs-out-k">No new cameras installed. The hardware the chain already owns becomes the sensor network</div></div>
+    </div>
+  </section>
+
+  <section class="cs-sec r">
+    <p class="cs-p">
+      On what a Jetson can and cannot actually do once DeepStream and TensorRT are involved, and the
+      traps that cost me a week of it:
+      <a href="/blog/jetson-orin-nano" style="color:var(--accent)">What a $250 Box Can Actually Do</a>.
+    </p>
+  </section>
+
+  <div class="cs-cta r">
+    <span class="cs-cta-txt">Have cameras you are not allowed to send to the cloud?</span>
+    <a class="btn btn-accent" href="/contact">Let's talk <span>↗</span></a>
+  </div>
+
+</div>
+
+</main>
+
+<!--#include footer-->
+
+<!--#include scripts-->
+</body>
+</html>

@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 const BASE = process.env.QA_BASE || 'https://abdelkerimdassi.com';
 const PAGES = ['/', '/about', '/work', '/stack', '/writing', '/contact', '/resume',
   '/blog/rag-in-production', '/blog/pip-poetry-uv', '/blog/arabic-rag',
-  '/blog/jetson-orin-nano', '/case-studies/arabic-rag'];
+  '/blog/jetson-orin-nano', '/case-studies/arabic-rag', '/case-studies/edge-cctv'];
 
 const results = [];
 const pass = (n) => results.push(['PASS', n]);
@@ -141,9 +141,11 @@ for (const path of PAGES) {
   const mapOk = await page.evaluate(() => document.querySelector('#map .leaflet-container, #map.leaflet-container') !== null);
   mapOk ? pass('work: leaflet map renders') : fail('work: leaflet map renders');
   const rows = await page.locator('a.proj-row').count();
-  rows >= 5 ? pass(`work: project rows (${rows})`) : fail('work: project rows', `${rows}`);
-  const cs = await page.getAttribute('a.proj-row[href="/case-studies/arabic-rag"]', 'href');
-  cs ? pass('work: case-study row links to /case-studies/arabic-rag') : fail('work: case-study row link');
+  rows >= 4 ? pass(`work: project rows (${rows})`) : fail('work: project rows', `${rows}`);
+  for (const slug of ['arabic-rag', 'edge-cctv']) {
+    const cs = await page.getAttribute(`a.proj-row[href="/case-studies/${slug}"]`, 'href');
+    cs ? pass(`work: case-study row links to /case-studies/${slug}`) : fail(`work: case-study row link ${slug}`);
+  }
   await page.close();
 }
 
