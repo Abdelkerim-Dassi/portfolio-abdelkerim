@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!--#include head-open-->
+<title>Le RAG en production : ce que personne ne vous dit · Abdelkerim Dassi</title>
+<meta name="description" content="Au-delà des bases : stratégies de découpage, qualité de la récupération, re-ranking, et les défaillances discrètes qui tuent la précision dans de vrais déploiements RAG.">
+<meta name="author" content="Abdelkerim Dassi">
+<link rel="canonical" href="https://abdelkerimdassi.com/fr/blog/rag-en-production">
+<!--#include hreflang-->
+<!--#include head-icons-->
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://abdelkerimdassi.com/fr/blog/rag-en-production">
+<meta property="og:title" content="Le RAG en production : ce que personne ne vous dit">
+<meta property="og:description" content="Découpage, qualité de la récupération, re-ranking, et les défaillances discrètes qui tuent la précision en production.">
+<meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-rag-in-production.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Abdelkerim Dassi">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="article:published_time" content="2026-03-15T09:00:00Z">
+<meta property="article:author" content="Abdelkerim Dassi">
+<meta property="article:tag" content="RAG">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="Production">
+<meta property="article:tag" content="AWS">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Le RAG en production : ce que personne ne vous dit">
+<meta name="twitter:description" content="Découpage, qualité de la récupération, re-ranking, et les défaillances discrètes qui tuent la précision.">
+<meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-rag-in-production.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Le RAG en production : ce que personne ne vous dit",
+  "description": "Au-delà des bases : stratégies de découpage, qualité de la récupération, re-ranking, et les défaillances discrètes qui tuent la précision dans de vrais déploiements RAG.",
+  "image": "https://abdelkerimdassi.com/assets/og/og-rag-in-production.png",
+  "datePublished": "2026-03-15T09:00:00Z",
+  "dateModified": "2026-03-15T09:00:00Z",
+  "keywords": "RAG, LLM, production, AWS",
+  "inLanguage": "fr",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://abdelkerimdassi.com/fr/blog/rag-en-production"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://abdelkerimdassi.com/#person",
+    "name": "Abdelkerim Dassi",
+    "url": "https://abdelkerimdassi.com"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Abdelkerim Dassi",
+    "url": "https://abdelkerimdassi.com"
+  }
+}
+</script>
+
+<!--#include head-close-fr-->
+<link rel="stylesheet" href="/assets/blog.css">
+<link rel="stylesheet" href="/assets/comments.css">
+</head>
+<body>
+<div id="reading-bar"></div>
+
+<!--#include nav-fr-->
+
+<main id="main">
+
+<!-- ── BLOG HERO ── -->
+<section class="blog-hero">
+  <div class="blog-meta"><time datetime="2026-03-15">Mars 2026</time> · 8 min de lecture</div>
+  <h1 class="blog-title">Le RAG en production :<br>ce que personne ne vous dit</h1>
+  <p class="blog-subtitle">
+    Au-delà des bases : <em>stratégies de découpage, qualité de la récupération, re-ranking</em>, et les défaillances discrètes qui tuent la précision dans de vrais déploiements. Écrit à partir de 3 systèmes en production.
+  </p>
+  <button class="listen-btn" id="listen-btn" aria-label="Écouter cet article">
+    <span class="l-icon" id="l-icon">▶</span>
+    <span class="l-text" id="l-text">Écouter cet article</span>
+  </button>
+  <div class="blog-tags">
+    <span class="blog-tag">RAG</span>
+    <span class="blog-tag">LLM</span>
+    <span class="blog-tag">Production</span>
+    <span class="blog-tag">AWS</span>
+  </div>
+  <div class="blog-border"></div>
+</section>
+
+<!-- ── ARTICLE ── -->
+<article class="article">
+
+  <figure class="blog-photo">
+    <picture>
+      <source type="image/webp" srcset="/assets/blog/rag_in_prod-640.webp 640w, /assets/blog/rag_in_prod-1024.webp 1024w" sizes="(max-width: 816px) calc(100vw - 96px), 624px">
+      <img src="/assets/blog/rag_in_prod.jpg" alt="Illustration d'un pipeline RAG en production : des démos en notebook au découpage, à la qualité de récupération et au re-ranking, jusqu'à des réponses justes" width="1024" height="559" fetchpriority="high" decoding="async">
+    </picture>
+    <figcaption>De la démo en notebook au vrai déploiement : les parties que les tutoriels sautent</figcaption>
+  </figure>
+
+  <p>
+    Tout le monde écrit sur le RAG, et les tutoriels donnent l'impression que c'est simple : vous embarquez vos documents, vous les jetez dans une base vectorielle, vous branchez un LLM, terminé. Livrez.
+  </p>
+  <p>
+    Je l'ai cru aussi, jusqu'au jour où il a fallu construire des systèmes RAG qui <strong>tiennent vraiment en production</strong>. Pas des démos. Pas des notebooks. Des systèmes où de vrais utilisateurs posent des questions imprévisibles, où une mauvaise réponse a des conséquences, et où « ça marche la plupart du temps » ne suffit pas.
+  </p>
+  <p>
+    Ces deux dernières années, j'ai construit et livré trois systèmes RAG en production : un <strong>assistant de documentation piloté par IA</strong> déployé sur AWS avec Kubernetes, une <strong>plateforme d'analyse de discours parlementaires</strong> traitant plus de 100 000 documents, et un <strong>assistant IA QHSE</strong> construit avec Spring AI et MCP. Chacun m'a appris des choses qu'aucun tutoriel n'a jamais mentionnées.
+  </p>
+  <p>
+    Voici ce que j'aurais aimé qu'on me dise avant de commencer.
+  </p>
+
+  <hr>
+
+  <figure class="blog-figure">
+    <svg viewBox="0 0 720 240" role="img" aria-label="Schéma d'architecture d'un système RAG en production. Ligne d'ingestion : les documents bruts passent par un découpage attentif à la structure vers une base vectorielle. Ligne de requête : une requête utilisateur avec filtres de métadonnées lance une recherche hybride combinant vecteurs, BM25 et fusion par rang réciproque, un cross-encoder reclasse vingt candidats pour n'en garder que cinq, et le LLM répond avec des liens sources. Le re-ranking seul a fait passer la qualité des réponses de 72 à 89 pour cent.">
+      <defs>
+        <marker id="fig-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0 0L8 4L0 8z" class="fig-arrowhead"/>
+        </marker>
+      </defs>
+      <text class="fig-ta" x="40" y="8">INGESTION · OÙ SE JOUE 80 % DE LA QUALITÉ</text>
+      <rect class="fig-box" x="40" y="16" width="160" height="52"/>
+      <text class="fig-t1" x="120" y="38" text-anchor="middle">DOCS BRUTS</text>
+      <text class="fig-t3" x="120" y="55" text-anchor="middle">PDF · MD · HTML · 100K+</text>
+      <line class="fig-line" x1="200" y1="42" x2="276" y2="42" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="280" y="16" width="160" height="52"/>
+      <text class="fig-t1" x="360" y="38" text-anchor="middle">DÉCOUPAGE</text>
+      <text class="fig-t3" x="360" y="55" text-anchor="middle">structuré + chevauchement</text>
+      <line class="fig-line" x1="440" y1="42" x2="516" y2="42" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="520" y="16" width="160" height="52"/>
+      <text class="fig-t1" x="600" y="38" text-anchor="middle">BASE VECTORIELLE</text>
+      <text class="fig-t3" x="600" y="55" text-anchor="middle">embeddings + métadonnées</text>
+      <path class="fig-line fig-dash" d="M600 68 V102 H265 V134" marker-end="url(#fig-arrow)"/>
+      <text class="fig-ta" x="0" y="130">À LA REQUÊTE</text>
+      <rect class="fig-box" x="0" y="138" width="150" height="56"/>
+      <text class="fig-t1" x="75" y="161" text-anchor="middle">REQUÊTE</text>
+      <text class="fig-t3" x="75" y="179" text-anchor="middle">+ filtres métadonnées</text>
+      <line class="fig-line" x1="150" y1="166" x2="186" y2="166" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="190" y="138" width="150" height="56"/>
+      <text class="fig-t1" x="265" y="161" text-anchor="middle">RECHERCHE HYBRIDE</text>
+      <text class="fig-t3" x="265" y="179" text-anchor="middle">vecteurs + BM25 + RRF</text>
+      <line class="fig-line" x1="340" y1="166" x2="376" y2="166" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box-accent" x="380" y="138" width="150" height="56"/>
+      <text class="fig-t1" x="455" y="161" text-anchor="middle">RE-RANKING</text>
+      <text class="fig-ta" x="455" y="179" text-anchor="middle">CROSS-ENCODER · 20 → 5</text>
+      <line class="fig-line" x1="530" y1="166" x2="566" y2="166" marker-end="url(#fig-arrow)"/>
+      <rect class="fig-box" x="570" y="138" width="150" height="56"/>
+      <text class="fig-t1" x="645" y="161" text-anchor="middle">RÉPONSE</text>
+      <text class="fig-t3" x="645" y="179" text-anchor="middle">LLM + liens sources</text>
+      <text class="fig-t3" x="360" y="226" text-anchor="middle">LE RE-RANKING SEUL A FAIT PASSER LA QUALITÉ DES RÉPONSES DE <tspan class="fig-ta">72 % → 89 %</tspan></text>
+    </svg>
+    <figcaption>La forme vers laquelle les trois systèmes de production ont convergé</figcaption>
+  </figure>
+
+  <h2>Le piège de l'ingestion des documents</h2>
+
+  <p>
+    Le premier système que j'ai construit était un assistant de documentation : un chatbot capable de répondre à des questions sur la documentation projet interne. La stack était Python, Weaviate comme base vectorielle, et AWS SageMaker pour le LLM. Le déploiement tournait sur <strong>EKS avec des conteneurs Docker</strong>, orchestré par un pipeline CI/CD.
+  </p>
+  <p>
+    Le prototype a pris deux semaines. Le rendre prêt pour la production a pris trois mois.
+  </p>
+  <p>
+    La première leçon est tombée tout de suite : <strong>le composant le plus important, c'est votre pipeline d'ingestion</strong>. Pas le LLM. Pas le prompt. La façon dont vous traitez, découpez et embarquez les documents décide de 80 % de la qualité finale.
+  </p>
+
+  <h3>Découper n'est pas fractionner</h3>
+
+  <p>
+    Tous les tutoriels répètent « découpez vos documents en morceaux d'environ 500 tokens ». Un conseil techniquement exact et parfaitement inutile.
+  </p>
+  <p>
+    Dans l'assistant de documentation, les docs projet étaient profondément imbriquées : des spécifications dont les sous-sections renvoyaient à d'autres sous-sections, des tableaux qui n'avaient de sens qu'avec leur en-tête, des blocs de code qui ne voulaient plus rien dire coupés en deux. Un découpeur de texte récursif basique rasait tout ce contexte.
+  </p>
+  <p>
+    Ce qui a réellement marché :
+  </p>
+  <ul>
+    <li><strong>Un découpage attentif à la structure</strong> : analyser d'abord le format du document (titres Markdown, sections HTML, mise en page PDF) et découper le long des frontières sémantiques, pas des comptes de tokens</li>
+    <li><strong>Des fenêtres chevauchantes avec métadonnées</strong> : 15 à 20 % de chevauchement entre morceaux, avec les titres de section parents injectés en métadonnées pour que le retriever puisse évaluer la pertinence au regard du contexte plus large</li>
+    <li><strong>La préservation des tableaux</strong> : les tableaux étaient extraits entiers et stockés comme morceaux distincts avec un indicateur de type « table », jamais coupés entre les lignes</li>
+    <li><strong>Petits morceaux pour la récupération, grands morceaux pour la génération</strong> : le motif « parent-enfant », où l'on embarque de petits morceaux granulaires mais où l'on récupère le parent plus large quand une correspondance est trouvée</li>
+  </ul>
+
+  <div class="callout">
+    <div class="callout-label">Leçon apprise</div>
+    <p>Si votre précision de récupération est mauvaise, n'ajustez pas votre prompt et ne changez pas de LLM. Corrigez d'abord votre découpage. J'ai vu des gains de précision de 20 à 30 % rien qu'avec un meilleur découpage : plus que tout ce que l'ingénierie de prompt m'a jamais apporté.</p>
+  </div>
+
+  <h2>Le problème de la qualité de récupération</h2>
+
+  <p>
+    Le deuxième système, une plateforme RAG parlementaire, m'a obligé à affronter la qualité de récupération à l'échelle. Nous avions <strong>plus de 100 000 discours parlementaires</strong> que les citoyens pouvaient interroger en langage naturel. Le pipeline de classification thématique atteignait 95 % de précision, mais le composant RAG a d'abord peiné.
+  </p>
+  <p>
+    Le problème était d'une simplicité trompeuse : <strong>la similarité sémantique n'est pas la pertinence</strong>.
+  </p>
+  <p>
+    Un citoyen demandant « qu'a dit le parlement sur la réforme de la santé en 2023 ? » obtenait des résultats sémantiquement proches (des discours qui <em>mentionnaient</em> la santé) mais pas les plus <em>pertinents</em>. Les vrais débats de politique publique, les votes clés, les discours charnières étaient enfouis sous des dizaines de mentions accessoires.
+  </p>
+
+  <h3>La recherche hybride nous a sauvés</h3>
+
+  <p>
+    La recherche vectorielle seule ne suffisait pas. La recherche par mots-clés seule (BM25) non plus. Le déclic est venu de la <strong>combinaison des deux</strong> :
+  </p>
+  <ul>
+    <li><strong>La recherche vectorielle</strong> saisissait l'intention sémantique : comprendre que « réforme de la santé » se rapporte à « changements de politique médicale »</li>
+    <li><strong>La recherche par mots-clés BM25</strong> saisissait la terminologie exacte : numéros de projets de loi, noms de responsables politiques, termes juridiques que les embeddings brouillent souvent</li>
+    <li><strong>La fusion par rang réciproque</strong> fusionnait les deux jeux de résultats, avec un rappel nettement meilleur que l'une ou l'autre approche seule</li>
+  </ul>
+  <p>
+    À l'échelle de plus de 100 000 documents, j'ai aussi appris que <strong>le filtrage par métadonnées n'est pas optionnel</strong>. Plages de dates, types de documents, rôles des intervenants, sessions parlementaires : ces filtres s'appliquent avant la recherche vectorielle, réduisant énormément l'espace de recherche et améliorant à la fois la vitesse et la pertinence.
+  </p>
+
+  <h2>Le re-ranking : le multiplicateur caché</h2>
+
+  <p>
+    Voilà une chose que presque aucun tutoriel n'aborde : <strong>vos premiers résultats de recherche ne sont que des candidats</strong>. Ce n'est pas le contexte final à donner à votre LLM.
+  </p>
+  <p>
+    Dans l'assistant de documentation, j'ai ajouté une étape de re-ranking par cross-encoder après la récupération. Le processus :
+  </p>
+  <ul>
+    <li>Récupérer les 20 meilleurs morceaux depuis Weaviate par recherche hybride</li>
+    <li>Reclasser ces 20 morceaux avec un modèle cross-encoder qui note chaque paire (requête, morceau)</li>
+    <li>Ne transmettre au LLM que les 5 meilleurs morceaux reclassés</li>
+  </ul>
+  <p>
+    Le cross-encoder est plus lent que la similarité d'embeddings — il traite chaque paire une par une — mais nettement plus juste, parce qu'il voit la requête et le document <strong>ensemble</strong>, et non comme deux vecteurs indépendants.
+  </p>
+
+  <blockquote>
+    <p>La récupération vous amène dans le quartier. Le re-ranking vous amène à la bonne porte.</p>
+  </blockquote>
+
+  <p>
+    Le gain de précision était frappant. Sur notre jeu d'évaluation interne, le re-ranking a fait passer la qualité des réponses d'environ 72 % à 89 %, mesurée par évaluation humaine du critère « cette réponse répond-elle correctement et complètement à la question ».
+  </p>
+
+  <h2>Les défaillances dont personne ne parle</h2>
+
+  <p>
+    En production, les systèmes RAG échouent d'une manière qu'aucune démo ne montre. Voici les modes de défaillance croisés sur les trois systèmes :
+  </p>
+
+  <h3>1. La réponse fausse et assurée</h3>
+
+  <p>
+    Le LLM tombe sur un contexte à peu près pertinent et produit une réponse fluide, assurée, et <strong>subtilement fausse</strong>. L'utilisateur n'a aucun moyen de s'en apercevoir. C'est pire que pas de réponse du tout.
+  </p>
+  <p>
+    Mon correctif : <strong>toujours faire remonter les morceaux sources</strong> à côté de la réponse. Dans le système parlementaire, chaque réponse incluait des références cliquables vers les discours d'origine. Dans la plateforme QHSE, les réponses renvoyaient à la réglementation ou au document d'audit précis. Cela n'empêche pas l'hallucination, mais cela la rend vérifiable.
+  </p>
+
+  <h3>2. La question sans réponse</h3>
+
+  <p>
+    Les utilisateurs posent des questions auxquelles votre base ne peut tout simplement pas répondre. Un système RAG naïf remontera les morceaux « les moins hors sujet » et hallucinera quand même une réponse.
+  </p>
+  <p>
+    La solution qui a marché : un <strong>seuil de pertinence sur les scores de récupération</strong>. Si le meilleur morceau note en dessous d'un seuil calibré, le système répond « je n'ai pas assez d'informations pour répondre » au lieu de deviner. Calibrer ce seuil pour chaque domaine demande du tâtonnement : trop haut, vous rejetez des questions valides ; trop bas, vous laissez passer n'importe quoi.
+  </p>
+
+  <h3>3. Le problème des connaissances périmées</h3>
+
+  <p>
+    Les documents sont mis à jour. Les réglementations changent. De nouveaux discours sont publiés. Votre base vectorielle ne le sait pas, sauf si vous le lui dites.
+  </p>
+  <p>
+    Dans la plateforme QHSE (construite avec <strong>Spring AI, MCP et Groq</strong>), j'ai mis en place un pipeline d'ingestion incrémentale : les documents étaient versionnés, et les mises à jour ne déclenchaient le ré-embedding que des sections modifiées. Les suppressions étaient gérées par invalidation à base de métadonnées, pas par réindexation complète.
+  </p>
+
+  <h3>4. La question multi-sauts</h3>
+
+  <p>
+    « Comment le budget santé de 2022 se compare-t-il à celui de 2023 ? » Il faut aller chercher sur deux périodes distinctes, puis synthétiser. Une recherche en un seul coup se casse les dents.
+  </p>
+  <p>
+    L'approche qui a marché : la <strong>décomposition de requête</strong>. Le LLM commence par découper la question en sous-requêtes (« budget santé 2022 » et « budget santé 2023 »), récupère séparément pour chacune, puis synthétise. C'est plus lent mais nettement plus précis pour les questions comparatives ou en plusieurs étapes.
+  </p>
+
+  <h2>Leçons d'infrastructure tirées d'AWS</h2>
+
+  <p>
+    L'assistant de documentation tournait sur <strong>AWS EKS</strong> : des conteneurs gérés par Kubernetes avec des endpoints SageMaker pour le LLM. Voici ce que j'ai appris sur l'exécution d'un RAG dans le cloud :
+  </p>
+  <ul>
+    <li><strong>Séparez votre service d'embedding de votre service de génération</strong> : ils ont des profils de montée en charge complètement différents. L'embedding est limité par le CPU/GPU et arrive par à-coups pendant l'ingestion. La génération est sensible à la latence et suit le trafic utilisateur</li>
+    <li><strong>Le dimensionnement de la base vectorielle compte plus qu'on ne le croit</strong> : l'empreinte mémoire de Weaviate croît linéairement avec le nombre de vecteurs. Nous l'avions sous-estimée, et la production nous l'a fait payer en OOM kills. Prévoyez 2 à 3 fois la taille d'index attendue</li>
+    <li><strong>Mettez en cache sans complexe</strong> : les requêtes identiques ou presque sont bien plus fréquentes qu'on ne l'imagine. Un simple cache par hachage de requête, TTL d'une heure, a nettement allégé notre facture d'inférence SageMaker</li>
+    <li><strong>S3 comme source de vérité</strong> : les documents bruts vivaient dans S3, les morceaux traités dans la base vectorielle. Si la base vectorielle se corrompait ou devait être réindexée, nous pouvions toujours reconstruire depuis S3. Ça nous a sauvés deux fois</li>
+  </ul>
+
+  <div class="callout">
+    <div class="callout-label">Conseil d'architecture</div>
+    <p>Votre base vectorielle est un stockage dérivé, pas un stockage primaire. Traitez-la comme un cache reconstructible. Gardez vos documents bruts et vos métadonnées de traitement dans un endroit durable. Quand (et non si) vous devrez réindexer avec un nouveau modèle d'embedding ou une autre stratégie de découpage, vous serez content de l'avoir fait.</p>
+  </div>
+
+  <h2>L'évaluation : la partie la plus dure</h2>
+
+  <p>
+    Comment savoir si votre système RAG est réellement bon ? C'est la question sur laquelle je bute encore, après trois systèmes en production.
+  </p>
+  <p>
+    Ce à quoi je me suis arrêté, c'est une <strong>évaluation à trois couches</strong> :
+  </p>
+  <ul>
+    <li><strong>Qualité de récupération</strong> : pour une question donnée, les bons morceaux sont-ils dans le top 5 ? Mesurée par le rappel@5 sur un jeu de test constitué à la main. C'est la métrique la plus importante et celle que la plupart des gens sautent</li>
+    <li><strong>Qualité de réponse</strong> : avec les bons morceaux, le LLM produit-il une réponse correcte ? Cela isole la génération de la récupération. Mesurée par évaluation humaine sur un échantillon</li>
+    <li><strong>Qualité de bout en bout</strong> : pour une question donnée, la réponse finale est-elle correcte ? C'est ce que vivent les utilisateurs. Mesurée par une combinaison de contrôles automatisés et de revues humaines périodiques</li>
+  </ul>
+  <p>
+    L'idée décisive : <strong>si la recherche est cassée, rien en aval ne la réparera</strong>. J'ai vu des équipes passer des semaines à retoucher des prompts alors que le vrai problème était que les bons documents ne remontaient jamais. Déboguez toujours en partant de la recherche.
+  </p>
+
+  <h2>Ce que je ferais autrement</h2>
+
+  <p>
+    Si je démarrais un nouveau système RAG demain, voici ce que je changerais :
+  </p>
+  <ul>
+    <li><strong>Commencer par l'évaluation, pas par la construction</strong> : constituez votre jeu de test de 50 à 100 paires question/réponse avant d'écrire une ligne de pipeline. Chaque décision de conception se mesure ensuite contre lui</li>
+    <li><strong>Investir tôt dans le découpage</strong> : passez une semaine sur la stratégie de découpage avant de toucher à la récupération ou à la génération. Le retour sur investissement est énorme</li>
+    <li><strong>La recherche hybride dès le premier jour</strong> : ne partez pas sur du vectoriel pur en vous disant que vous « ajouterez BM25 plus tard ». Ce ne sont pas les mêmes hypothèses d'architecture</li>
+    <li><strong>Construire la boucle de retour en premier</strong> : instrumentez votre système pour capter quelles réponses les utilisateurs ont trouvées utiles et lesquelles non. Ces données valent de l'or pour itérer</li>
+    <li><strong>Garder votre LLM interchangeable</strong> : j'ai changé de LLM en cours de projet deux fois. Abstrayez la couche de génération pour pouvoir changer de modèle sans recâbler votre pipeline</li>
+  </ul>
+
+  <hr>
+
+  <p>
+    Le RAG n'est pas un problème résolu. C'est une <em>discipline d'ingénierie</em>, qui réclame autant d'attention à la qualité des données, à l'infrastructure et à l'évaluation qu'à l'IA elle-même. Les tutoriels vous emmènent à 20 % du chemin. Les 80 % restants, c'est ce qui arrive quand de vrais utilisateurs rencontrent de vrais documents en production.
+  </p>
+  <p>
+    Ces 80 %, c'est là que vivent le vrai travail et la vraie valeur.
+  </p>
+
+</article>
+
+<section class="comments-section" data-comments="rag-in-production">
+  <div class="comments-head">
+    <span class="comments-label">/ Un avis ?</span>
+    <h3 class="comments-title">Commentaires</h3>
+    <p class="comments-sub">Pas de connexion, pas de pistage. Écrivez juste votre nom et votre avis. Restez courtois.</p>
+  </div>
+  <div class="comments-list" aria-live="polite" aria-busy="true"><div class="comments-loading">Chargement…</div></div>
+  <form class="comments-form" novalidate>
+    <label class="vh" for="comment-name">Votre nom</label>
+    <input type="text" id="comment-name" name="name" class="comments-input" placeholder="Votre nom" required maxlength="40" autocomplete="name">
+    <label class="vh" for="comment-body">Votre commentaire</label>
+    <textarea id="comment-body" name="body" class="comments-textarea" placeholder="Qu'en pensez-vous ?" required minlength="5" maxlength="2000"></textarea>
+    <input type="text" name="hp" class="comments-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="comments-form-actions">
+      <span class="comments-status" role="status" aria-live="polite"></span>
+      <button type="submit" class="comments-submit">Publier</button>
+    </div>
+  </form>
+</section>
+<script src="/assets/comments.js" defer></script>
+
+<div class="blog-nav">
+  <a class="blog-nav-prev" href="/fr/articles">
+    <span class="blog-nav-dir">← Tous les articles</span>
+    <span class="blog-nav-title">Index des articles</span>
+  </a>
+  <a class="blog-nav-next" href="/fr/blog/pip-poetry-uv">
+    <span class="blog-nav-dir">Suivant →</span>
+    <span class="blog-nav-title">J'ai utilisé pip pendant des années. Poetry en équipe. Puis uv est arrivé.</span>
+  </a>
+</div>
+
+<div class="blog-footer">
+  <div class="blog-footer-cta">D'autres <em>articles</em> bientôt.</div>
+  <div class="blog-share">
+    <a class="blog-share-btn" href="https://twitter.com/intent/tweet?text=Le+RAG+en+production+%3A+ce+que+personne+ne+vous+dit&url=https%3A%2F%2Fabdelkerimdassi.com%2Ffr%2Fblog%2Frag-en-production" target="_blank" rel="noopener">Partager sur X ↗</a>
+    <a class="blog-share-btn" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fabdelkerimdassi.com%2Ffr%2Fblog%2Frag-en-production&title=Le+RAG+en+production+%3A+ce+que+personne+ne+vous+dit" target="_blank" rel="noopener">LinkedIn ↗</a>
+    <button class="blog-share-btn share-copy">Copier le lien</button>
+  </div>
+  <div class="blog-footer-links">
+    <a href="/fr/articles">← Articles</a>
+    <a href="https://github.com/Abdelkerim-Dassi" target="_blank" rel="noopener">GitHub ↗</a>
+    <a href="mailto:abdelkerimdassi@gmail.com">E-mail ↗</a>
+  </div>
+</div>
+
+</main>
+
+<!--#include footer-fr-->
+
+<!--#include scripts-->
+</body>
+</html>

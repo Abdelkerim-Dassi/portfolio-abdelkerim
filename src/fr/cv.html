@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!--#include head-open-->
+<title>CV · Abdelkerim Dassi · Ingénieur IA &amp; Data Scientist, Tunisie</title>
+<meta name="description" content="CV d'Abdelkerim Dassi, ingénieur IA et data scientist basé en Tunisie. RAG en production, agents LLM, Spring AI / MCP, vision par ordinateur en edge. Imprimez cette page pour un PDF propre.">
+<meta name="author" content="Abdelkerim Dassi">
+<meta name="keywords" content="CV ingénieur IA Tunisie, data scientist Tunisie, Abdelkerim Dassi, RAG, Spring AI, MCP">
+<link rel="canonical" href="https://abdelkerimdassi.com/fr/cv">
+<!--#include hreflang-->
+<!--#include head-icons-->
+
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://abdelkerimdassi.com/fr/cv">
+<meta property="og:title" content="CV · Abdelkerim Dassi · Ingénieur IA">
+<meta property="og:description" content="RAG en production, agents LLM, Spring AI / MCP. Tunis → Golfe → monde.">
+<meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Abdelkerim Dassi">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CV · Abdelkerim Dassi">
+<meta name="twitter:description" content="Ingénieur IA : RAG en production, agents LLM, Spring AI / MCP.">
+<meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "inLanguage": "fr",
+  "mainEntity": {
+    "@type": "Person",
+    "@id": "https://abdelkerimdassi.com/#person",
+    "name": "Abdelkerim Dassi",
+    "url": "https://abdelkerimdassi.com",
+    "image": "https://abdelkerimdassi.com/assets/avatar.jpg",
+    "jobTitle": "Ingénieur IA",
+    "email": "abdelkerimdassi@gmail.com",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "1morething Ventures",
+      "url": "https://1morething.io"
+    },
+    "alumniOf": {
+      "@type": "EducationalOrganization",
+      "name": "ESPRIT School of Engineering",
+      "url": "https://esprit.tn"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Tunis",
+      "addressCountry": "TN"
+    },
+    "sameAs": [
+      "https://github.com/Abdelkerim-Dassi",
+      "https://linkedin.com/in/abdelkerim-dassi/"
+    ]
+  }
+}
+</script>
+
+<!--#include head-close-fr-->
+<style>
+  .cv-wrap { max-width: 880px; margin: 0 auto; padding: 140px 24px 80px; }
+  .cv-actions { display:flex; gap:14px; margin-bottom:48px; }
+  .cv-head { border-bottom: 1px solid var(--line); padding-bottom: 32px; margin-bottom: 40px; }
+  .cv-name { font-family:'Bebas Neue',sans-serif; font-size: clamp(48px, 8vw, 80px); line-height:.95; letter-spacing:.5px; }
+  .cv-role { font-family:'Libre Baskerville',serif; font-style: italic; color: var(--accent); font-size: 19px; margin-top: 10px; }
+  .cv-contact { display:flex; flex-wrap:wrap; gap: 8px 26px; margin-top: 20px; font-size: 13px; color: var(--t2); }
+  .cv-contact a { color: var(--t2); text-decoration:none; border-bottom:1px solid var(--dim); }
+  .cv-contact a:hover { color: var(--accent); border-color: var(--accent); }
+  .cv-sec { margin-bottom: 44px; }
+  .cv-sec-title {
+    font-family:'Bebas Neue',sans-serif; font-size: 24px; letter-spacing: 2px;
+    color: var(--accent); margin-bottom: 20px;
+    display:flex; align-items:center; gap:16px;
+  }
+  .cv-sec-title::after { content:""; flex:1; height:1px; background: var(--line); }
+  .cv-summary { font-size: 15.5px; line-height: 1.75; color: var(--t2); max-width: 70ch; }
+  .cv-summary b { color: var(--paper); font-weight: 400; }
+  .cv-item { display: grid; grid-template-columns: 1fr 130px; gap: 8px 24px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .cv-item:last-child { border-bottom: none; }
+  .cv-item-role { font-size: 15px; font-weight: 400; letter-spacing:.02em; }
+  .cv-item-co { font-size: 13px; color: var(--t2); margin-top: 3px; }
+  .cv-item-date { font-size: 12px; color: var(--t3); text-align: right; letter-spacing:.08em; text-transform: uppercase; padding-top:3px; }
+  .cv-item ul { grid-column: 1 / -1; margin: 6px 0 0 16px; font-size: 13.5px; line-height: 1.7; color: var(--t2); }
+  .cv-item b { color: var(--paper); font-weight: 400; }
+  .cv-skills { display:grid; grid-template-columns: 160px 1fr; gap: 12px 24px; font-size: 13.5px; }
+  .cv-skill-k { color: var(--t3); letter-spacing:.1em; text-transform: uppercase; font-size: 11px; padding-top: 2px; }
+  .cv-skill-v { color: var(--t2); line-height: 1.65; }
+  .cv-two { display:grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
+  @media (max-width: 700px) { .cv-two { grid-template-columns: 1fr; } .cv-skills { grid-template-columns: 1fr; gap: 2px 0; } .cv-item { grid-template-columns: 1fr; } .cv-item-date { text-align:left; } }
+
+  /* ── PRINT: clean light document ── */
+  @media print {
+    @page { margin: 14mm 16mm; }
+    html, body { background: #fff !important; color: #111 !important; }
+    nav, footer, #btt, .cv-actions, .theme-toggle, .nav-burger { display: none !important; }
+    .cv-wrap { padding: 0; max-width: none; }
+    .cv-name, .cv-sec-title { color: #111 !important; }
+    .cv-role { color: #8a6320 !important; }
+    .cv-contact, .cv-contact a, .cv-summary, .cv-item-co, .cv-item ul, .cv-skill-v { color: #444 !important; }
+    .cv-item-date, .cv-skill-k { color: #777 !important; }
+    .cv-summary b, .cv-item b, .cv-item-role { color: #111 !important; }
+    .cv-item, .cv-head { border-color: #ddd !important; }
+    .cv-sec-title::after { background: #ddd !important; }
+    .cv-sec { break-inside: avoid-page; }
+    .cv-item { break-inside: avoid; }
+    a { text-decoration: none !important; border: none !important; }
+  }
+</style>
+</head>
+<body class="no-ask">
+
+<!--#include nav-fr-->
+
+<main id="main">
+
+<div class="cv-wrap">
+
+  <div class="cv-actions r">
+    <button class="btn btn-accent" id="print-cv">Imprimer / enregistrer en PDF <span>↓</span></button>
+  </div>
+
+  <header class="cv-head r">
+    <h1 class="cv-name">Abdelkerim Dassi</h1>
+    <div class="cv-role">Ingénieur IA : RAG, agents LLM, Spring AI / MCP</div>
+    <div class="cv-contact">
+      <span>Tunis, Tunisie (télétravail bienvenu)</span>
+      <a href="mailto:abdelkerimdassi@gmail.com">abdelkerimdassi@gmail.com</a>
+      <a href="tel:+21655683474">+216 55 683 474</a>
+      <a href="https://abdelkerimdassi.com">abdelkerimdassi.com</a>
+      <a href="https://linkedin.com/in/abdelkerim-dassi/">linkedin.com/in/abdelkerim-dassi</a>
+      <a href="https://github.com/Abdelkerim-Dassi">github.com/Abdelkerim-Dassi</a>
+    </div>
+  </header>
+
+  <section class="cv-sec r">
+    <h2 class="cv-sec-title">Profil</h2>
+    <p class="cv-summary">
+      Ingénieur IA, je construis des <b>systèmes RAG, des agents LLM et des architectures Spring AI / MCP en production</b>. Dans l'IA depuis 2021 :
+      quatre ans de stages et de missions freelance en parallèle d'un diplôme d'ingénieur, puis le plein temps. Aujourd'hui je dirige l'IA chez
+      <b>1morething Ventures</b> (Sharjah, EAU) pour les clients du Golfe et de la région MEA, dont une IA agricole pour la
+      <b>FAO en Égypte</b> ; j'anime des bootcamps IA à côté et je travaille avec un premier <b>client américain</b>.
+      Livré dans 8 pays. Langues de travail : arabe, français, anglais.
+    </p>
+  </section>
+
+  <section class="cv-sec r">
+    <h2 class="cv-sec-title">Expérience</h2>
+
+    <div class="cv-item">
+      <div><div class="cv-item-role">Ingénieur IA</div><div class="cv-item-co">1morething Ventures · Sharjah, EAU · Hybride</div></div>
+      <div class="cv-item-date">Janv. 2026 – auj.</div>
+      <ul>
+        <li>Pilotage de la livraison IA sur le portefeuille B2B de 1MT dans le <b>Golfe et la région MEA</b> : EAU, Arabie saoudite, Tunisie, plus une IA agricole pour la <b>FAO en Égypte</b>.</li>
+        <li>Direction IA, mise en production des systèmes RAG et LLM, accompagnement de l'équipe d'ingénierie sur le MLOps.</li>
+      </ul>
+    </div>
+
+    <div class="cv-item">
+      <div><div class="cv-item-role">Consultant IA · Freelance</div><div class="cv-item-co">Indépendant · à distance (client américain)</div></div>
+      <div class="cv-item-date">2026 – auj.</div>
+      <ul><li>Premier client américain, à distance, livré de bout en bout.</li></ul>
+    </div>
+
+    <div class="cv-item">
+      <div><div class="cv-item-role">Formateur en data science</div><div class="cv-item-co">RCH International · TeachCode · GOMYCODE · Tunisie</div></div>
+      <div class="cv-item-date">Mars 2025 – auj.</div>
+      <ul>
+        <li>Enseignement de l'<b>AI Full Pack</b> dans trois académies : de Python aux Transformers, de bout en bout.</li>
+        <li>Cours en anglais, français et tunisien. Très pratique, orienté projets.</li>
+      </ul>
+    </div>
+
+    <div class="cv-item">
+      <div><div class="cv-item-role">Data Scientist</div><div class="cv-item-co">Qualipro® by Imagine Human · Tunisie · Hybride</div></div>
+      <div class="cv-item-date">Oct. 2025 – févr. 2026</div>
+      <ul>
+        <li>Intégration de l'IA dans la plateforme QHSE : <b>traduction en direct</b>, assistant intégré, agents d'automatisation des audits.</li>
+        <li>Stack : <b>Spring AI, RAG, MCP, Groq</b>. Livré de bout en bout.</li>
+      </ul>
+    </div>
+
+    <div class="cv-item">
+      <div><div class="cv-item-role">Data Scientist</div><div class="cv-item-co">D2D Analytics · Canada · À distance</div></div>
+      <div class="cv-item-date">Avr. 2025 – sept. 2025</div>
+      <ul>
+        <li>Classification de <b>plus de 100 000 discours parlementaires</b> par thème ; le pipeline a atteint <b>95 %</b>.</li>
+        <li>Système RAG permettant aux citoyens d'interroger ce qui a été dit au parlement.</li>
+      </ul>
+    </div>
+
+    <div class="cv-item">
+      <div><div class="cv-item-role">Ingénieur IA · Stage</div><div class="cv-item-co">Wevioo (Tunis) · NTT DATA Munich (en direct) · Hybride</div></div>
+      <div class="cv-item-date">Févr. 2024 – déc. 2024</div>
+      <ul>
+        <li>Intégré à l'<b>équipe NTT DATA de Munich</b>. Recherche RAG et choix du LLM sur <b>AWS SageMaker</b>.</li>
+        <li>Construction des pipelines cloud : <b>S3, EC2, EKS</b>, Docker, GitLab CI.</li>
+      </ul>
+    </div>
+
+    <div class="cv-item">
+      <div><div class="cv-item-role">Data Scientist · Stage</div><div class="cv-item-co">Silver Brain AI AG · Zurich, Suisse · À distance</div></div>
+      <div class="cv-item-date">Juin 2023 – oct. 2023</div>
+      <ul>
+        <li>Entraînement d'un pipeline RoBERTa sur <b>plus d'un million de documents juridiques allemands</b> : <b>+15 %</b> de précision en aval.</li>
+        <li>Automatisation du traitement : <b>40 % plus rapide</b> de bout en bout.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="cv-sec r">
+    <h2 class="cv-sec-title">Compétences</h2>
+    <div class="cv-skills">
+      <span class="cv-skill-k">Systèmes LLM</span>
+      <span class="cv-skill-v">Pipelines RAG, agents LLM, Spring AI, MCP (Model Context Protocol), LangChain, LlamaIndex, Groq, évaluation des prompts &amp; de la récupération</span>
+      <span class="cv-skill-k">TAL / ML</span>
+      <span class="cv-skill-v">Transformers (HuggingFace), fine-tuning RoBERTa, résumé BART, ML classique &amp; prévision, vision par ordinateur (CNN)</span>
+      <span class="cv-skill-k">Cloud / MLOps</span>
+      <span class="cv-skill-v">AWS (SageMaker, S3, EC2, EKS), Docker, Kubernetes, GitLab CI/CD</span>
+      <span class="cv-skill-k">Langages &amp; API</span>
+      <span class="cv-skill-v">Python, Java, FastAPI, R · Weaviate &amp; bases vectorielles</span>
+      <span class="cv-skill-k">Langues</span>
+      <span class="cv-skill-v">Arabe (langue maternelle), français, anglais — j'enseigne dans les trois</span>
+    </div>
+  </section>
+
+  <div class="cv-two">
+    <section class="cv-sec r">
+      <h2 class="cv-sec-title">Projets sélectionnés</h2>
+      <div class="cv-item"><div><div class="cv-item-role">Vidéosurveillance analytique en edge · commerce, Arabie saoudite</div><div class="cv-item-co">Jetson · DeepStream · TensorRT · sur site · pilote</div></div></div>
+      <div class="cv-item"><div><div class="cv-item-role">RAG en arabe pour des agriculteurs · Égypte</div><div class="cv-item-co">RAG dialectal · recherche hybride · en production</div></div></div>
+      <div class="cv-item"><div><div class="cv-item-role">DocMate · assistant de documentation IA</div><div class="cv-item-co">RAG · Weaviate · SageMaker · EKS · entreprise</div></div></div>
+      <div class="cv-item"><div><div class="cv-item-role">RAG et MCP avec Spring AI</div><div class="cv-item-co">Spring AI · MCP · Java · open source</div></div></div>
+    </section>
+
+    <section class="cv-sec r">
+      <h2 class="cv-sec-title">Formation &amp; certifications</h2>
+      <div class="cv-item"><div><div class="cv-item-role">Diplôme national d'ingénieur · Data Science</div><div class="cv-item-co">ESPRIT School of Engineering · début 2025</div></div></div>
+      <div class="cv-item"><div><div class="cv-item-role">Maths &amp; Physique · cycle préparatoire</div><div class="cv-item-co">Institut préparatoire aux études d'ingénieur de Tunis · 2021</div></div></div>
+      <div class="cv-item"><div><div class="cv-item-role">NVIDIA DLI · 4 certifications</div><div class="cv-item-co">Deep Learning · TAL à base de Transformers · Détection d'anomalies · Vision pour l'inspection industrielle</div></div></div>
+    </section>
+  </div>
+
+</div>
+
+</main>
+
+<!--#include footer-fr-->
+
+<!--#include scripts-->
+</body>
+</html>

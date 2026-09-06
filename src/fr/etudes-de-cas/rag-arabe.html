@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!--#include head-open-->
+<title>Étude de cas : RAG en arabe pour des agriculteurs · Abdelkerim Dassi</title>
+<meta name="description" content="Comment un assistant RAG qui répond à des agriculteurs en arabe égyptien est passé d'une recherche qui ne trouvait rien à la production : normalisation, réécriture dialectale, recherche hybride et boucle de retour experte.">
+<meta name="author" content="Abdelkerim Dassi">
+<link rel="canonical" href="https://abdelkerimdassi.com/fr/etudes-de-cas/rag-arabe">
+<!--#include hreflang-->
+<!--#include head-icons-->
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://abdelkerimdassi.com/fr/etudes-de-cas/rag-arabe">
+<meta property="og:title" content="Étude de cas : RAG en arabe pour des agriculteurs">
+<meta property="og:description" content="D'une recherche qui ne trouvait rien à la production : un pipeline RAG dialectal pour l'agriculture, construit de bout en bout.">
+<meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-arabic-rag.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Abdelkerim Dassi">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Étude de cas : RAG en arabe pour des agriculteurs">
+<meta name="twitter:description" content="D'une recherche qui ne trouvait rien à la production : un pipeline RAG dialectal pour l'agriculture.">
+<meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-arabic-rag.png">
+
+<!--#include head-close-fr-->
+<style>
+  .cs-wrap { max-width: 920px; margin: 0 auto; padding: 150px 24px 40px; }
+  .cs-eyebrow { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .cs-eyebrow::before { content: ""; width: 40px; height: 1px; background: var(--accent); }
+  .cs-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(44px, 7.5vw, 92px); line-height: .95; }
+  .cs-title em { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: .6em; color: var(--accent); }
+  .cs-lede { margin-top: 26px; font-size: 17px; line-height: 1.75; color: var(--t2); max-width: 62ch; }
+
+  .cs-facts { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 56px 0; }
+  .cs-fact { padding: 22px 18px 22px 0; }
+  .cs-fact + .cs-fact { border-left: 1px solid var(--line); padding-left: 22px; }
+  .cs-fact-k { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--t3); margin-bottom: 8px; }
+  .cs-fact-v { font-size: 14px; line-height: 1.5; color: var(--t1); }
+  @media (max-width: 720px) { .cs-facts { grid-template-columns: 1fr 1fr; } .cs-fact:nth-child(3) { border-left: none; padding-left: 0; } .cs-fact { border-top: 1px solid var(--line); } .cs-fact:nth-child(-n+2) { border-top: none; } }
+
+  .cs-sec { margin: 64px 0; }
+  .cs-h { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; margin-bottom: 22px; display: flex; align-items: baseline; gap: 18px; }
+  .cs-h .n { font-size: 15px; color: var(--accent); font-family: 'Archivo', sans-serif; letter-spacing: .15em; }
+  .cs-p { font-size: 15.5px; line-height: 1.85; color: var(--t2); max-width: 68ch; margin-bottom: 18px; }
+  .cs-p b { color: var(--paper); font-weight: 400; }
+  .cs-quote { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 19px; line-height: 1.7; color: var(--accent); border-left: 2px solid var(--accent); padding-left: 26px; margin: 34px 0; max-width: 56ch; }
+
+  /* pipeline diagram */
+  .cs-pipe { margin: 36px 0 8px; max-width: 620px; }
+  .cs-step { display: grid; grid-template-columns: 44px 1fr; gap: 0 20px; position: relative; padding-bottom: 30px; }
+  .cs-step::before { content: ""; position: absolute; left: 21px; top: 44px; bottom: 4px; width: 1px; background: var(--dim); }
+  .cs-step:last-child::before { display: none; }
+  .cs-step-n { width: 44px; height: 44px; border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--accent); background: var(--bg); }
+  .cs-step-t { font-size: 14.5px; padding-top: 3px; }
+  .cs-step-d { font-size: 13px; color: var(--t3); margin-top: 4px; line-height: 1.6; max-width: 52ch; }
+
+  .cs-outcomes { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 30px; }
+  .cs-out { background: var(--bg); padding: 26px; }
+  .cs-out-v { font-family: 'Bebas Neue', sans-serif; font-size: 38px; color: var(--accent); line-height: 1; }
+  .cs-out-k { font-size: 12.5px; color: var(--t3); margin-top: 10px; line-height: 1.55; }
+  @media (max-width: 600px) { .cs-outcomes { grid-template-columns: 1fr; } }
+
+  .cs-cta { border-top: 1px solid var(--line); margin-top: 72px; padding-top: 44px; display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; }
+  .cs-cta-txt { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 19px; color: var(--t2); }
+</style>
+</head>
+<body>
+
+<div id="reading-bar"></div>
+
+<!--#include nav-fr-->
+
+<main id="main">
+
+<div class="cs-wrap">
+
+  <header class="r">
+    <div class="cs-eyebrow">Étude de cas · IA en production</div>
+    <h1 class="cs-title">Un RAG qui répond aux agriculteurs<br><em>dans leur propre dialecte.</em></h1>
+    <p class="cs-lede">
+      Un assistant de conseil agricole pour l'Égypte. Les utilisateurs tapent en arabe égyptien depuis
+      leur téléphone ; la base, elle, est rédigée en arabe standard. Le premier jour, la recherche
+      ne remontait presque rien. Voici comment il est devenu quelque chose que j'assume de mettre
+      entre les mains d'agriculteurs.
+    </p>
+  </header>
+
+  <div class="cs-facts r">
+    <div class="cs-fact"><div class="cs-fact-k">Secteur</div><div class="cs-fact-v">Conseil agricole · Égypte</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Mon rôle</div><div class="cs-fact-v">Ingénieur IA · pipeline de bout en bout</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Stack</div><div class="cs-fact-v">RAG · pgvector · Postgres FTS · réécriture GPT-4o</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Statut</div><div class="cs-fact-v">En production</div></div>
+  </div>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">01</span>Le problème</h2>
+    <p class="cs-p">
+      En anglais, dans une démo, le RAG a tout du tour de magie : on verse des PDF, on interroge, le
+      modèle répond. Ici, il fallait répondre à des questions comme <b>« comment j'arrose ma
+      courgette en été »</b> (tapé <b>ازاى اروى الكوسة فى الصيف؟</b>) face à une documentation
+      rédigée en arabe formel. Le même mot arrive avec des formes d'alif différentes, avec ou sans
+      diacritiques, avec des marques RTL parasites venues d'un clavier de téléphone. Et le dialecte
+      se superpose à tout cela.
+    </p>
+    <p class="cs-p">
+      La plupart des modèles d'embedding, même multilingues, ne voient pas que la question en dialecte
+      et la documentation en arabe standard disent la même chose.
+      <b>Le premier jour, la recherche revenait presque vide.</b>
+    </p>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">02</span>La contrainte qui a tout façonné</h2>
+    <p class="cs-p">
+      En agriculture, une dose de pesticide de travers peut tuer une récolte, voire pire. Le système
+      n'avait pas le droit de deviner avec aplomb. Cette seule contrainte a dicté toute
+      l'architecture de confiance : chaque réponse est notée deux fois, et le moindre doute part
+      vers un expert humain plutôt que vers le modèle.
+    </p>
+    <blockquote class="cs-quote">« Le chemin “je ne sais pas, je vais chercher quelqu'un” n'est pas un pis-aller : c'est une fonctionnalité. »</blockquote>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">03</span>Le pipeline</h2>
+    <div class="cs-pipe">
+      <div class="cs-step">
+        <div class="cs-step-n">1</div>
+        <div><div class="cs-step-t">Normaliser la requête : jamais les documents</div>
+        <div class="cs-step-d">Retirer diacritiques, tatweel et marques RTL ; unifier les variantes d'alif. Le ta marbouta reste : il porte du sens en arabe technique. La base de connaissances est laissée intacte, pour que les mots exacts que cherchent les agriculteurs survivent.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">2</div>
+        <div><div class="cs-step-t">Réécrire le dialecte en arabe standard, noms figés</div>
+        <div class="cs-step-d">Un appel GPT-4o en few-shot convertit l'égyptien parlé en arabe standard, avec la consigne explicite de ne pas toucher aux noms de cultures, aux noms de pesticides, aux doses, aux dates ni aux unités. Les réécritures sont mises en cache ; en cas d'échec, le système repart de la requête d'origine et fusionne les deux jeux de résultats.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">3</div>
+        <div><div class="cs-step-t">Récupération hybride avec le tokenizer arabe</div>
+        <div class="cs-step-d">pgvector pour la sémantique, recherche plein texte Postgres pour les mots-clés ; fusion par nœud sur le score maximum. Basculer le FTS Postgres sur la configuration arabe a été un changement d'une ligne, plus utile au rappel que n'importe quelle retouche de prompt.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">4</div>
+        <div><div class="cs-step-t">Seuils de similarité recalibrés</div>
+        <div class="cs-step-d">Les seuils cosinus de 0,7 calibrés sur l'anglais rejetaient presque toutes les bonnes correspondances arabes (valeurs réelles : 0,20–0,45). Un benchmark de 20 requêtes en arabe, français et anglais a fixé un plancher et un plafond empiriques, remappés sur une confiance de 0 à 1.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">5</div>
+        <div><div class="cs-step-t">Confiance à deux signaux, trois issues</div>
+        <div class="cs-step-d">Le LLM déclare sa propre confiance ; la similarité de récupération sert de filet. Élevée → on répond. Moyenne → on répond avec un avertissement. Faible → on remonte à un agronome humain.</div></div>
+      </div>
+      <div class="cs-step">
+        <div class="cs-step-n">6</div>
+        <div><div class="cs-step-t">Chaque réponse d'expert nourrit le cerveau</div>
+        <div class="cs-step-d">Les escalades résolues sont réinjectées dans la base de connaissances sous forme de nœuds uniques, étiquetés et conservés dans la langue et le registre de l'utilisateur. Le système enrichit sa connaissance du dialecte, une escalade après l'autre.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">04</span>Le résultat</h2>
+    <p class="cs-p">
+      La recherche est passée de <b>presque rien le premier jour</b> à un système en production devant
+      de vrais agriculteurs, sans un seul modèle d'embedding spécialement arabe. Les gains viennent
+      d'un enchaînement d'étapes simples et honnêtes, pas d'un modèle miracle. Et grâce à la boucle
+      de retour, l'essentiel de ce que le retriever sait aujourd'hui du dialecte n'y était pas au
+      lancement : le système l'a appris tout seul.
+    </p>
+    <div class="cs-outcomes">
+      <div class="cs-out"><div class="cs-out-v">~0 → utilisable</div><div class="cs-out-k">Rappel de récupération au premier jour vs. en production, mesuré sur un benchmark multilingue de 20 requêtes</div></div>
+      <div class="cs-out"><div class="cs-out-v">3 issues</div><div class="cs-out-k">Réponse / réponse avec avertissement / expert humain, aucune supposition assurée sur un conseil critique pour la culture</div></div>
+      <div class="cs-out"><div class="cs-out-v">6 correctifs</div><div class="cs-out-k">Normalisation, réécriture dialectale, recherche hybride, recalibrage, double confiance, boucle de retour</div></div>
+      <div class="cs-out"><div class="cs-out-v">Auto-enrichi</div><div class="cs-out-k">Chaque escalade experte est réinjectée. La base de connaissances s'améliore à l'usage</div></div>
+    </div>
+  </section>
+
+  <section class="cs-sec r">
+    <p class="cs-p">
+      Envie du détail technique — les règles de normalisation exactes, la fabrication du prompt de
+      réécriture, les valeurs de seuils ? Tout est dans l'article long :
+      <a href="/fr/blog/rag-arabe" style="color:var(--accent)">L'arabe a cassé mon RAG. Voici ce qui l'a sauvé.</a>
+    </p>
+  </section>
+
+  <div class="cs-cta r">
+    <span class="cs-cta-txt">Un problème RAG bien réel, en vrac, et pas en anglais ?</span>
+    <a class="btn btn-accent" href="/fr/contact">Parlons-en <span>↗</span></a>
+  </div>
+
+</div>
+
+</main>
+
+<!--#include footer-fr-->
+
+<!--#include scripts-->
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!--#include head-open-->
+<title>J'ai utilisé pip pendant des années. Poetry en équipe. Puis uv est arrivé. · Abdelkerim Dassi</title>
+<meta name="description" content="Une comparaison honnête de pip, Poetry et uv, par un ingénieur IA en activité. Écrit simplement, en cinq minutes.">
+<meta name="author" content="Abdelkerim Dassi">
+<link rel="canonical" href="https://abdelkerimdassi.com/fr/blog/pip-poetry-uv">
+<!--#include hreflang-->
+<!--#include head-icons-->
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://abdelkerimdassi.com/fr/blog/pip-poetry-uv">
+<meta property="og:title" content="J'ai utilisé pip pendant des années. Poetry en équipe. Puis uv est arrivé.">
+<meta property="og:description" content="Une comparaison honnête de pip, Poetry et uv, par un ingénieur IA en activité.">
+<meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-pip-poetry-uv.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Abdelkerim Dassi">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="article:published_time" content="2026-04-15T09:00:00Z">
+<meta property="article:author" content="Abdelkerim Dassi">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="Outillage">
+<meta property="article:tag" content="Stack IA">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="J'ai utilisé pip pendant des années. Poetry en équipe. Puis uv est arrivé.">
+<meta name="twitter:description" content="Une comparaison honnête de pip, Poetry et uv, par un ingénieur IA en activité.">
+<meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-pip-poetry-uv.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "J'ai utilisé pip pendant des années. Poetry en équipe. Puis uv est arrivé.",
+  "description": "Une comparaison honnête de pip, Poetry et uv, par un ingénieur IA en activité. Écrit simplement, en cinq minutes.",
+  "image": "https://abdelkerimdassi.com/assets/og/og-pip-poetry-uv.png",
+  "datePublished": "2026-04-15T09:00:00Z",
+  "dateModified": "2026-04-15T09:00:00Z",
+  "keywords": "Python, outillage, uv, Poetry, pip",
+  "inLanguage": "fr",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://abdelkerimdassi.com/fr/blog/pip-poetry-uv"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://abdelkerimdassi.com/#person",
+    "name": "Abdelkerim Dassi",
+    "url": "https://abdelkerimdassi.com"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Abdelkerim Dassi",
+    "url": "https://abdelkerimdassi.com"
+  }
+}
+</script>
+
+<!--#include head-close-fr-->
+<link rel="stylesheet" href="/assets/blog.css">
+<link rel="stylesheet" href="/assets/comments.css">
+</head>
+<body>
+<div id="reading-bar"></div>
+
+<!--#include nav-fr-->
+
+<main id="main">
+
+<!-- ── BLOG HERO ── -->
+<section class="blog-hero">
+  <div class="blog-meta"><time datetime="2026-04-15">Avril 2026</time> · 5 min de lecture</div>
+  <h1 class="blog-title">J'ai utilisé pip<br>pendant des années.<br>Poetry en équipe.<br>Puis uv est arrivé.</h1>
+  <p class="blog-subtitle">
+    Le choix d'outil qu'on ne montre jamais, derrière chaque projet Python. Et l'<em>histoire honnête</em> de la façon dont le mien a changé.
+  </p>
+  <button class="listen-btn" id="listen-btn" aria-label="Écouter cet article">
+    <span class="l-icon" id="l-icon">▶</span>
+    <span class="l-text" id="l-text">Écouter cet article</span>
+  </button>
+  <div class="blog-tags">
+    <span class="blog-tag">Python</span>
+    <span class="blog-tag">Outillage</span>
+    <span class="blog-tag">Stack IA</span>
+  </div>
+  <div class="blog-border"></div>
+</section>
+
+<!-- ── ARTICLE ── -->
+<article class="article">
+
+  <figure class="blog-photo">
+    <picture>
+      <source type="image/webp" srcset="/assets/blog/pip_poetry_uv-640.webp 640w, /assets/blog/pip_poetry_uv-1024.webp 1024w" sizes="(max-width: 816px) calc(100vw - 96px), 624px">
+      <img src="/assets/blog/pip_poetry_uv.jpg" alt="Illustration de pip, poetry et uv sous forme de trois terminaux lumineux reliés à l'écosystème Python" width="1279" height="720" fetchpriority="high" decoding="async">
+    </picture>
+    <figcaption>Trois terminaux, un seul métier : installer vos paquets</figcaption>
+  </figure>
+
+  <p>
+    Si vous écrivez du Python, vous installez des paquets. C'est tout. Ça devrait être d'un ennui total.
+  </p>
+  <p>
+    Sauf que l'outil qui installe ces paquets façonne en douce toute votre journée : votre vitesse, la facilité à passer votre travail à quelqu'un d'autre, et le nombre de fois où ça casse sur la machine d'un collègue. J'en ai traversé trois. <strong>Pip</strong> pendant des années. Puis <strong>poetry</strong>, quand je me suis mis à construire en équipe. Et depuis peu <strong>uv</strong>, pour démarrer mes projets IA : un pipeline RAG avec Supabase, un service de synthèse vocale, une démo de reconnaissance d'images. Voici ce que j'ai vraiment ressenti — pas ce que raconte la doc.
+  </p>
+
+  <hr>
+
+  <figure class="blog-figure">
+    <svg viewBox="0 0 720 196" role="img" aria-label="Comparaison de pip, poetry et uv : pip, depuis 2008, est l'installeur que tout le monde connaît, idéal pour les scripts et les notebooks ; poetry, depuis 2018, apporte le fichier de verrouillage pour les équipes mais résout lentement ; uv, depuis 2024, est rapide grâce à Rust et le choix pour les nouveaux projets. Une barre par outil montre le temps d'installation relatif, celle d'uv étant une fraction des autres.">
+      <defs>
+        <marker id="fig-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0 0L8 4L0 8z" class="fig-arrowhead"/>
+        </marker>
+      </defs>
+      <rect class="fig-box" x="20" y="10" width="200" height="168"/>
+      <text class="fig-display" x="120" y="48" text-anchor="middle">PIP</text>
+      <text class="fig-t3" x="120" y="66" text-anchor="middle">2008 · livré avec python</text>
+      <text class="fig-t2" x="120" y="90" text-anchor="middle">l'installeur que tous connaissent</text>
+      <text class="fig-t3" x="40" y="118">INSTALL · LA RÉFÉRENCE</text>
+      <rect class="fig-bar" x="40" y="126" width="93" height="6"/>
+      <text class="fig-ta" x="120" y="160" text-anchor="middle">SCRIPTS &amp; NOTEBOOKS</text>
+      <rect class="fig-box" x="260" y="10" width="200" height="168"/>
+      <text class="fig-display" x="360" y="48" text-anchor="middle">POETRY</text>
+      <text class="fig-t3" x="360" y="66" text-anchor="middle">2018 · gestionnaire de projet</text>
+      <text class="fig-t2" x="360" y="90" text-anchor="middle">le lockfile pour les équipes</text>
+      <text class="fig-t3" x="280" y="118">INSTALL · ~1 MIN DE RÉSOLUTION</text>
+      <rect class="fig-bar" x="280" y="126" width="160" height="6"/>
+      <text class="fig-ta" x="360" y="160" text-anchor="middle">SERVICES EN ÉQUIPE</text>
+      <rect class="fig-box-accent" x="500" y="10" width="200" height="168"/>
+      <text class="fig-display" x="600" y="48" text-anchor="middle">UV</text>
+      <text class="fig-t3" x="600" y="66" text-anchor="middle">2024 · la surprise</text>
+      <text class="fig-t2" x="600" y="90" text-anchor="middle">rapide en rust, tout-en-un</text>
+      <text class="fig-t3" x="520" y="118">INSTALL · QUELQUES SECONDES</text>
+      <rect class="fig-bar-accent" x="520" y="126" width="10" height="6"/>
+      <text class="fig-ta" x="600" y="160" text-anchor="middle">NOUVEAUX PROJETS</text>
+    </svg>
+    <figcaption>Trois outils, un seul métier, et les temps d'installation qui ont changé mes réflexes</figcaption>
+  </figure>
+
+  <h2>Pip : celui que vous connaissez déjà</h2>
+
+  <p>
+    Pip vient avec Python. Tous les tutoriels s'en servent, toutes les images Docker l'embarquent. Vous tapez <code>pip install requests</code> et vous êtes parti. Pour apprendre, pour un script, pour un outil d'un seul fichier, c'est encore la bonne réponse.
+  </p>
+  <p>
+    Le problème arrive plus tard. Pip ne retient pas vraiment les versions <em>exactes</em> avec lesquelles vous avez travaillé. Vous écrivez un <code>requirements.txt</code>, vous figez deux ou trois paquets, vous vous croyez à l'abri. Six mois plus tard, une sous-dépendance bouge sans prévenir, et votre code ne se comporte plus pareil. Aucun moyen propre, alors, de revenir exactement à l'état d'avant.
+  </p>
+  <p>
+    Au moins, pip est honnête sur ce qu'il est : un installeur de paquets. Ni un gestionnaire de projet, ni un verrou de versions. Pour ça, il faut mettre quelque chose par-dessus.
+  </p>
+
+  <pre><code>python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt</code></pre>
+
+  <p>
+    Ma règle : pip convient aux petits scripts et aux notebooks. Dès qu'un projet a un nom et un avenir, j'en veux davantage.
+  </p>
+
+  <h2>Poetry : quand d'autres personnes arrivent</h2>
+
+  <p>
+    Poetry a été ma réponse pendant longtemps. La bascule s'est faite le jour où quelqu'un d'autre a cloné mon dépôt sans arriver à le lancer. C'est là qu'on comprend que <strong>« ça marche sur ma machine »</strong> est un passif, pas un argument.
+  </p>
+  <p>
+    Poetry règle ça. Il tient un vrai lockfile : la version exacte de chaque paquet, figée. Un nouveau collègue lance <code>poetry install</code> et se retrouve avec votre environnement, au paquet près. Fini le « mais tu avais quelle version de numpy ? ».
+  </p>
+  <p>
+    Il gère aussi le reste, sans cérémonie : il sépare les outils de dév — tests, linters — des paquets de production, pour que votre image livrée ne traîne pas de bagages inutiles. Il publie sur PyPI si vous sortez une bibliothèque. Et il parle aux serveurs de paquets privés sans faire d'histoires.
+  </p>
+
+  <pre><code>[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.110"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0"
+ruff  = "^0.3"</code></pre>
+
+  <p>
+    Le coût est réel. Poetry est plus lent que pip, surtout au moment de résoudre les dépendances. Il a sa propre façon de faire, comptez un ou deux jours pour l'apprivoiser. Et certaines bibliothèques IA, qui bougent vite, publient des wheels qui le déroutent.
+  </p>
+  <p>
+    Ma règle : dès qu'un projet compte plus d'une personne, poetry justifie sa place.
+  </p>
+
+  <h2>Uv : la surprise</h2>
+
+  <p>
+    Uv, lui, m'a pris de court. Je ne cherchais pas un nouvel outil : pip et poetry me suffisaient largement. Puis je m'en suis servi pour générer des squelettes de projets IA. RAG avec Supabase. Synthèse vocale. Reconnaissance d'images. Et quelque chose a cloché.
+  </p>
+  <p>
+    C'était rapide. Pas « un peu plus rapide ». <em>Beaucoup</em> plus rapide. Des installations d'une minute sous poetry se bouclaient en quelques secondes. La première fois, j'ai cru qu'il avait sauté une étape.
+  </p>
+  <p>
+    La raison, en clair : uv est écrit en Rust, pas en Python. Il ne traîne pas pendant qu'il réfléchit. Il installe vos paquets, gère votre version de Python — adieu pyenv à côté — et vous rend un fichier de projet très proche de celui de poetry. Le tout dans un seul binaire.
+  </p>
+
+  <blockquote>
+    <p>Poetry, c'est installer un atelier. Uv, c'est un couteau bien aiguisé.</p>
+  </blockquote>
+
+  <p>
+    Deux façons de s'en servir. Si vous tenez à pip, tapez <code>uv pip install requests</code> : même comportement, en beaucoup plus rapide. Si vous voulez le mode projet complet, <code>uv init</code> puis <code>uv add requests</code> vous donnent un lockfile et un environnement géré, sans un octet de configuration en plus.
+  </p>
+  <p>
+    Les réserves, honnêtement : uv est plus jeune que les deux autres. Une poignée de vieux paquets le font encore trébucher. Et l'écosystème autour — tutoriels, réponses Stack Overflow, recettes de CI — court toujours derrière celui de poetry.
+  </p>
+  <p>
+    Ma règle : si je démarre quelque chose cette semaine, je prends uv en premier.
+  </p>
+
+  <h2>Alors lequel, et quand ?</h2>
+
+  <p>
+    Voici comment j'y pense aujourd'hui :
+  </p>
+  <ul>
+    <li><strong>Un script ponctuel ou un notebook ?</strong> Pip, et n'y pensez pas plus longtemps.</li>
+    <li><strong>Un nouveau prototype IA ?</strong> Uv. Les secondes gagnées s'accumulent quand vous itérez cent fois par jour.</li>
+    <li><strong>Livrer un service en équipe ?</strong> Poetry. Le lockfile et les groupes de dépendances sont remboursés dès le premier collègue qui clone le dépôt.</li>
+    <li><strong>Publier une bibliothèque sur PyPI ?</strong> Poetry aujourd'hui. Uv y arrive, vite.</li>
+  </ul>
+
+  <div class="callout">
+    <div class="callout-label">Ce que personne ne dit</div>
+    <p>Le meilleur outil est celui que votre équipe utilisera vraiment comme vous. Un lockfile commité dans le dépôt vaut mieux que le gestionnaire de paquets le plus malin resté dans votre tête. Choisissez-en un, commitez-le, et passez au vrai travail.</p>
+  </div>
+
+  <hr>
+
+  <p>
+    L'outillage n'a rien de glamour. Personne n'a jamais été recruté pour avoir choisi uv plutôt que poetry. Mais les trente secondes gagnées à chaque installation, et les trois heures que vous ne passez pas à déboguer un environnement cassé, finissent par compter. Prenez celui qui va au projet que vous avez devant vous, pas celui qui gagne le débat le plus bruyant en ligne.
+  </p>
+  <p>
+    J'utilise toujours les trois. Simplement plus pour les mêmes choses qu'avant.
+  </p>
+
+</article>
+
+<section class="comments-section" data-comments="pip-poetry-uv">
+  <div class="comments-head">
+    <span class="comments-label">/ Un avis ?</span>
+    <h3 class="comments-title">Commentaires</h3>
+    <p class="comments-sub">Pas de connexion, pas de pistage. Écrivez juste votre nom et votre avis. Restez courtois.</p>
+  </div>
+  <div class="comments-list" aria-live="polite" aria-busy="true"><div class="comments-loading">Chargement…</div></div>
+  <form class="comments-form" novalidate>
+    <label class="vh" for="comment-name">Votre nom</label>
+    <input type="text" id="comment-name" name="name" class="comments-input" placeholder="Votre nom" required maxlength="40" autocomplete="name">
+    <label class="vh" for="comment-body">Votre commentaire</label>
+    <textarea id="comment-body" name="body" class="comments-textarea" placeholder="Qu'en pensez-vous ?" required minlength="5" maxlength="2000"></textarea>
+    <input type="text" name="hp" class="comments-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="comments-form-actions">
+      <span class="comments-status" role="status" aria-live="polite"></span>
+      <button type="submit" class="comments-submit">Publier</button>
+    </div>
+  </form>
+</section>
+<script src="/assets/comments.js" defer></script>
+
+<div class="blog-nav">
+  <a class="blog-nav-prev" href="/fr/blog/rag-en-production">
+    <span class="blog-nav-dir">← Précédent</span>
+    <span class="blog-nav-title">Le RAG en production : ce que personne ne vous dit</span>
+  </a>
+  <a class="blog-nav-next" href="/fr/blog/rag-arabe">
+    <span class="blog-nav-dir">Suivant →</span>
+    <span class="blog-nav-title">L'arabe a cassé mon RAG. Voici ce qui l'a sauvé.</span>
+  </a>
+</div>
+
+<div class="blog-footer">
+  <div class="blog-footer-cta">D'autres <em>articles</em> bientôt.</div>
+  <div class="blog-share">
+    <a class="blog-share-btn" href="https://twitter.com/intent/tweet?text=J%27ai+utilis%C3%A9+pip+pendant+des+ann%C3%A9es.+Poetry+en+%C3%A9quipe.+Puis+uv+est+arriv%C3%A9.&url=https%3A%2F%2Fabdelkerimdassi.com%2Ffr%2Fblog%2Fpip-poetry-uv" target="_blank" rel="noopener">Partager sur X ↗</a>
+    <a class="blog-share-btn" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fabdelkerimdassi.com%2Ffr%2Fblog%2Fpip-poetry-uv&title=J%27ai+utilis%C3%A9+pip+pendant+des+ann%C3%A9es.+Poetry+en+%C3%A9quipe.+Puis+uv+est+arriv%C3%A9." target="_blank" rel="noopener">LinkedIn ↗</a>
+    <button class="blog-share-btn share-copy">Copier le lien</button>
+  </div>
+  <div class="blog-footer-links">
+    <a href="/fr/articles">← Articles</a>
+    <a href="https://github.com/Abdelkerim-Dassi" target="_blank" rel="noopener">GitHub ↗</a>
+    <a href="mailto:abdelkerimdassi@gmail.com">E-mail ↗</a>
+  </div>
+</div>
+
+</main>
+
+<!--#include footer-fr-->
+
+<!--#include scripts-->
+</body>
+</html>

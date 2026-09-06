@@ -3,7 +3,12 @@ import { chromium } from 'playwright';
 const BASE = process.env.QA_BASE || 'https://abdelkerimdassi.com';
 const PAGES = ['/', '/about', '/work', '/stack', '/writing', '/contact', '/resume',
   '/blog/rag-in-production', '/blog/pip-poetry-uv', '/blog/arabic-rag',
-  '/blog/jetson-orin-nano', '/case-studies/arabic-rag', '/case-studies/edge-cctv'];
+  '/blog/jetson-orin-nano', '/case-studies/arabic-rag', '/case-studies/edge-cctv',
+  '/fr', '/fr/a-propos', '/fr/projets', '/fr/stack', '/fr/articles', '/fr/contact',
+  '/fr/cv',
+  '/fr/blog/rag-en-production', '/fr/blog/pip-poetry-uv', '/fr/blog/rag-arabe',
+  '/fr/blog/jetson-orin-nano', '/fr/etudes-de-cas/rag-arabe',
+  '/fr/etudes-de-cas/videosurveillance-edge'];
 
 const results = [];
 const pass = (n) => results.push(['PASS', n]);
@@ -93,7 +98,7 @@ for (const path of PAGES) {
   t2 === t0 || (t0 === null && t2 === 'dark') ? pass('theme toggle switches back') : fail('theme toggle back', `now ${t2}`);
 
   // nav links hrefs
-  for (const [text, href] of [['Home', '/'], ['Work', '/work'], ['Stack', '/stack'], ['Writing', '/writing'], ['Contact', '/contact']]) {
+  for (const [text, href] of [['Home', '/'], ['Work', '/work'], ['Stack', '/stack'], ['Writing', '/writing'], ['Contact', '/contact'], ['FR', '/fr']]) {
     const h = await page.getAttribute(`nav .n-links a:text-is("${text}")`, 'href');
     h === href ? pass(`nav link ${text} → ${href}`) : fail(`nav link ${text}`, `href=${h}`);
   }
@@ -311,7 +316,7 @@ for (const path of PAGES) {
 }
 
 // ── structured data on posts ──
-for (const path of PAGES.filter(p => p.startsWith('/blog/'))) {
+for (const path of PAGES.filter(p => /^\/(?:fr\/)?blog\//.test(p))) {
   const page = await ctx.newPage();
   await page.goto(BASE + path, { waitUntil: 'domcontentloaded', timeout: 45000 });
   const d = await page.evaluate(() => {

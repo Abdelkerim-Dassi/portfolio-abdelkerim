@@ -169,6 +169,22 @@ nav {
 .n-links a:hover { color:var(--paper); }
 .n-links a.active { color:var(--accent); }
 
+/* Language switch: reads as a control, not a seventh destination. */
+.n-lang {
+  border:1px solid rgba(240,236,228,.18);
+  border-radius:999px;
+  padding:5px 9px;
+  line-height:1;
+  flex-shrink:0;
+  transition:color .3s, border-color .3s;
+}
+.n-lang:hover { border-color:rgba(240,236,228,.58); }
+
+/* Seven links + two controls stop fitting before the burger takes over at 860. */
+@media (max-width:1080px) and (min-width:861px) {
+  .n-links { gap:24px; }
+}
+
 /* ─────────────────────────────────────
    PAGE HEAD (subpage hero)
 ───────────────────────────────────── */
@@ -765,7 +781,7 @@ footer {
   display:flex; align-items:center; justify-content:space-between;
 }
 .ft-l { font-size:11px; letter-spacing:.08em; color:rgba(240,236,228,.55); }
-.ft-r { display:flex; gap:32px; }
+.ft-r { display:flex; gap:32px; flex-wrap:wrap; }
 .ft-r a {
   font-size:11px; letter-spacing:.1em;
   text-transform:uppercase; color:rgba(240,236,228,.55);
@@ -1425,6 +1441,8 @@ footer {
     width: 100%;
     color: rgba(240,236,228,.82);
   }
+  /* In the drawer the pill would float oddly — make it another row. */
+  .n-links .n-lang { border:none; border-bottom:1px solid var(--line); border-radius:0; padding:18px 0; }
   .n-links .theme-toggle { margin-top: 28px; align-self: flex-start; }
   body.nav-open .n-links {
     transform: translateX(0);
@@ -1495,6 +1513,8 @@ footer {
 [data-theme="light"] .n-logo:hover { color:var(--paper); }
 [data-theme="light"] .n-links a { color:rgba(15,29,61,.68); }
 [data-theme="light"] .n-links a:hover { color:var(--paper); }
+[data-theme="light"] .n-lang { border-color:rgba(176,125,53,.3); }
+[data-theme="light"] .n-lang:hover { border-color:rgba(176,125,53,.55); color:var(--accent); }
 @media (max-width:860px) {
   [data-theme="light"] .n-links a { color: rgba(15,29,61,.75); }
 }

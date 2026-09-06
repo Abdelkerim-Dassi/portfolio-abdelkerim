@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!--#include head-open-->
+<title>Étude de cas : vidéosurveillance analytique en edge · Abdelkerim Dassi</title>
+<meta name="description" content="Vision par ordinateur en edge pour une chaîne de magasins en Arabie saoudite : la vidéosurveillance existante transformée en données d'exploitation en direct, traitées sur site pour qu'aucune vidéo brute ne quitte le magasin. Ce que j'ai piloté, et la contrainte qui a tout façonné.">
+<meta name="author" content="Abdelkerim Dassi">
+<link rel="canonical" href="https://abdelkerimdassi.com/fr/etudes-de-cas/videosurveillance-edge">
+<!--#include hreflang-->
+<!--#include head-icons-->
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://abdelkerimdassi.com/fr/etudes-de-cas/videosurveillance-edge">
+<meta property="og:title" content="Étude de cas : vidéosurveillance analytique en edge">
+<meta property="og:description" content="Les caméras déjà en place transformées en données d'exploitation en direct, traitées sur site sur NVIDIA Jetson. Aucune vidéo brute ne quitte le magasin.">
+<meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Abdelkerim Dassi">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Étude de cas : vidéosurveillance analytique en edge">
+<meta name="twitter:description" content="Des caméras de magasin transformées en données d'exploitation, sur site sur NVIDIA Jetson. Aucune vidéo brute ne sort.">
+<meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
+
+<!--#include head-close-fr-->
+<style>
+  .cs-wrap { max-width: 920px; margin: 0 auto; padding: 150px 24px 40px; }
+  .cs-eyebrow { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .cs-eyebrow::before { content: ""; width: 40px; height: 1px; background: var(--accent); }
+  .cs-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(44px, 7.5vw, 92px); line-height: .95; }
+  .cs-title em { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: .6em; color: var(--accent); }
+  .cs-lede { margin-top: 26px; font-size: 17px; line-height: 1.75; color: var(--t2); max-width: 62ch; }
+
+  .cs-facts { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 56px 0; }
+  .cs-fact { padding: 22px 18px 22px 0; }
+  .cs-fact + .cs-fact { border-left: 1px solid var(--line); padding-left: 22px; }
+  .cs-fact-k { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--t3); margin-bottom: 8px; }
+  .cs-fact-v { font-size: 14px; line-height: 1.5; color: var(--t1); }
+  @media (max-width: 720px) { .cs-facts { grid-template-columns: 1fr 1fr; } .cs-fact:nth-child(3) { border-left: none; padding-left: 0; } .cs-fact { border-top: 1px solid var(--line); } .cs-fact:nth-child(-n+2) { border-top: none; } }
+
+  .cs-sec { margin: 64px 0; }
+  .cs-h { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; margin-bottom: 22px; display: flex; align-items: baseline; gap: 18px; }
+  .cs-h .n { font-size: 15px; color: var(--accent); font-family: 'Archivo', sans-serif; letter-spacing: .15em; }
+  .cs-p { font-size: 15.5px; line-height: 1.85; color: var(--t2); max-width: 68ch; margin-bottom: 18px; }
+  .cs-p b { color: var(--paper); font-weight: 400; }
+  .cs-quote { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 19px; line-height: 1.7; color: var(--accent); border-left: 2px solid var(--accent); padding-left: 26px; margin: 34px 0; max-width: 56ch; }
+
+  /* pipeline diagram */
+  .cs-pipe { margin: 36px 0 8px; max-width: 620px; }
+  .cs-step { display: grid; grid-template-columns: 44px 1fr; gap: 0 20px; position: relative; padding-bottom: 30px; }
+  .cs-step::before { content: ""; position: absolute; left: 21px; top: 44px; bottom: 4px; width: 1px; background: var(--dim); }
+  .cs-step:last-child::before { display: none; }
+  .cs-step-n { width: 44px; height: 44px; border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--accent); background: var(--bg); }
+  .cs-step-t { font-size: 14.5px; padding-top: 3px; }
+  .cs-step-d { font-size: 13px; color: var(--t3); margin-top: 4px; line-height: 1.6; max-width: 52ch; }
+
+  .cs-outcomes { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 30px; }
+  .cs-out { background: var(--bg); padding: 26px; }
+  .cs-out-v { font-family: 'Bebas Neue', sans-serif; font-size: 38px; color: var(--accent); line-height: 1; }
+  .cs-out-k { font-size: 12.5px; color: var(--t3); margin-top: 10px; line-height: 1.55; }
+  @media (max-width: 600px) { .cs-outcomes { grid-template-columns: 1fr; } }
+
+  .cs-cta { border-top: 1px solid var(--line); margin-top: 72px; padding-top: 44px; display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; }
+  .cs-cta-txt { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 19px; color: var(--t2); }
+</style>
+</head>
+<body>
+
+<div id="reading-bar"></div>
+
+<!--#include nav-fr-->
+
+<main id="main">
+
+<div class="cs-wrap">
+
+  <header class="r">
+    <div class="cs-eyebrow">Étude de cas · Vision par ordinateur en edge</div>
+    <h1 class="cs-title">Des caméras qui comptent,<br><em>une vidéo qui ne sort jamais.</em></h1>
+    <p class="cs-lede">
+      Une chaîne de magasins en Arabie saoudite avait déjà des caméras dans chaque point de vente, sans
+      qu'aucune donnée d'exploitation n'en sorte jamais. J'ai piloté la partie IA et edge : ces
+      caméras produisent désormais de la donnée d'exploitation en direct, calculée sur un boîtier
+      posé dans le magasin. Aucune image brute ne franchit la porte.
+    </p>
+  </header>
+
+  <div class="cs-facts r">
+    <div class="cs-fact"><div class="cs-fact-k">Secteur</div><div class="cs-fact-v">Exploitation de points de vente · Arabie saoudite</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Mon rôle</div><div class="cs-fact-v">Responsable IA · pipeline edge</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Stack</div><div class="cs-fact-v">NVIDIA Jetson · DeepStream · TensorRT</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Statut</div><div class="cs-fact-v">Pilote</div></div>
+  </div>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">01</span>La contrainte qui a tout façonné</h2>
+    <p class="cs-p">
+      La PDPL saoudienne traite la vidéo de personnes identifiables comme une donnée personnelle, et
+      <b>flouter les visages ne vaut pas anonymisation</b> : un flou est une transformation, pas une
+      garantie, et l'original reste ce que vous avez transmis. Les images brutes ne pouvaient donc
+      aller nulle part. Ni vers un GPU dans le cloud, ni vers un point d'entrée régional, ni dans un
+      bucket pour plus tard.
+    </p>
+    <p class="cs-p">
+      Ce seul fait renverse la construction habituelle. Plutôt que d'amener la vidéo au calcul, on fait
+      entrer le calcul dans le magasin : la seule chose autorisée à sortir, c'est la conclusion.
+    </p>
+    <blockquote class="cs-quote">« Flouter un visage n'est pas de l'anonymisation. Une fois ce point acquis, la vidéo ne peut plus quitter le bâtiment, et toutes les autres décisions en découlent. »</blockquote>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">02</span>Ce que j'ai piloté</h2>
+    <p class="cs-p">
+      J'ai porté la partie IA et edge de bout en bout : choisir ce qui tourne sur l'appareil, le
+      faire tourner dans le budget thermique et de débit d'un petit boîtier, et décider quels
+      signaux étaient assez fiables pour être mis devant une équipe d'exploitation.
+    </p>
+    <p class="cs-p">
+      Deux décisions que je retiens. D'abord, <b>la licence du modèle</b> : j'ai basculé le
+      détecteur sur un modèle sous licence permissive, parce que plusieurs choix évidents portent des
+      clauses copyleft qui vous suivent jusque dans un produit commercial, et qu'un problème de
+      licence découvert après déploiement ne se corrige pas d'un patch. Ensuite, <b>un bug de mesure
+      qui bloquait discrètement trois des fonctions analytiques</b> : la logique de comptage
+      avait l'air terminée et se trompait d'une façon qui ne se voit que sur de vraies images. Pour le
+      débusquer, il a fallu lire le comportement plutôt que le code ; la correction a débloqué les
+      trois d'un coup.
+    </p>
+    <p class="cs-p">
+      Volontairement peu disert sur l'architecture. C'est un produit commercial en activité : la
+      conception reste chez l'entreprise.
+    </p>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">03</span>Où ça en est</h2>
+    <p class="cs-p">
+      <b>Phase pilote</b>, sur le matériel du client. Aucun chiffre de précision ni de débit sur cette
+      page, et c'est volontaire : rien n'a encore été mesuré, et un nombre inventé pour un portfolio
+      vaut moins que l'aveu qu'il n'existe pas.
+    </p>
+    <div class="cs-outcomes">
+      <div class="cs-out"><div class="cs-out-v">0 image</div><div class="cs-out-k">De vidéo brute quittant le magasin. Seules les conclusions sortent, vers un cloud isolé par client</div></div>
+      <div class="cs-out"><div class="cs-out-v">Caméras existantes</div><div class="cs-out-k">Aucune nouvelle caméra installée. Le matériel que la chaîne possède déjà devient le réseau de capteurs</div></div>
+    </div>
+  </section>
+
+  <section class="cs-sec r">
+    <p class="cs-p">
+      Sur ce qu'un Jetson sait faire, et ne sait pas faire, une fois DeepStream et TensorRT dans l'équation :
+      <a href="/fr/blog/jetson-orin-nano" style="color:var(--accent)">Ce qu'un boîtier à 250 $ sait vraiment faire</a>.
+    </p>
+  </section>
+
+  <div class="cs-cta r">
+    <span class="cs-cta-txt">Des caméras que vous n'avez pas le droit d'envoyer dans le cloud ?</span>
+    <a class="btn btn-accent" href="/fr/contact">Parlons-en <span>↗</span></a>
+  </div>
+
+</div>
+
+</main>
+
+<!--#include footer-fr-->
+
+<!--#include scripts-->
+</body>
+</html>
