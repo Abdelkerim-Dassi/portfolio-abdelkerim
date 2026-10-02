@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
 <!--#include head-open-->
-<title>Étude de cas : vidéosurveillance analytique en edge · Abdelkerim Dassi</title>
-<meta name="description" content="Vision par ordinateur en edge pour une chaîne de magasins en Arabie saoudite : la vidéosurveillance existante transformée en données d'exploitation en direct, traitées sur site pour qu'aucune vidéo brute ne quitte le magasin. Ce que j'ai piloté, et la contrainte qui a tout façonné.">
+<title>Étude de cas : Absar, vision edge pour une chaîne de cafés à Riyad · Abdelkerim Dassi</title>
+<meta name="description" content="Absar : 11 contrôles SOP sur l'appareil, sur NVIDIA Jetson, en service dans une chaîne de cafés à Riyad. Inférence 17× plus rapide, précision du détecteur de gobelets 0,875 → 0,992, détecteur de lait 12 % → 83 %. Ce que j'ai construit et comment c'est mesuré.">
 <meta name="author" content="Abdelkerim Dassi">
 <link rel="canonical" href="https://abdelkerimdassi.com/fr/etudes-de-cas/videosurveillance-edge">
 <!--#include hreflang-->
@@ -11,8 +11,8 @@
 
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://abdelkerimdassi.com/fr/etudes-de-cas/videosurveillance-edge">
-<meta property="og:title" content="Étude de cas : vidéosurveillance analytique en edge">
-<meta property="og:description" content="Les caméras déjà en place transformées en données d'exploitation en direct, traitées sur site sur NVIDIA Jetson. Aucune vidéo brute ne quitte le magasin.">
+<meta property="og:title" content="Étude de cas : Absar, vision edge à Riyad">
+<meta property="og:description" content="11 contrôles SOP sur NVIDIA Jetson, en service dans une chaîne de cafés à Riyad. Aucun flux vidéo en direct ne quitte le magasin.">
 <meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -21,8 +21,8 @@
 <meta property="og:locale:alternate" content="en_US">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Étude de cas : vidéosurveillance analytique en edge">
-<meta name="twitter:description" content="Des caméras de magasin transformées en données d'exploitation, sur site sur NVIDIA Jetson. Aucune vidéo brute ne sort.">
+<meta name="twitter:title" content="Étude de cas : Absar, vision edge à Riyad">
+<meta name="twitter:description" content="11 contrôles SOP sur NVIDIA Jetson, en service dans une chaîne de cafés à Riyad. Inférence 17× plus rapide.">
 <meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
 
 <!--#include head-close-fr-->
@@ -79,83 +79,103 @@
 
   <header class="r">
     <div class="cs-eyebrow">Étude de cas · Vision par ordinateur en edge</div>
-    <h1 class="cs-title">Des caméras qui comptent,<br><em>une vidéo qui ne sort jamais.</em></h1>
+    <h1 class="cs-title">Des caméras qui vérifient les procédures,<br><em>une vidéo qui reste en magasin.</em></h1>
     <p class="cs-lede">
-      Une chaîne de magasins en Arabie saoudite avait déjà des caméras dans chaque point de vente, sans
-      qu'aucune donnée d'exploitation n'en sorte jamais. J'ai piloté la partie IA et edge : ces
-      caméras produisent désormais de la donnée d'exploitation en direct, calculée sur un boîtier
-      posé dans le magasin. Aucune image brute ne franchit la porte.
+      Absar transforme la vidéosurveillance déjà en place d'une chaîne de cafés en contrôles en direct de
+      ses procédures opérationnelles (SOP). Un petit boîtier NVIDIA Jetson installé dans le magasin
+      observe les caméras et signale les écarts dès qu'ils surviennent : une charlotte oubliée, une
+      boisson sans couvercle, du lait laissé dehors, une commande au drive remise sans ticket. Je suis
+      responsable de la couche vision, c'est-à-dire de chaque contrôle qui tourne sur ce boîtier.
     </p>
   </header>
 
   <div class="cs-facts r">
-    <div class="cs-fact"><div class="cs-fact-k">Secteur</div><div class="cs-fact-v">Exploitation de points de vente · Arabie saoudite</div></div>
-    <div class="cs-fact"><div class="cs-fact-k">Mon rôle</div><div class="cs-fact-v">Responsable IA · pipeline edge</div></div>
-    <div class="cs-fact"><div class="cs-fact-k">Stack</div><div class="cs-fact-v">NVIDIA Jetson · DeepStream · TensorRT</div></div>
-    <div class="cs-fact"><div class="cs-fact-k">Statut</div><div class="cs-fact-v">Pilote</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Client</div><div class="cs-fact-v">Chaîne de cafés · Riyad, Arabie saoudite</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Mon rôle</div><div class="cs-fact-v">AI Lead · responsable de la couche vision</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Stack</div><div class="cs-fact-v">NVIDIA Jetson Orin · DeepStream · TensorRT</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Statut</div><div class="cs-fact-v">En service dans le premier magasin depuis sept. 2026</div></div>
   </div>
 
   <section class="cs-sec r">
     <h2 class="cs-h"><span class="n">01</span>La contrainte qui a tout façonné</h2>
     <p class="cs-p">
-      La PDPL saoudienne traite la vidéo de personnes identifiables comme une donnée personnelle, et
-      <b>flouter les visages ne vaut pas anonymisation</b> : un flou est une transformation, pas une
-      garantie, et l'original reste ce que vous avez transmis. Les images brutes ne pouvaient donc
-      aller nulle part. Ni vers un GPU dans le cloud, ni vers un point d'entrée régional, ni dans un
-      bucket pour plus tard.
+      La loi saoudienne sur les données personnelles (PDPL) traite la vidéo de personnes identifiables
+      comme une donnée personnelle, et <b>flouter les visages ne vaut pas anonymisation</b> : un flou est
+      une transformation, pas une garantie. Il n'y a donc aucun flux vidéo en direct qui sorte du
+      magasin. Ni vers un GPU dans le cloud, ni vers un point d'accès régional.
     </p>
     <p class="cs-p">
-      Ce seul fait renverse la construction habituelle. Plutôt que d'amener la vidéo au calcul, on fait
-      entrer le calcul dans le magasin : la seule chose autorisée à sortir, c'est la conclusion.
+      Ce seul fait inverse la construction habituelle. Au lieu d'amener la vidéo vers le calcul, on
+      amène le calcul dans le magasin. Ce qui sort, c'est la conclusion : un enregistrement d'événement,
+      plus une image par alerte pour que le responsable voie ce qui s'est passé.
     </p>
-    <blockquote class="cs-quote">« Flouter un visage n'est pas de l'anonymisation. Une fois ce point acquis, la vidéo ne peut plus quitter le bâtiment, et toutes les autres décisions en découlent. »</blockquote>
+    <blockquote class="cs-quote">« Flouter un visage n'est pas de l'anonymisation. Une fois ce point acquis, le flux vidéo ne peut plus quitter le bâtiment, et toutes les autres décisions en découlent. »</blockquote>
   </section>
 
   <section class="cs-sec r">
-    <h2 class="cs-h"><span class="n">02</span>Ce que j'ai piloté</h2>
+    <h2 class="cs-h"><span class="n">02</span>Ce qu'il surveille</h2>
     <p class="cs-p">
-      J'ai porté la partie IA et edge de bout en bout : choisir ce qui tourne sur l'appareil, le
-      faire tourner dans le budget thermique et de débit d'un petit boîtier, et décider quels
-      signaux étaient assez fiables pour être mis devant une équipe d'exploitation.
+      <b>Onze contrôles</b>, chacun écrit à partir d'une procédure du registre SOP du client : tenue
+      d'hygiène du personnel (charlotte, masque, gants), boissons laissées sans couvercle, lait sorti du
+      réfrigérateur, bac à glace ou porte arrière laissés ouverts, barista qui fait mousser le lait sans
+      regarder, et commandes au drive payées sans remise de ticket. Le boîtier compte aussi les passages
+      à la porte et les voitures au drive.
     </p>
     <p class="cs-p">
-      Deux décisions que je retiens. D'abord, <b>la licence du modèle</b> : j'ai basculé le
-      détecteur sur un modèle sous licence permissive, parce que plusieurs choix évidents portent des
-      clauses copyleft qui vous suivent jusque dans un produit commercial, et qu'un problème de
-      licence découvert après déploiement ne se corrige pas d'un patch. Ensuite, <b>un bug de mesure
-      qui bloquait discrètement trois des fonctions analytiques</b> : la logique de comptage
-      avait l'air terminée et se trompait d'une façon qui ne se voit que sur de vraies images. Pour le
-      débusquer, il a fallu lire le comportement plutôt que le code ; la correction a débloqué les
-      trois d'un coup.
-    </p>
-    <p class="cs-p">
-      Volontairement peu disert sur l'architecture. C'est un produit commercial en activité : la
-      conception reste chez l'entreprise.
+      Les alertes arrivent aux responsables sur un tableau de bord web, une application mobile et
+      Telegram. Le premier boîtier de production gère <b>8 caméras à 16 images par seconde chacune,
+      derrière 36 règles configurables</b>.
     </p>
   </section>
 
   <section class="cs-sec r">
-    <h2 class="cs-h"><span class="n">03</span>Où ça en est</h2>
+    <h2 class="cs-h"><span class="n">03</span>Ce que j'ai construit</h2>
     <p class="cs-p">
-      <b>Phase pilote</b>, sur le matériel du client. Aucun chiffre de précision ni de débit sur cette
-      page, et c'est volontaire : rien n'a encore été mesuré, et un nombre inventé pour un portfolio
-      vaut moins que l'aveu qu'il n'existe pas.
+      J'ai écrit les onze services de contrôle et le worker GPU partagé qui les héberge, choisi et
+      réentraîné les modèles, et validé les zones de détection de chaque caméra. Nous étions une équipe
+      de quatre : d'autres ont construit le tableau de bord, l'application mobile et l'outillage de
+      déploiement vers le boîtier.
+    </p>
+    <p class="cs-p">
+      Deux décisions que je mettrais en avant. D'abord, <b>un benchmark qui a fixé l'architecture</b> :
+      faire tourner les modèles de contrôle sur le GPU du Jetson plutôt que sur son CPU était 17× plus
+      rapide, mais chaque processus GPU coûte de la mémoire. Les contrôles partagent donc un seul worker
+      GPU au lieu d'en avoir un chacun. Ensuite, <b>la licence des modèles</b> : j'ai basculé la détection
+      sur des modèles sous licence permissive, parce que plusieurs choix évidents portent des clauses
+      copyleft qui vous suivent jusque dans un produit commercial.
+    </p>
+    <p class="cs-p">
+      Volontairement peu de détails d'architecture ici. C'est un produit commercial en service, la
+      conception reste à l'entreprise.
+    </p>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">04</span>Résultats</h2>
+    <p class="cs-p">
+      Chaque chiffre ci-dessous vient d'images de magasin réservées à l'évaluation ou du rejeu d'alertes
+      réelles, jamais des données d'entraînement. La disponibilité en production et la latence caméra →
+      téléphone sont en cours d'instrumentation, elles ne figurent donc pas encore ici.
     </p>
     <div class="cs-outcomes">
-      <div class="cs-out"><div class="cs-out-v">0 image</div><div class="cs-out-k">De vidéo brute quittant le magasin. Seules les conclusions sortent, vers un cloud isolé par client</div></div>
-      <div class="cs-out"><div class="cs-out-v">Caméras existantes</div><div class="cs-out-k">Aucune nouvelle caméra installée. Le matériel que la chaîne possède déjà devient le réseau de capteurs</div></div>
+      <div class="cs-out"><div class="cs-out-v">17×</div><div class="cs-out-k">Inférence plus rapide sur le GPU du Jetson que sur son CPU : de 3,9 s à 225 ms par image, en moyenne sur 12 exécutions</div></div>
+      <div class="cs-out"><div class="cs-out-v">0,875 → 0,992</div><div class="cs-out-k">Précision du détecteur de gobelets après la reconstruction de son jeu de données à partir de 140 clips de magasin, découpé par jour. Rappel de 0,66 à 0,845</div></div>
+      <div class="cs-out"><div class="cs-out-v">12 % → 83 %</div><div class="cs-out-k">Précision du détecteur de lait sur une heure réservée d'images réelles, après avoir découvert que l'ancien découpage entraînement / test fuyait</div></div>
+      <div class="cs-out"><div class="cs-out-v">21 → 0</div><div class="cs-out-k">Fausses alertes de moussage au rejeu de 36 alertes vérifiées par le gérant, en conservant 14 des 15 vraies</div></div>
+      <div class="cs-out"><div class="cs-out-v">3,7 % → 0,2 %</div><div class="cs-out-k">Fausses alertes charlotte sur 849 têtes rejouées, dès qu'un second cadrage, plus haut, de la tête doit confirmer avant qu'une alerte parte</div></div>
+      <div class="cs-out"><div class="cs-out-v">53–57 FPS</div><div class="cs-out-k">Le pipeline de tenue d'hygiène avec ses deux modèles chargés sur un Jetson Orin Nano de 8 Go, pour 1,9 Go de RAM</div></div>
     </div>
   </section>
 
   <section class="cs-sec r">
     <p class="cs-p">
-      Sur ce qu'un Jetson sait faire, et ne sait pas faire, une fois DeepStream et TensorRT dans l'équation :
+      Sur ce qu'un Jetson sait vraiment faire, et ne sait pas faire, une fois DeepStream et TensorRT dans la boucle :
       <a href="/fr/blog/jetson-orin-nano" style="color:var(--accent)">Ce qu'un boîtier à 250 $ sait vraiment faire</a>.
     </p>
   </section>
 
   <div class="cs-cta r">
-    <span class="cs-cta-txt">Des caméras que vous n'avez pas le droit d'envoyer dans le cloud ?</span>
+    <span class="cs-cta-txt">De la vision qui doit tourner là où sont les caméras ?</span>
     <a class="btn btn-accent" href="/fr/contact">Parlons-en <span>↗</span></a>
   </div>
 

@@ -198,16 +198,16 @@ text = re.sub(r"\s+", " ", text).strip()</code></pre>
     Vector search alone misses crop names. BM25 alone misses dialect paraphrases. Together they cover both. I use pgvector for the semantic side and Postgres full-text for the keyword side, merged by node ID with the higher score winning.
   </p>
   <p>
-    The catch is small but vicious: Postgres' default full-text config tokenizes English. On Arabic it produces nonsense. You have to switch to the Arabic full-text config explicitly. That one line did more for recall than any prompt change.
+    The catch is small but vicious: Postgres' default full-text config tokenizes English. On Arabic it produces nonsense. You have to switch to the Arabic full-text config explicitly. It is one line, and easy to miss.
   </p>
 
   <h2>Fix #4: Recalibrate Your Similarity Scores</h2>
 
   <p>
-    Multilingual embeddings don't score Arabic the way they score English. The 0.7 threshold I trusted from English projects rejected almost every correct Arabic match. Real cosine values for relevant Arabic chunks were landing between 0.20 and 0.45.
+    Multilingual embeddings don't score Arabic the way they score English. The 0.7 threshold we had carried over from English projects rejected almost every correct Arabic match. Real cosine values for relevant Arabic chunks were landing between 0.20 and 0.45.
   </p>
   <p>
-    So I built a small benchmark: 20 queries, half in-scope agriculture, half off-topic, across Arabic, French, and English. Then I picked an empirical floor (<code>0.15</code>) and ceiling (<code>0.50</code>) from what I was actually seeing, and remapped raw cosine into a 0–1 confidence score. Threshold sits at raw <code>0.30</code>.
+    So a teammate built a small benchmark: 20 queries, most of them in-scope agriculture and the rest off-topic, across Arabic, French, and English. From it we picked an empirical floor (<code>0.15</code>) and ceiling (<code>0.50</code>) from what we were actually seeing, and remapped raw cosine into a 0–1 confidence score. Threshold sits at raw <code>0.30</code>.
   </p>
 
   <h2>Fix #5: Confidence Is Two Questions, Not One</h2>

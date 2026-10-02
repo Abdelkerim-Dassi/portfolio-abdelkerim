@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <!--#include head-open-->
-<title>Case Study: Arabic RAG for Farmers · Abdelkerim Dassi</title>
-<meta name="description" content="How a RAG assistant that answered farmers in Egyptian Arabic went from near-zero retrieval to production: normalization, dialect rewriting, hybrid search, and an expert feedback loop.">
+<title>Case Study: SheGrows, Arabic RAG for Farmers (FAO Egypt) · Abdelkerim Dassi</title>
+<meta name="description" content="SheGrows, a WhatsApp RAG assistant for women farmers in Egypt, built for FAO: 15K+ questions answered in production. How I built its Egyptian-dialect retrieval layer and expert feedback loop.">
 <meta name="author" content="Abdelkerim Dassi">
 <link rel="canonical" href="https://abdelkerimdassi.com/case-studies/arabic-rag">
 <!--#include hreflang-->
@@ -11,8 +11,8 @@
 
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://abdelkerimdassi.com/case-studies/arabic-rag">
-<meta property="og:title" content="Case Study: Arabic RAG for Farmers">
-<meta property="og:description" content="From near-zero retrieval to production: a dialect-aware RAG pipeline for agriculture, built end to end.">
+<meta property="og:title" content="Case Study: SheGrows, Arabic RAG for FAO Egypt">
+<meta property="og:description" content="A WhatsApp RAG assistant for women farmers in Egypt: dialect-aware retrieval, expert feedback loop, 15K+ questions in production.">
 <meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-arabic-rag.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -21,8 +21,8 @@
 <meta property="og:locale:alternate" content="fr_FR">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Case Study: Arabic RAG for Farmers">
-<meta name="twitter:description" content="From near-zero retrieval to production: a dialect-aware RAG pipeline for agriculture.">
+<meta name="twitter:title" content="Case Study: SheGrows, Arabic RAG for FAO Egypt">
+<meta name="twitter:description" content="Dialect-aware RAG for women farmers in Egypt: 15K+ questions answered in production.">
 <meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-arabic-rag.png">
 
 <!--#include head-close-->
@@ -81,17 +81,18 @@
     <div class="cs-eyebrow">Case study · Production AI</div>
     <h1 class="cs-title">A RAG that answers farmers<br><em>in their own dialect.</em></h1>
     <p class="cs-lede">
-      An agriculture advisory assistant for Egypt. Users type Egyptian Arabic on their phones;
-      the knowledge base is written in Modern Standard Arabic. On day one, retrieval found almost
-      nothing. This is how it became something I'm willing to put in front of farmers.
+      SheGrows is a WhatsApp assistant for women farmers in Egypt, built by 1morething for FAO.
+      Farmers ask in Egyptian Arabic, by text or by voice note, and the knowledge base is written in
+      formal Arabic. I owned the part that makes those two meet, the dialect retrieval layer, and the
+      loop that turns expert answers into new knowledge.
     </p>
   </header>
 
   <div class="cs-facts r">
-    <div class="cs-fact"><div class="cs-fact-k">Sector</div><div class="cs-fact-v">Agriculture advisory · Egypt</div></div>
-    <div class="cs-fact"><div class="cs-fact-k">My role</div><div class="cs-fact-v">AI Engineer · pipeline end to end</div></div>
-    <div class="cs-fact"><div class="cs-fact-k">Stack</div><div class="cs-fact-v">RAG · pgvector · Postgres FTS · GPT-4o rewriting</div></div>
-    <div class="cs-fact"><div class="cs-fact-k">Status</div><div class="cs-fact-v">In production</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Client</div><div class="cs-fact-v">FAO · Egypt</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">My role</div><div class="cs-fact-v">AI Engineer · dialect retrieval and feedback loop, in a team of 4</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Stack</div><div class="cs-fact-v">RAG · pgvector · Arabic full-text search · GPT-4o · Azure</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Status</div><div class="cs-fact-v">In production since July 2026</div></div>
   </div>
 
   <section class="cs-sec r">
@@ -101,11 +102,12 @@
       This one had to answer questions like <b>"how do I water my courgette in summer"</b> (typed
       as <b>ازاى اروى الكوسة فى الصيف؟</b>) against documentation written in formal Arabic.
       The same word arrives with different alif shapes, with or without diacritics, with stray
-      RTL marks from a phone keyboard. Dialect sits on top of all of that.
+      right-to-left marks from a phone keyboard. Dialect sits on top of all of that.
     </p>
     <p class="cs-p">
       Most embedding models, even multilingual ones, can't tell that the dialect question and the
-      MSA documentation mean the same thing. <b>Day-one retrieval came back almost empty.</b>
+      formal documentation mean the same thing. <b>Dialect questions kept missing documents that
+      plainly answered them.</b>
     </p>
   </section>
 
@@ -114,43 +116,44 @@
     <p class="cs-p">
       In agriculture, a wrong pesticide dose can kill a crop, or worse. The system could not be
       allowed to guess confidently. That single constraint drove the confidence architecture:
-      every answer is scored twice, and anything uncertain goes to a human expert instead of the model.
+      anything uncertain goes to a human agronomist instead of the model.
     </p>
     <blockquote class="cs-quote">"The 'I don't know, let me get someone' path isn't a fallback. It's a feature."</blockquote>
   </section>
 
   <section class="cs-sec r">
     <h2 class="cs-h"><span class="n">03</span>The pipeline</h2>
+    <p class="cs-p">Steps 1, 2, 3, 5 and 6 are mine. Step 4 was a teammate's, and it is here because the rest does not make sense without it.</p>
     <div class="cs-pipe">
       <div class="cs-step">
         <div class="cs-step-n">1</div>
-        <div><div class="cs-step-t">Normalize the query: never the docs</div>
-        <div class="cs-step-d">Strip diacritics, tatweel, RTL marks; unify alif variants. Ta-marbuta stays; it carries meaning in technical Arabic. The knowledge base is left untouched so the exact words farmers search for survive.</div></div>
+        <div><div class="cs-step-t">Normalize the query, never the docs</div>
+        <div class="cs-step-d">Strip diacritics, tatweel and right-to-left marks; unify alif variants. Ta-marbuta stays, because it carries meaning in technical Arabic. The knowledge base is left untouched so the exact words farmers search for survive.</div></div>
       </div>
       <div class="cs-step">
         <div class="cs-step-n">2</div>
-        <div><div class="cs-step-t">Rewrite dialect into MSA, with frozen nouns</div>
-        <div class="cs-step-d">A few-shot GPT-4o call converts Egyptian colloquial to MSA, explicitly told not to touch crop names, pesticide names, doses, dates, units. Rewrites are cached; on failure the system falls back to the original query and merges both result sets.</div></div>
+        <div><div class="cs-step-t">Rewrite dialect into formal Arabic, with frozen nouns</div>
+        <div class="cs-step-d">A few-shot GPT-4o call converts Egyptian colloquial into formal Arabic and is told not to touch crop names, pesticide names, doses, dates or units. Rewrites are cached. Retrieval always runs on both the original and the rewrite, and the results are merged.</div></div>
       </div>
       <div class="cs-step">
         <div class="cs-step-n">3</div>
         <div><div class="cs-step-t">Hybrid retrieval with the Arabic tokenizer</div>
-        <div class="cs-step-d">pgvector for semantics, Postgres full-text for keywords; merged by node with max score. Switching Postgres FTS to the Arabic config was a one-line change that did more for recall than any prompt edit.</div></div>
+        <div class="cs-step-d">pgvector for meaning, Postgres full-text search for keywords, merged by keeping each passage's best score. Postgres full-text search defaults to a configuration that does not understand Arabic; switching it to the Arabic one was a one-line change.</div></div>
       </div>
       <div class="cs-step">
         <div class="cs-step-n">4</div>
-        <div><div class="cs-step-t">Recalibrated similarity thresholds</div>
-        <div class="cs-step-d">English-tuned 0.7 cosine thresholds rejected nearly every correct Arabic match (real values: 0.20–0.45). A 20-query benchmark across Arabic, French, and English set an empirical floor and ceiling, remapped to a 0–1 confidence.</div></div>
+        <div><div class="cs-step-t">Thresholds tuned for Arabic</div>
+        <div class="cs-step-d">English-tuned 0.7 cosine thresholds rejected most correct Arabic matches, whose real scores sat between 0.20 and 0.45. A teammate's 20-query benchmark across Arabic, French and English set an empirical floor and ceiling.</div></div>
       </div>
       <div class="cs-step">
         <div class="cs-step-n">5</div>
-        <div><div class="cs-step-t">Two-signal confidence, three outcomes</div>
-        <div class="cs-step-d">The LLM reports its own confidence; retrieval similarity is the safety net. High → answer. Medium → answer with disclaimer. Low → escalate to a human agronomist.</div></div>
+        <div><div class="cs-step-t">Three outcomes, and the same answer every time</div>
+        <div class="cs-step-d">High confidence: answer. Medium: answer with a disclaimer. Low: escalate to a human agronomist. I also made routing deterministic, so the same message always takes the same path, and added a block that escalates before the LLM is even called when retrieval is weak.</div></div>
       </div>
       <div class="cs-step">
         <div class="cs-step-n">6</div>
-        <div><div class="cs-step-t">Every expert answer becomes part of the brain</div>
-        <div class="cs-step-d">Resolved escalations are embedded back into the knowledge base as single nodes, tagged and kept in the user's own language and register. The system grows its dialect knowledge one escalation at a time.</div></div>
+        <div><div class="cs-step-t">Expert answers feed the knowledge base</div>
+        <div class="cs-step-d">Resolved escalations are embedded back into the knowledge base, kept in the farmer's own language and register. More than 1,200 expert answers have gone back in so far; new ones now pass an admin approval step first.</div></div>
       </div>
     </div>
   </section>
@@ -158,23 +161,23 @@
   <section class="cs-sec r">
     <h2 class="cs-h"><span class="n">04</span>The outcome</h2>
     <p class="cs-p">
-      Retrieval went from <b>almost nothing on day one</b> to a system in production in front of real
-      farmers, without a single Arabic-specific embedding model. The wins came from a pipeline of
-      cheap, honest steps, not a magic model. And because of the feedback loop, most of the dialect
-      knowledge in the retriever today wasn't there at launch: the system taught itself.
+      In production since July 2026. By late September it had answered <b>more than 15,000 questions
+      from over 100 farmers</b>, about a third of whom ask by voice. Roughly four in five questions are
+      answered without a human. These usage figures come from the production database. Answer accuracy
+      has not yet been graded against an expert-labelled set, so it is not claimed here.
     </p>
     <div class="cs-outcomes">
-      <div class="cs-out"><div class="cs-out-v">~0 → usable</div><div class="cs-out-k">Day-one retrieval recall vs. production, measured on a 20-query multilingual benchmark</div></div>
-      <div class="cs-out"><div class="cs-out-v">3 paths</div><div class="cs-out-k">Answer / answer-with-disclaimer / human expert, no confident guessing on crop-critical advice</div></div>
-      <div class="cs-out"><div class="cs-out-v">6 fixes</div><div class="cs-out-k">Normalization, dialect rewriting, hybrid search, recalibration, dual confidence, feedback loop</div></div>
-      <div class="cs-out"><div class="cs-out-v">Self-growing</div><div class="cs-out-k">Every expert escalation is embedded back. The knowledge base improves with use</div></div>
+      <div class="cs-out"><div class="cs-out-v">15K+</div><div class="cs-out-k">Farmer questions answered since the July 2026 launch</div></div>
+      <div class="cs-out"><div class="cs-out-v">~4 in 5</div><div class="cs-out-k">Answered without a human; the rest go to an agronomist instead of a guess</div></div>
+      <div class="cs-out"><div class="cs-out-v">1,200+</div><div class="cs-out-k">Expert answers fed back into the knowledge base through the loop I built</div></div>
+      <div class="cs-out"><div class="cs-out-v">3 paths</div><div class="cs-out-k">Answer, answer with a disclaimer, or a human expert. No confident guessing on crop-critical advice</div></div>
     </div>
   </section>
 
   <section class="cs-sec r">
     <p class="cs-p">
-      Want the engineering detail: the actual normalization rules, the rewriter prompt design,
-      the threshold numbers? It's all in the long-form write-up:
+      Want the engineering detail: the normalization rules, the rewriter prompt design, the
+      threshold numbers? It's all in the long-form write-up:
       <a href="/blog/arabic-rag" style="color:var(--accent)">Arabic Broke My RAG. Here's What Saved It.</a>
     </p>
   </section>

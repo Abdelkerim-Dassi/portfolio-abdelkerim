@@ -544,6 +544,12 @@ nav {
   transition:transform .4s cubic-bezier(.23,1,.32,1), color .3s;
 }
 .proj-row:hover .p-arr { transform:translate(4px,-4px); color:var(--paper); }
+/* a row with no link (private client work): no pointer, no hover nudge */
+div.proj-row { cursor:default; }
+div.proj-row:hover .p-name { transform:none; }
+.p-sub { line-height:1.6; max-width:72ch; }
+.proj-foot { font-size:13px; color:var(--t3); margin-top:28px; line-height:1.7; }
+.proj-foot a { color:var(--accent); }
 
 /* ─────────────────────────────────────
    STACK

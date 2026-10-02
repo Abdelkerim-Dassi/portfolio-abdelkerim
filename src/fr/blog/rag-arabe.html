@@ -199,16 +199,16 @@ text = re.sub(r"\s+", " ", text).strip()</code></pre>
     Seule, la recherche vectorielle rate les noms de cultures. Seul, BM25 rate les paraphrases dialectales. À deux, ils se couvrent l'un l'autre. pgvector pour le sémantique, le plein texte Postgres pour les mots-clés, fusion par identifiant de nœud, le meilleur score l'emporte.
   </p>
   <p>
-    Le piège est minuscule et coûteux : par défaut, le plein texte de Postgres tokenise de l'anglais. Sur de l'arabe, il produit de la bouillie. Il faut lui désigner explicitement la configuration arabe. Cette ligne-là a plus fait pour le rappel que toutes mes retouches de prompt réunies.
+    Le piège est minuscule et coûteux : par défaut, le plein texte de Postgres tokenise de l'anglais. Sur de l'arabe, il produit de la bouillie. Il faut lui désigner explicitement la configuration arabe. Elle tient en une ligne, et on la rate facilement.
   </p>
 
   <h2>Correctif n° 4 : recalibrer vos scores de similarité</h2>
 
   <p>
-    Les embeddings multilingues ne notent pas l'arabe comme l'anglais. Le seuil de 0,7 que je traînais depuis mes projets anglophones rejetait presque toutes les bonnes réponses arabes : en vrai, les passages pertinents sortaient entre 0,20 et 0,45.
+    Les embeddings multilingues ne notent pas l'arabe comme l'anglais. Le seuil de 0,7 que nous traînions depuis des projets anglophones rejetait presque toutes les bonnes réponses arabes : en vrai, les passages pertinents sortaient entre 0,20 et 0,45.
   </p>
   <p>
-    D'où un petit banc d'essai : 20 requêtes, moitié dans le périmètre agricole, moitié hors sujet, en arabe, en français et en anglais. J'en ai tiré un plancher (<code>0,15</code>) et un plafond (<code>0,50</code>) empiriques, puis j'ai remappé le cosinus brut sur une confiance de 0 à 1. Le seuil tombe à <code>0,30</code> brut.
+    Un coéquipier a donc monté un petit banc d'essai : 20 requêtes, la plupart dans le périmètre agricole et le reste hors sujet, en arabe, en français et en anglais. Nous en avons tiré un plancher (<code>0,15</code>) et un plafond (<code>0,50</code>) empiriques, puis remappé le cosinus brut sur une confiance de 0 à 1. Le seuil tombe à <code>0,30</code> brut.
   </p>
 
   <h2>Correctif n° 5 : la confiance, ce sont deux questions, pas une</h2>

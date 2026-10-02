@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <!--#include head-open-->
-<title>Case Study: Edge CCTV Analytics · Abdelkerim Dassi</title>
-<meta name="description" content="Edge computer vision for a retail chain in Saudi Arabia: existing CCTV turned into live operations data, processed on-device so no raw video leaves the store. What I led, and the constraint that shaped it.">
+<title>Case Study: Absar, Edge Vision for a Coffee Chain in Riyadh · Abdelkerim Dassi</title>
+<meta name="description" content="Absar: 11 on-device SOP checks on NVIDIA Jetson, live in a Riyadh coffee chain. 17× faster inference, cup-detector precision 0.875 → 0.992, milk detector 12% → 83%. What I built and how it was measured.">
 <meta name="author" content="Abdelkerim Dassi">
 <link rel="canonical" href="https://abdelkerimdassi.com/case-studies/edge-cctv">
 <!--#include hreflang-->
@@ -11,8 +11,8 @@
 
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://abdelkerimdassi.com/case-studies/edge-cctv">
-<meta property="og:title" content="Case Study: Edge CCTV Analytics">
-<meta property="og:description" content="Existing store cameras turned into live operations data, processed on-device on NVIDIA Jetson. No raw video leaves the store.">
+<meta property="og:title" content="Case Study: Absar, Edge Vision in Riyadh">
+<meta property="og:description" content="11 on-device SOP checks on NVIDIA Jetson, live in a Riyadh coffee chain. No live video leaves the store.">
 <meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -21,8 +21,8 @@
 <meta property="og:locale:alternate" content="fr_FR">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Case Study: Edge CCTV Analytics">
-<meta name="twitter:description" content="Store cameras turned into live operations data, on-device on NVIDIA Jetson. No raw video leaves the store.">
+<meta name="twitter:title" content="Case Study: Absar, Edge Vision in Riyadh">
+<meta name="twitter:description" content="11 on-device SOP checks on NVIDIA Jetson, live in a Riyadh coffee chain. 17× faster inference.">
 <meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
 
 <!--#include head-close-->
@@ -79,51 +79,65 @@
 
   <header class="r">
     <div class="cs-eyebrow">Case study · Edge computer vision</div>
-    <h1 class="cs-title">Cameras that count,<br><em>video that never leaves.</em></h1>
+    <h1 class="cs-title">Cameras that check the SOPs,<br><em>video that stays in the store.</em></h1>
     <p class="cs-lede">
-      A retail chain in Saudi Arabia already had CCTV in every store, and no operational data
-      coming out of it. I led the AI and edge work that turns those existing cameras into live
-      operations data, processed on a box inside the store so no raw video ever leaves the premises.
+      Absar turns a coffee chain's existing CCTV into live checks on its standard operating
+      procedures. A small NVIDIA Jetson box inside the store watches the cameras and flags lapses
+      as they happen: a missing hairnet, an uncovered drink, milk left out, a drive-thru order
+      handed over without a receipt. I own the vision layer, which means every check that runs on that box.
     </p>
   </header>
 
   <div class="cs-facts r">
-    <div class="cs-fact"><div class="cs-fact-k">Sector</div><div class="cs-fact-v">Retail operations · Saudi Arabia</div></div>
-    <div class="cs-fact"><div class="cs-fact-k">My role</div><div class="cs-fact-v">AI lead · edge pipeline</div></div>
-    <div class="cs-fact"><div class="cs-fact-k">Stack</div><div class="cs-fact-v">NVIDIA Jetson · DeepStream · TensorRT</div></div>
-    <div class="cs-fact"><div class="cs-fact-k">Status</div><div class="cs-fact-v">Pilot</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Client</div><div class="cs-fact-v">Coffee chain · Riyadh, Saudi Arabia</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">My role</div><div class="cs-fact-v">AI Lead · owner of the vision layer</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Stack</div><div class="cs-fact-v">NVIDIA Jetson Orin · DeepStream · TensorRT</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Status</div><div class="cs-fact-v">Live in the first store since Sep 2026</div></div>
   </div>
 
   <section class="cs-sec r">
     <h2 class="cs-h"><span class="n">01</span>The constraint that shaped everything</h2>
     <p class="cs-p">
       Saudi PDPL treats video of identifiable people as personal data, and <b>blurring faces does
-      not count as true anonymization</b>: a blur is a transformation, not a guarantee, and the
-      original is still the thing you transmitted. So the raw frames could not go anywhere. Not to
-      a cloud GPU, not to a regional endpoint, not into a bucket for later.
+      not count as true anonymization</b>: a blur is a transformation, not a guarantee. So there is
+      no live video feed out of the store. Not to a cloud GPU, not to a regional endpoint.
     </p>
     <p class="cs-p">
       That single fact inverts the usual build. Instead of moving the video to the compute, the
-      compute moves into the store, and the only thing allowed out is the conclusion.
+      compute moves into the store. What leaves is the conclusion: an event record, plus one image
+      per alert so the manager can see what happened.
     </p>
-    <blockquote class="cs-quote">"Blurring a face is not anonymization. Once that is true, the video cannot leave the building, and every other decision follows from there."</blockquote>
+    <blockquote class="cs-quote">"Blurring a face is not anonymization. Once that is true, the video stream cannot leave the building, and every other decision follows from there."</blockquote>
   </section>
 
   <section class="cs-sec r">
-    <h2 class="cs-h"><span class="n">02</span>What I led</h2>
+    <h2 class="cs-h"><span class="n">02</span>What it watches</h2>
     <p class="cs-p">
-      I owned the AI and edge side end to end: choosing what runs on-device, getting it to run
-      there within the thermal and throughput budget of a small box, and deciding which signals
-      were reliable enough to put in front of an operations team.
+      <b>Eleven checks</b>, each written against a procedure in the client's own SOP register:
+      staff hygiene gear (hairnet, mask, gloves), drinks left uncovered or without a lid, milk out
+      of the fridge, the ice tank or back door left open, a barista steaming milk while looking
+      away, and drive-thru orders paid for with no receipt handed over. The box also counts door
+      traffic and drive-thru cars.
     </p>
     <p class="cs-p">
-      Two calls I would point to. First, <b>the model licensing</b>: I moved the detector onto a
-      permissively licensed model, because several of the obvious choices carry copyleft terms that
-      follow you into a commercial product, and a licensing problem found after rollout is not one
-      you can patch. Second, <b>a measurement bug that was quietly gating three of the analytics
-      features</b>: the counting logic looked finished and was wrong in a way that only shows up
-      against real footage. Finding it took reading behaviour rather than reading code, and the
-      correction unblocked all three at once.
+      Alerts reach managers on a web dashboard, a mobile app and Telegram. The first production box
+      runs <b>8 cameras at 16 frames per second each, behind 36 configurable rules</b>.
+    </p>
+  </section>
+
+  <section class="cs-sec r">
+    <h2 class="cs-h"><span class="n">03</span>What I built</h2>
+    <p class="cs-p">
+      I wrote all eleven check services and the shared GPU worker that hosts them, chose and
+      retrained the models, and signed off the detection zones for every camera. We were a team of four:
+      others built the dashboard, the mobile app and the release tooling that ships to the box.
+    </p>
+    <p class="cs-p">
+      Two calls I would point to. First, <b>a benchmark that set the architecture</b>: running the
+      check models on the Jetson's GPU instead of its CPU was 17× faster, but every GPU process costs
+      memory. So the checks share one GPU worker instead of each getting its own. Second, <b>the
+      model licensing</b>: I moved detection onto permissively licensed models, because several of the
+      obvious choices carry copyleft terms that follow you into a commercial product.
     </p>
     <p class="cs-p">
       Deliberately light on architecture here. It is a live commercial product, so the design stays
@@ -132,15 +146,19 @@
   </section>
 
   <section class="cs-sec r">
-    <h2 class="cs-h"><span class="n">03</span>Where it stands</h2>
+    <h2 class="cs-h"><span class="n">04</span>Results</h2>
     <p class="cs-p">
-      <b>Pilot stage</b>, running on customer hardware. No accuracy or throughput numbers on this
-      page on purpose: they have not been measured yet, and a number invented for a portfolio is
-      worth less than admitting it does not exist.
+      Every number below comes from held-out store footage or a replay of real alerts, never from
+      the training data. Live uptime and camera-to-phone latency are being instrumented now, so they
+      are not here yet.
     </p>
     <div class="cs-outcomes">
-      <div class="cs-out"><div class="cs-out-v">0 frames</div><div class="cs-out-k">Raw video leaving the store. Only the conclusions go out, to an isolated per-client cloud</div></div>
-      <div class="cs-out"><div class="cs-out-v">Existing CCTV</div><div class="cs-out-k">No new cameras installed. The hardware the chain already owns becomes the sensor network</div></div>
+      <div class="cs-out"><div class="cs-out-v">17×</div><div class="cs-out-k">Faster inference on the Jetson GPU than on its CPU: 3.9 s down to 225 ms per frame, averaged over 12 runs</div></div>
+      <div class="cs-out"><div class="cs-out-v">0.875 → 0.992</div><div class="cs-out-k">Cup-detector precision after I rebuilt its dataset from 140 store clips, split by day. Recall went from 0.66 to 0.845</div></div>
+      <div class="cs-out"><div class="cs-out-v">12% → 83%</div><div class="cs-out-k">Milk-detector precision on a held-out hour of real footage, after I found the old train and test splits leaked</div></div>
+      <div class="cs-out"><div class="cs-out-v">21 → 0</div><div class="cs-out-k">False steaming alerts in a replay of 36 alerts the owner had reviewed, with 14 of the 15 real ones kept</div></div>
+      <div class="cs-out"><div class="cs-out-v">3.7% → 0.2%</div><div class="cs-out-k">Hairnet false flags across 849 replayed head samples, once a second, taller crop of the head had to agree before an alert fires</div></div>
+      <div class="cs-out"><div class="cs-out-v">53–57 FPS</div><div class="cs-out-k">The hygiene-gear pipeline with both of its models resident on an 8 GB Jetson Orin Nano, using 1.9 GB of RAM</div></div>
     </div>
   </section>
 
@@ -152,7 +170,7 @@
   </section>
 
   <div class="cs-cta r">
-    <span class="cs-cta-txt">Have cameras you are not allowed to send to the cloud?</span>
+    <span class="cs-cta-txt">Building vision that has to run where the cameras are?</span>
     <a class="btn btn-accent" href="/contact">Let's talk <span>↗</span></a>
   </div>
 

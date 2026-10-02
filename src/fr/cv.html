@@ -2,18 +2,18 @@
 <html lang="fr">
 <head>
 <!--#include head-open-->
-<title>CV · Abdelkerim Dassi · Ingénieur IA &amp; Data Scientist, Tunisie</title>
-<meta name="description" content="CV d'Abdelkerim Dassi, ingénieur IA et data scientist basé en Tunisie. RAG en production, agents LLM, Spring AI / MCP, vision par ordinateur en edge. Imprimez cette page pour un PDF propre.">
+<title>CV · Abdelkerim Dassi · Ingénieur IA (LLM, RAG, agents, vision edge)</title>
+<meta name="description" content="CV d'Abdelkerim Dassi, ingénieur IA et AI Lead chez 1morething Ventures. RAG en production, agents LLM, évaluation d'agents, vision par ordinateur en edge. Ouvert à la mobilité vers le Golfe, l'UE, le Royaume-Uni ou les États-Unis. Imprimez cette page pour un PDF propre.">
 <meta name="author" content="Abdelkerim Dassi">
-<meta name="keywords" content="CV ingénieur IA Tunisie, data scientist Tunisie, Abdelkerim Dassi, RAG, Spring AI, MCP">
+<meta name="keywords" content="CV ingénieur IA, CV ingénieur machine learning, ingénieur LLM, AI Lead, mobilité internationale, ingénieur IA Tunisie, Abdelkerim Dassi, RAG, Spring AI, MCP">
 <link rel="canonical" href="https://abdelkerimdassi.com/fr/cv">
 <!--#include hreflang-->
 <!--#include head-icons-->
 
 <meta property="og:type" content="profile">
 <meta property="og:url" content="https://abdelkerimdassi.com/fr/cv">
-<meta property="og:title" content="CV · Abdelkerim Dassi · Ingénieur IA">
-<meta property="og:description" content="RAG en production, agents LLM, Spring AI / MCP. Tunis → Golfe → monde.">
+<meta property="og:title" content="CV · Abdelkerim Dassi · Ingénieur IA, mobilité internationale">
+<meta property="og:description" content="AI Lead chez 1morething Ventures. RAG en production, agents LLM, évaluation d'agents, vision edge. Ouvert à la mobilité internationale.">
 <meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -23,7 +23,7 @@
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="CV · Abdelkerim Dassi">
-<meta name="twitter:description" content="Ingénieur IA : RAG en production, agents LLM, Spring AI / MCP.">
+<meta name="twitter:description" content="Ingénieur IA : RAG en production, agents LLM, évaluation d'agents, vision edge. Ouvert à la mobilité internationale.">
 <meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
 
 <script type="application/ld+json">
@@ -37,7 +37,7 @@
     "name": "Abdelkerim Dassi",
     "url": "https://abdelkerimdassi.com",
     "image": "https://abdelkerimdassi.com/assets/avatar.jpg",
-    "jobTitle": "Ingénieur IA",
+    "jobTitle": "AI Lead",
     "email": "abdelkerimdassi@gmail.com",
     "worksFor": {
       "@type": "Organization",
@@ -107,9 +107,29 @@
     .cv-summary b, .cv-item b, .cv-item-role { color: #111 !important; }
     .cv-item, .cv-head { border-color: #ddd !important; }
     .cv-sec-title::after { background: #ddd !important; }
-    .cv-sec { break-inside: avoid-page; }
-    .cv-item { break-inside: avoid; }
+    .cv-sec { break-inside: auto; margin-bottom: 16px; }
+    .cv-item { break-inside: avoid; padding: 7px 0; }
+    /* two pages is the ceiling recruiters read: tighten type for paper only */
+    .cv-head { padding-bottom: 12px; margin-bottom: 14px; }
+    .cv-name { font-size: 46px; }
+    .cv-role { font-size: 16px; margin-top: 6px; }
+    .cv-contact { font-size: 11.5px; margin-top: 10px; gap: 4px 20px; }
+    .cv-sec-title { font-size: 18px; margin-bottom: 6px; }
+    .cv-summary { font-size: 12px; line-height: 1.5; }
+    .cv-item-role { font-size: 13.5px; }
+    .cv-item-co { font-size: 11.5px; margin-top: 1px; }
+    .cv-item-date { font-size: 10.5px; }
+    .cv-item ul { font-size: 11px; line-height: 1.45; margin-top: 3px; }
+    .cv-skills { font-size: 11.5px; gap: 5px 20px; }
+    .cv-skill-v { line-height: 1.45; }
+    /* A4 is ~673px wide, under the 700px phone breakpoint: keep the desktop grid on paper */
+    .cv-item { grid-template-columns: 1fr 120px !important; }
+    .cv-item-date { text-align: right !important; }
+    .cv-skills { grid-template-columns: 130px 1fr !important; gap: 5px 18px !important; }
+    .cv-two { grid-template-columns: 1fr 1fr !important; gap: 0 32px !important; }
     a { text-decoration: none !important; border: none !important; }
+    /* the contact links already print their own address */
+    .cv-contact a::after { content: none !important; }
   }
 </style>
 </head>
@@ -127,25 +147,30 @@
 
   <header class="cv-head r">
     <h1 class="cv-name">Abdelkerim Dassi</h1>
-    <div class="cv-role">Ingénieur IA : RAG, agents LLM, Spring AI / MCP</div>
+    <div class="cv-role">Ingénieur IA : systèmes LLM, RAG, agents, vision par ordinateur en edge</div>
     <div class="cv-contact">
-      <span>Tunis, Tunisie (télétravail bienvenu)</span>
+      <span>Tunis, Tunisie · mobilité internationale : Golfe, UE, Royaume-Uni, États-Unis</span>
       <a href="mailto:abdelkerimdassi@gmail.com">abdelkerimdassi@gmail.com</a>
       <a href="tel:+21655683474">+216 55 683 474</a>
       <a href="https://abdelkerimdassi.com">abdelkerimdassi.com</a>
       <a href="https://linkedin.com/in/abdelkerim-dassi/">linkedin.com/in/abdelkerim-dassi</a>
       <a href="https://github.com/Abdelkerim-Dassi">github.com/Abdelkerim-Dassi</a>
     </div>
+    <div class="cv-contact">
+      <span>Préavis : 21 jours</span>
+      <span>Autorisation de travail : visa sponsorisé nécessaire</span>
+      <span>Arabe (langue maternelle) · anglais (C1) · français (C1) · allemand (notions) · j'enseigne dans les trois</span>
+    </div>
   </header>
 
   <section class="cv-sec r">
     <h2 class="cv-sec-title">Profil</h2>
     <p class="cv-summary">
-      Ingénieur IA, je construis des <b>systèmes RAG, des agents LLM et des architectures Spring AI / MCP en production</b>. Dans l'IA depuis 2021 :
-      quatre ans de stages et de missions freelance en parallèle d'un diplôme d'ingénieur, puis le plein temps. Aujourd'hui je dirige l'IA chez
-      <b>1morething Ventures</b> (Sharjah, EAU) pour les clients du Golfe et de la région MEA, dont une IA agricole pour la
-      <b>FAO en Égypte</b> ; j'anime des bootcamps IA à côté et je travaille avec un premier <b>client américain</b>.
-      Livré dans 8 pays. Langues de travail : arabe, français, anglais.
+      Ingénieur IA qui livre en production : <b>RAG, agents LLM, évaluation d'agents et vision par ordinateur en edge</b>.
+      Dans l'IA depuis 2021 : des stages à Zurich et avec NTT DATA Munich pendant mon diplôme d'ingénieur, puis le plein temps à partir de 2025.
+      Aujourd'hui <b>AI Lead chez 1morething Ventures</b> (vision edge à Riyad, RAG en arabe pour la <b>FAO en Égypte</b>,
+      OCR juridique pour un ministère) et concepteur de tâches d'évaluation d'agents pour les <b>modèles d'Anthropic</b>.
+      Je cherche un poste d'ingénieur IA / ML à plein temps à l'étranger.
     </p>
   </section>
 
@@ -153,26 +178,30 @@
     <h2 class="cv-sec-title">Expérience</h2>
 
     <div class="cv-item">
-      <div><div class="cv-item-role">Ingénieur IA</div><div class="cv-item-co">1morething Ventures · Sharjah, EAU · Hybride</div></div>
+      <div><div class="cv-item-role">AI Lead</div><div class="cv-item-co">1morething Ventures · Sharjah, EAU · Hybride</div></div>
       <div class="cv-item-date">Janv. 2026 – auj.</div>
       <ul>
-        <li>Pilotage de la livraison IA sur le portefeuille B2B de 1MT dans le <b>Golfe et la région MEA</b> : EAU, Arabie saoudite, Tunisie, plus une IA agricole pour la <b>FAO en Égypte</b>.</li>
-        <li>Direction IA, mise en production des systèmes RAG et LLM, accompagnement de l'équipe d'ingénierie sur le MLOps.</li>
+        <li>Responsable de la <b>feuille de route IA de tous les produits</b> du portefeuille : validation des choix d'architecture et de modèles, standards des services IA, relecture des services IA livrés par l'équipe. Encadrement de 2 à 4 ingénieurs.</li>
+        <li><b>Absar, vision edge (chaîne de cafés, Riyad) :</b> construction des 11 contrôles SOP sur l'appareil (tenue d'hygiène, sécurité alimentaire, drive), en service sur NVIDIA Jetson, 8 caméras à 16 FPS. Mon benchmark GPU : <b>inférence 17× plus rapide</b> (3,9 s → 225 ms).</li>
+        <li>Réentraînement des détecteurs, évalués sur des images de magasin réservées : précision gobelets <b>0,875 → 0,992</b> (rappel 0,66 → 0,845), précision lait <b>12 % → 83 %</b>, fausses alertes charlotte <b>3,7 % → 0,2 %</b>.</li>
+        <li><b>SheGrows, RAG en arabe (FAO, Égypte) :</b> réécriture du dialecte égyptien, recherche hybride en arabe, routage par confiance et boucle d'experts d'un assistant WhatsApp : <b>15K+ questions d'agricultrices</b> en production.</li>
+        <li><b>LegalTech (un ministère) :</b> pipeline hors réseau pour des dossiers juridiques arabes numérisés, avec citations vérifiées. OCR <b>45× plus rapide</b> (86 s → 1,9 s par ligne, résultat identique) sur un GPU de 4 Go ; filtrage d'un OCR qui inventait du texte avec plus de confiance que le vrai arabe.</li>
       </ul>
     </div>
 
     <div class="cv-item">
-      <div><div class="cv-item-role">Consultant IA · Freelance</div><div class="cv-item-co">Indépendant · à distance (client américain)</div></div>
+      <div><div class="cv-item-role">Ingénieur évaluation IA · Freelance</div><div class="cv-item-co">Startup en mode furtif · États-Unis · À distance</div></div>
       <div class="cv-item-date">2026 – auj.</div>
-      <ul><li>Premier client américain, à distance, livré de bout en bout.</li></ul>
+      <ul>
+        <li>Conception d'<b>environ 40 tâches d'évaluation agentique</b> testant <b>Claude Sonnet 5 et Opus 4.6 d'Anthropic</b> sur de vrais logiciels clients, pour que ces clients puissent livrer des agents fondés sur ces modèles. <b>Environ 80 % de tâches acceptées.</b> Validation de tâches pour Qwen3 pour un second client.</li>
+      </ul>
     </div>
 
     <div class="cv-item">
       <div><div class="cv-item-role">Formateur en data science</div><div class="cv-item-co">RCH International · TeachCode · GOMYCODE · Tunisie</div></div>
       <div class="cv-item-date">Mars 2025 – auj.</div>
       <ul>
-        <li>Enseignement de l'<b>AI Full Pack</b> dans trois académies : de Python aux Transformers, de bout en bout.</li>
-        <li>Cours en anglais, français et tunisien. Très pratique, orienté projets.</li>
+        <li>Enseignement de l'<b>AI Full Pack</b>, de Python aux Transformers : <b>3 promotions, une cinquantaine d'apprenants</b>, surtout des professionnels en activité. En anglais, en français et en tunisien.</li>
       </ul>
     </div>
 
@@ -180,8 +209,8 @@
       <div><div class="cv-item-role">Data Scientist</div><div class="cv-item-co">Qualipro® by Imagine Human · Tunisie · Hybride</div></div>
       <div class="cv-item-date">Oct. 2025 – févr. 2026</div>
       <ul>
-        <li>Intégration de l'IA dans la plateforme QHSE : <b>traduction en direct</b>, assistant intégré, agents d'automatisation des audits.</li>
-        <li>Stack : <b>Spring AI, RAG, MCP, Groq</b>. Livré de bout en bout.</li>
+        <li>Service de traduction QHSE en <b>Spring AI + Groq</b> couvrant <b>10 langues</b>, avec cache par client et traduction par lots en parallèle ; exposé comme <b>agent A2A</b>, avec un <b>serveur MCP Spring AI</b> par-dessus.</li>
+        <li>Livraison aussi de l'assistant intégré et des agents d'automatisation des audits. <b>301 tests automatisés</b>, CI GitLab en 9 étapes avec OWASP et SonarQube.</li>
       </ul>
     </div>
 
@@ -217,30 +246,28 @@
     <h2 class="cv-sec-title">Compétences</h2>
     <div class="cv-skills">
       <span class="cv-skill-k">Systèmes LLM</span>
-      <span class="cv-skill-v">Pipelines RAG, agents LLM, Spring AI, MCP (Model Context Protocol), LangChain, LlamaIndex, Groq, évaluation des prompts &amp; de la récupération</span>
+      <span class="cv-skill-v">RAG (recherche hybride, pgvector, re-ranking), agents LLM, évaluation d'agents, Spring AI, MCP, A2A, LangChain, LlamaIndex, CrewAI, OpenAI / Azure OpenAI, Groq, Claude</span>
+      <span class="cv-skill-k">Vision par ordinateur</span>
+      <span class="cv-skill-v">NVIDIA Jetson (Orin NX / Nano), DeepStream, TensorRT, entraînement de détecteurs et de classifieurs, constitution de jeux de données, évaluation sur données réservées</span>
       <span class="cv-skill-k">TAL / ML</span>
-      <span class="cv-skill-v">Transformers (HuggingFace), fine-tuning RoBERTa, résumé BART, ML classique &amp; prévision, vision par ordinateur (CNN)</span>
+      <span class="cv-skill-v">TAL arabe et dialectal, OCR arabe, Transformers (HuggingFace), fine-tuning RoBERTa, ML classique et prévision</span>
       <span class="cv-skill-k">Cloud / MLOps</span>
-      <span class="cv-skill-v">AWS (SageMaker, S3, EC2, EKS), Docker, Kubernetes, GitLab CI/CD</span>
+      <span class="cv-skill-v">AWS (SageMaker, S3, EC2, EKS), Azure, Docker, Kubernetes, GitLab CI/CD, Vercel</span>
       <span class="cv-skill-k">Langages &amp; API</span>
-      <span class="cv-skill-v">Python, Java, FastAPI, R · Weaviate &amp; bases vectorielles</span>
-      <span class="cv-skill-k">Langues</span>
-      <span class="cv-skill-v">Arabe (langue maternelle), français, anglais — j'enseigne dans les trois</span>
+      <span class="cv-skill-v">Python, Java (Spring Boot), TypeScript, FastAPI, PostgreSQL, MongoDB, Redis</span>
     </div>
   </section>
 
   <div class="cv-two">
     <section class="cv-sec r">
-      <h2 class="cv-sec-title">Projets sélectionnés</h2>
-      <div class="cv-item"><div><div class="cv-item-role">Vidéosurveillance analytique en edge · commerce, Arabie saoudite</div><div class="cv-item-co">Jetson · DeepStream · TensorRT · sur site · pilote</div></div></div>
-      <div class="cv-item"><div><div class="cv-item-role">RAG en arabe pour des agriculteurs · Égypte</div><div class="cv-item-co">RAG dialectal · recherche hybride · en production</div></div></div>
-      <div class="cv-item"><div><div class="cv-item-role">DocMate · assistant de documentation IA</div><div class="cv-item-co">RAG · Weaviate · SageMaker · EKS · entreprise</div></div></div>
-      <div class="cv-item"><div><div class="cv-item-role">RAG et MCP avec Spring AI</div><div class="cv-item-co">Spring AI · MCP · Java · open source</div></div></div>
+      <h2 class="cv-sec-title">Projets personnels</h2>
+      <div class="cv-item"><div><div class="cv-item-role">Signal Desk · projet solo, en ligne</div><div class="cv-item-co">Moteur de règles + briefing LLM et chat en streaming · FastAPI · React · backtesté sur 35K+ jours-actifs</div></div></div>
+      <div class="cv-item"><div><div class="cv-item-role">RAG et MCP avec Spring AI · open source</div><div class="cv-item-co">Spring AI · Model Context Protocol · Java</div></div></div>
     </section>
 
     <section class="cv-sec r">
       <h2 class="cv-sec-title">Formation &amp; certifications</h2>
-      <div class="cv-item"><div><div class="cv-item-role">Diplôme national d'ingénieur · Data Science</div><div class="cv-item-co">ESPRIT School of Engineering · début 2025</div></div></div>
+      <div class="cv-item"><div><div class="cv-item-role">Diplôme national d'ingénieur · Data Science</div><div class="cv-item-co">ESPRIT School of Engineering · 2025</div></div></div>
       <div class="cv-item"><div><div class="cv-item-role">Maths &amp; Physique · cycle préparatoire</div><div class="cv-item-co">Institut préparatoire aux études d'ingénieur de Tunis · 2021</div></div></div>
       <div class="cv-item"><div><div class="cv-item-role">NVIDIA DLI · 4 certifications</div><div class="cv-item-co">Deep Learning · TAL à base de Transformers · Détection d'anomalies · Vision pour l'inspection industrielle</div></div></div>
     </section>

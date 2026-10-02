@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
 <!--#include head-open-->
-<title>Étude de cas : RAG en arabe pour des agriculteurs · Abdelkerim Dassi</title>
-<meta name="description" content="Comment un assistant RAG qui répond à des agriculteurs en arabe égyptien est passé d'une recherche qui ne trouvait rien à la production : normalisation, réécriture dialectale, recherche hybride et boucle de retour experte.">
+<title>Étude de cas : SheGrows, RAG en arabe pour agricultrices (FAO Égypte) · Abdelkerim Dassi</title>
+<meta name="description" content="SheGrows, un assistant RAG sur WhatsApp pour les agricultrices en Égypte, construit pour la FAO : plus de 15 000 questions traitées en production. Comment j'ai construit sa couche de recherche en dialecte égyptien et sa boucle de retour des experts.">
 <meta name="author" content="Abdelkerim Dassi">
 <link rel="canonical" href="https://abdelkerimdassi.com/fr/etudes-de-cas/rag-arabe">
 <!--#include hreflang-->
@@ -11,8 +11,8 @@
 
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://abdelkerimdassi.com/fr/etudes-de-cas/rag-arabe">
-<meta property="og:title" content="Étude de cas : RAG en arabe pour des agriculteurs">
-<meta property="og:description" content="D'une recherche qui ne trouvait rien à la production : un pipeline RAG dialectal pour l'agriculture, construit de bout en bout.">
+<meta property="og:title" content="Étude de cas : SheGrows, RAG en arabe pour la FAO en Égypte">
+<meta property="og:description" content="Un assistant RAG sur WhatsApp pour les agricultrices en Égypte : recherche adaptée au dialecte, boucle de retour experte, plus de 15 000 questions en production.">
 <meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-arabic-rag.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -21,8 +21,8 @@
 <meta property="og:locale:alternate" content="en_US">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Étude de cas : RAG en arabe pour des agriculteurs">
-<meta name="twitter:description" content="D'une recherche qui ne trouvait rien à la production : un pipeline RAG dialectal pour l'agriculture.">
+<meta name="twitter:title" content="Étude de cas : SheGrows, RAG en arabe pour la FAO en Égypte">
+<meta name="twitter:description" content="RAG adapté au dialecte pour les agricultrices en Égypte : plus de 15 000 questions traitées en production.">
 <meta name="twitter:image" content="https://abdelkerimdassi.com/assets/og/og-arabic-rag.png">
 
 <!--#include head-close-fr-->
@@ -79,82 +79,83 @@
 
   <header class="r">
     <div class="cs-eyebrow">Étude de cas · IA en production</div>
-    <h1 class="cs-title">Un RAG qui répond aux agriculteurs<br><em>dans leur propre dialecte.</em></h1>
+    <h1 class="cs-title">Un RAG qui répond aux agricultrices<br><em>dans leur propre dialecte.</em></h1>
     <p class="cs-lede">
-      Un assistant de conseil agricole pour l'Égypte. Les utilisateurs tapent en arabe égyptien depuis
-      leur téléphone ; la base, elle, est rédigée en arabe standard. Le premier jour, la recherche
-      ne remontait presque rien. Voici comment il est devenu quelque chose que j'assume de mettre
-      entre les mains d'agriculteurs.
+      SheGrows est un assistant WhatsApp pour les agricultrices en Égypte, construit par 1morething pour
+      la FAO. Elles posent leurs questions en arabe égyptien, par écrit ou par message vocal, et la base
+      de connaissances est rédigée en arabe standard. J'ai été responsable de ce qui fait se rencontrer
+      les deux, la couche de recherche adaptée au dialecte, et de la boucle qui transforme les réponses
+      des experts en nouvelles connaissances.
     </p>
   </header>
 
   <div class="cs-facts r">
-    <div class="cs-fact"><div class="cs-fact-k">Secteur</div><div class="cs-fact-v">Conseil agricole · Égypte</div></div>
-    <div class="cs-fact"><div class="cs-fact-k">Mon rôle</div><div class="cs-fact-v">Ingénieur IA · pipeline de bout en bout</div></div>
-    <div class="cs-fact"><div class="cs-fact-k">Stack</div><div class="cs-fact-v">RAG · pgvector · Postgres FTS · réécriture GPT-4o</div></div>
-    <div class="cs-fact"><div class="cs-fact-k">Statut</div><div class="cs-fact-v">En production</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Client</div><div class="cs-fact-v">FAO · Égypte</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Mon rôle</div><div class="cs-fact-v">Ingénieur IA · recherche dialectale et boucle de retour, dans une équipe de 4</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Stack</div><div class="cs-fact-v">RAG · pgvector · recherche plein texte arabe · GPT-4o · Azure</div></div>
+    <div class="cs-fact"><div class="cs-fact-k">Statut</div><div class="cs-fact-v">En production depuis juillet 2026</div></div>
   </div>
 
   <section class="cs-sec r">
     <h2 class="cs-h"><span class="n">01</span>Le problème</h2>
     <p class="cs-p">
-      En anglais, dans une démo, le RAG a tout du tour de magie : on verse des PDF, on interroge, le
-      modèle répond. Ici, il fallait répondre à des questions comme <b>« comment j'arrose ma
-      courgette en été »</b> (tapé <b>ازاى اروى الكوسة فى الصيف؟</b>) face à une documentation
-      rédigée en arabe formel. Le même mot arrive avec des formes d'alif différentes, avec ou sans
-      diacritiques, avec des marques RTL parasites venues d'un clavier de téléphone. Et le dialecte
-      se superpose à tout cela.
+      Le RAG a l'air magique dans les démos en anglais. On dépose des PDF, on récupère, on interroge le
+      modèle, terminé. Celui-ci devait répondre à des questions comme <b>« comment arroser mes courgettes
+      en été »</b> (tapé <b>ازاى اروى الكوسة فى الصيف؟</b>) à partir d'une documentation en arabe
+      standard. Le même mot arrive avec différentes formes d'alif, avec ou sans voyelles, avec des
+      marques de sens d'écriture parasites laissées par le clavier du téléphone. Et le dialecte se
+      superpose à tout cela.
     </p>
     <p class="cs-p">
       La plupart des modèles d'embedding, même multilingues, ne voient pas que la question en dialecte
-      et la documentation en arabe standard disent la même chose.
-      <b>Le premier jour, la recherche revenait presque vide.</b>
+      et la documentation en arabe standard disent la même chose. <b>Les questions en dialecte passaient
+      à côté de documents qui y répondaient pourtant clairement.</b>
     </p>
   </section>
 
   <section class="cs-sec r">
     <h2 class="cs-h"><span class="n">02</span>La contrainte qui a tout façonné</h2>
     <p class="cs-p">
-      En agriculture, une dose de pesticide de travers peut tuer une récolte, voire pire. Le système
-      n'avait pas le droit de deviner avec aplomb. Cette seule contrainte a dicté toute
-      l'architecture de confiance : chaque réponse est notée deux fois, et le moindre doute part
-      vers un expert humain plutôt que vers le modèle.
+      En agriculture, une mauvaise dose de pesticide peut tuer une récolte, voire pire. Le système ne
+      devait pas avoir le droit de deviner avec assurance. Cette seule contrainte a dicté l'architecture
+      de confiance : tout ce qui est incertain part vers un agronome humain plutôt que vers le modèle.
     </p>
     <blockquote class="cs-quote">« Le chemin “je ne sais pas, je vais chercher quelqu'un” n'est pas un pis-aller : c'est une fonctionnalité. »</blockquote>
   </section>
 
   <section class="cs-sec r">
     <h2 class="cs-h"><span class="n">03</span>Le pipeline</h2>
+    <p class="cs-p">Les étapes 1, 2, 3, 5 et 6 sont les miennes. L'étape 4 est celle d'un coéquipier ; elle figure ici parce que le reste n'a pas de sens sans elle.</p>
     <div class="cs-pipe">
       <div class="cs-step">
         <div class="cs-step-n">1</div>
-        <div><div class="cs-step-t">Normaliser la requête : jamais les documents</div>
-        <div class="cs-step-d">Retirer diacritiques, tatweel et marques RTL ; unifier les variantes d'alif. Le ta marbouta reste : il porte du sens en arabe technique. La base de connaissances est laissée intacte, pour que les mots exacts que cherchent les agriculteurs survivent.</div></div>
+        <div><div class="cs-step-t">Normaliser la requête, jamais les documents</div>
+        <div class="cs-step-d">Suppression des signes diacritiques, du tatweel et des marques de sens d'écriture ; unification des variantes d'alif. Le ta-marbuta reste, car il porte du sens en arabe technique. La base de connaissances n'est pas touchée, pour que les mots exacts que cherchent les agricultrices survivent.</div></div>
       </div>
       <div class="cs-step">
         <div class="cs-step-n">2</div>
         <div><div class="cs-step-t">Réécrire le dialecte en arabe standard, noms figés</div>
-        <div class="cs-step-d">Un appel GPT-4o en few-shot convertit l'égyptien parlé en arabe standard, avec la consigne explicite de ne pas toucher aux noms de cultures, aux noms de pesticides, aux doses, aux dates ni aux unités. Les réécritures sont mises en cache ; en cas d'échec, le système repart de la requête d'origine et fusionne les deux jeux de résultats.</div></div>
+        <div class="cs-step-d">Un appel GPT-4o en few-shot convertit l'égyptien parlé en arabe standard, avec l'instruction de ne pas toucher aux noms de cultures, de pesticides, aux doses, aux dates ni aux unités. Les réécritures sont mises en cache. La recherche tourne toujours sur l'original et sur la réécriture, et les résultats sont fusionnés.</div></div>
       </div>
       <div class="cs-step">
         <div class="cs-step-n">3</div>
-        <div><div class="cs-step-t">Récupération hybride avec le tokenizer arabe</div>
-        <div class="cs-step-d">pgvector pour la sémantique, recherche plein texte Postgres pour les mots-clés ; fusion par nœud sur le score maximum. Basculer le FTS Postgres sur la configuration arabe a été un changement d'une ligne, plus utile au rappel que n'importe quelle retouche de prompt.</div></div>
+        <div><div class="cs-step-t">Recherche hybride avec le tokeniseur arabe</div>
+        <div class="cs-step-d">pgvector pour le sens, la recherche plein texte de Postgres pour les mots-clés, fusionnées en gardant le meilleur score de chaque passage. Par défaut, la recherche plein texte de Postgres utilise une configuration qui ne comprend pas l'arabe ; passer à la configuration arabe tient en une ligne.</div></div>
       </div>
       <div class="cs-step">
         <div class="cs-step-n">4</div>
-        <div><div class="cs-step-t">Seuils de similarité recalibrés</div>
-        <div class="cs-step-d">Les seuils cosinus de 0,7 calibrés sur l'anglais rejetaient presque toutes les bonnes correspondances arabes (valeurs réelles : 0,20–0,45). Un benchmark de 20 requêtes en arabe, français et anglais a fixé un plancher et un plafond empiriques, remappés sur une confiance de 0 à 1.</div></div>
+        <div><div class="cs-step-t">Des seuils calibrés pour l'arabe</div>
+        <div class="cs-step-d">Des seuils cosinus à 0,7 calibrés pour l'anglais rejetaient la plupart des bonnes correspondances arabes, dont les scores réels se situaient entre 0,20 et 0,45. Le benchmark de 20 requêtes d'un coéquipier, en arabe, en français et en anglais, a fixé un plancher et un plafond empiriques.</div></div>
       </div>
       <div class="cs-step">
         <div class="cs-step-n">5</div>
-        <div><div class="cs-step-t">Confiance à deux signaux, trois issues</div>
-        <div class="cs-step-d">Le LLM déclare sa propre confiance ; la similarité de récupération sert de filet. Élevée → on répond. Moyenne → on répond avec un avertissement. Faible → on remonte à un agronome humain.</div></div>
+        <div><div class="cs-step-t">Trois issues, et toujours la même réponse</div>
+        <div class="cs-step-d">Confiance élevée : réponse. Moyenne : réponse avec avertissement. Faible : escalade vers un agronome humain. J'ai aussi rendu le routage déterministe, pour qu'un même message prenne toujours le même chemin, et ajouté un garde-fou qui escalade avant même l'appel au LLM quand la recherche est faible.</div></div>
       </div>
       <div class="cs-step">
         <div class="cs-step-n">6</div>
-        <div><div class="cs-step-t">Chaque réponse d'expert nourrit le cerveau</div>
-        <div class="cs-step-d">Les escalades résolues sont réinjectées dans la base de connaissances sous forme de nœuds uniques, étiquetés et conservés dans la langue et le registre de l'utilisateur. Le système enrichit sa connaissance du dialecte, une escalade après l'autre.</div></div>
+        <div><div class="cs-step-t">Les réponses des experts nourrissent la base</div>
+        <div class="cs-step-d">Les escalades résolues sont réinjectées dans la base de connaissances, dans la langue et le registre de l'agricultrice. Plus de 1 200 réponses d'experts y sont déjà entrées ; les nouvelles passent désormais d'abord par une validation administrateur.</div></div>
       </div>
     </div>
   </section>
@@ -162,24 +163,24 @@
   <section class="cs-sec r">
     <h2 class="cs-h"><span class="n">04</span>Le résultat</h2>
     <p class="cs-p">
-      La recherche est passée de <b>presque rien le premier jour</b> à un système en production devant
-      de vrais agriculteurs, sans un seul modèle d'embedding spécialement arabe. Les gains viennent
-      d'un enchaînement d'étapes simples et honnêtes, pas d'un modèle miracle. Et grâce à la boucle
-      de retour, l'essentiel de ce que le retriever sait aujourd'hui du dialecte n'y était pas au
-      lancement : le système l'a appris tout seul.
+      En production depuis juillet 2026. Fin septembre, il avait répondu à <b>plus de 15 000 questions de
+      plus de 100 agricultrices</b>, dont environ un tiers posent leurs questions à l'oral. Environ quatre
+      questions sur cinq obtiennent une réponse sans intervention humaine. Ces chiffres d'usage viennent de
+      la base de production. La justesse des réponses n'a pas encore été notée sur un jeu annoté par des
+      experts : elle n'est donc pas revendiquée ici.
     </p>
     <div class="cs-outcomes">
-      <div class="cs-out"><div class="cs-out-v">~0 → utilisable</div><div class="cs-out-k">Rappel de récupération au premier jour vs. en production, mesuré sur un benchmark multilingue de 20 requêtes</div></div>
-      <div class="cs-out"><div class="cs-out-v">3 issues</div><div class="cs-out-k">Réponse / réponse avec avertissement / expert humain, aucune supposition assurée sur un conseil critique pour la culture</div></div>
-      <div class="cs-out"><div class="cs-out-v">6 correctifs</div><div class="cs-out-k">Normalisation, réécriture dialectale, recherche hybride, recalibrage, double confiance, boucle de retour</div></div>
-      <div class="cs-out"><div class="cs-out-v">Auto-enrichi</div><div class="cs-out-k">Chaque escalade experte est réinjectée. La base de connaissances s'améliore à l'usage</div></div>
+      <div class="cs-out"><div class="cs-out-v">15K+</div><div class="cs-out-k">Questions d'agricultrices traitées depuis le lancement de juillet 2026</div></div>
+      <div class="cs-out"><div class="cs-out-v">~4 sur 5</div><div class="cs-out-k">Traitées sans humain ; les autres vont à un agronome plutôt qu'à une supposition</div></div>
+      <div class="cs-out"><div class="cs-out-v">1 200+</div><div class="cs-out-k">Réponses d'experts réinjectées dans la base de connaissances grâce à la boucle que j'ai construite</div></div>
+      <div class="cs-out"><div class="cs-out-v">3 chemins</div><div class="cs-out-k">Réponse, réponse avec avertissement, ou expert humain. Aucune supposition assurée sur un conseil critique pour la récolte</div></div>
     </div>
   </section>
 
   <section class="cs-sec r">
     <p class="cs-p">
-      Envie du détail technique — les règles de normalisation exactes, la fabrication du prompt de
-      réécriture, les valeurs de seuils ? Tout est dans l'article long :
+      Envie du détail technique : les règles de normalisation, la conception du prompt de réécriture,
+      les valeurs de seuil ? Tout est dans l'article complet :
       <a href="/fr/blog/rag-arabe" style="color:var(--accent)">L'arabe a cassé mon RAG. Voici ce qui l'a sauvé.</a>
     </p>
   </section>
