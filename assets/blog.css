@@ -55,7 +55,8 @@
 }
 .blog-subtitle em { font-family: 'Libre Baskerville', serif; color: var(--accent); }
 
-.blog-tags { display: flex; gap: 10px; margin-top: 28px; }
+.blog-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.blog-tag { white-space: nowrap; }
 .blog-tag {
   font-size: 9px; letter-spacing: .12em;
   text-transform: uppercase;
@@ -195,7 +196,7 @@
 }
 .blog-photo figcaption {
   font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--t4); text-align: right; margin-top: 10px;
+  color: var(--t3); text-align: right; margin-top: 10px;
 }
 .blog-photo figcaption a { color: var(--t3); }
 .blog-photo figcaption a:hover { color: var(--accent); }
@@ -205,6 +206,11 @@
 ───────────────────────────────────── */
 .blog-figure { margin: 48px 0; }
 .blog-figure svg { width: 100%; height: auto; display: block; overflow: visible; }
+/* phones: diagrams scaled to 340px left 4px labels; keep them legible and let them scroll */
+@media (max-width: 600px) {
+  .blog-figure { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .blog-figure svg { min-width: 560px; }
+}
 .blog-figure figcaption {
   font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
   color: var(--t3); text-align: center; margin-top: 18px;
@@ -272,7 +278,8 @@
   font-style: italic; color: var(--accent);
 }
 
-.blog-footer-links { display: flex; gap: 32px; }
+.blog-footer-links { display: flex; gap: 32px; flex-wrap: wrap; }
+.blog-footer-links a { display: inline-block; padding: 4px 0; white-space: nowrap; }
 .blog-footer-links a {
   font-size: 10px; letter-spacing: .14em;
   text-transform: uppercase;
@@ -294,7 +301,7 @@
 [data-theme="light"] .article blockquote p { color: rgba(15,29,61,.72); }
 [data-theme="light"] .article code { background: rgba(15,29,61,.06); border-color: rgba(15,29,61,.1); }
 [data-theme="light"] .article pre { background: rgba(15,29,61,.04); border-color: rgba(15,29,61,.08); }
-[data-theme="light"] .article pre code { color: rgba(15,29,61,.65); }
+[data-theme="light"] .article pre code { color: rgba(15,29,61,.65); background: none; border: none; }
 [data-theme="light"] .callout { background: rgba(176,125,53,.06); border-color: rgba(176,125,53,.18); }
 [data-theme="light"] .callout p { color: rgba(15,29,61,.65); }
 [data-theme="light"] .blog-footer-links a { color: rgba(15,29,61,.66); }

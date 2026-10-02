@@ -166,14 +166,16 @@
     const btn = document.createElement('button');
     btn.className = 'code-copy';
     btn.type = 'button';
-    btn.textContent = 'Copy';
-    btn.setAttribute('aria-label', 'Copy code to clipboard');
+    const FR = document.documentElement.lang === 'fr';
+    const [label, done] = FR ? ['Copier', 'Copié !'] : ['Copy', 'Copied!'];
+    btn.textContent = label;
+    btn.setAttribute('aria-label', FR ? 'Copier le code' : 'Copy code to clipboard');
     btn.addEventListener('click', () => {
       const code = pre.querySelector('code');
       navigator.clipboard.writeText((code || pre).innerText).then(() => {
-        btn.textContent = 'Copied!';
+        btn.textContent = done;
         btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+        setTimeout(() => { btn.textContent = label; btn.classList.remove('copied'); }, 2000);
       });
     });
     pre.appendChild(btn);
@@ -187,7 +189,7 @@
     btn.addEventListener('click', () => {
       navigator.clipboard.writeText(location.href).then(() => {
         const orig = btn.textContent;
-        btn.textContent = 'Copied!';
+        btn.textContent = document.documentElement.lang === 'fr' ? 'Copié !' : 'Copied!';
         btn.classList.add('copied');
         setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
       });
@@ -262,7 +264,9 @@
     light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39']
   };
   const CELL = 11, GAP = 3, DAY_LABEL_W = 28, MONTH_LABEL_H = 18;
-  const DAY_LABELS = { 1: 'Mon', 3: 'Wed', 5: 'Fri' };
+  const FR = document.documentElement.lang === 'fr';
+  const LOCALE = FR ? 'fr-FR' : 'en-US';
+  const DAY_LABELS = FR ? { 1: 'lun', 3: 'mer', 5: 'ven' } : { 1: 'Mon', 3: 'Wed', 5: 'Fri' };
 
   let cached = null;
 
@@ -304,8 +308,9 @@
   function fmtTitle(day) {
     if (!day) return '';
     const d = new Date(day.date + 'T00:00:00');
-    const dateStr = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    const dateStr = d.toLocaleDateString(LOCALE, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
     const c = day.count;
+    if (FR) return c === 0 ? `Aucune contribution le ${dateStr}` : `${c} contribution${c > 1 ? 's' : ''} le ${dateStr}`;
     if (c === 0) return `No contributions on ${dateStr}`;
     return `${c} contribution${c === 1 ? '' : 's'} on ${dateStr}`;
   }
@@ -331,7 +336,7 @@
       const mo = dt.getMonth();
       if (mo !== lastMonth && dt.getDate() <= 7) {
         const x = DAY_LABEL_W + i * (CELL + GAP);
-        const name = dt.toLocaleString('en-US', { month: 'short' });
+        const name = dt.toLocaleString(LOCALE, { month: 'short' });
         svg += `<text x="${x}" y="${MONTH_LABEL_H - 6}">${name}</text>`;
         lastMonth = mo;
       }
@@ -369,8 +374,13 @@
 
     if (totalEl && cached.total) {
       const t = cached.total.lastYear ?? Object.values(cached.total)[0];
-      if (t != null) totalEl.textContent = `${t.toLocaleString()} contributions in the last year, synced live from GitHub.`;
+      if (t != null) totalEl.textContent = FR
+        ? `${t.toLocaleString(LOCALE)} contributions sur les 12 derniers mois, synchronisées en direct depuis GitHub.`
+        : `${t.toLocaleString()} contributions in the last year, synced live from GitHub.`;
     }
+    // on phones the graph scrolls sideways; start at the most recent weeks, not a year ago
+    const scroller = root.closest('.activity-graph');
+    if (scroller) scroller.scrollLeft = scroller.scrollWidth;
   }
 
   function showError() {
@@ -406,33 +416,47 @@
   // not on print-focused pages
   if (document.body.classList.contains('no-ask')) return;
 
-  const SUGGESTIONS = [
-    'What has he shipped in production?',
-    'Does he know Arabic NLP?',
-    'Is he available for freelance work?',
-  ];
+  // the widget follows the page language; the model already replies in the visitor's
+  const FR = document.documentElement.lang === 'fr';
+  const T = FR ? {
+    suggestions: ["Qu'a-t-il mis en production ?", 'Est-il ouvert à la mobilité internationale ?', "Maîtrise-t-il le TAL arabe ?"],
+    fab: 'Mon IA', eyebrow: 'Ancrée dans ce site', title: 'Demandez à mon <em>IA</em>', close: 'Fermer',
+    placeholder: 'Posez une question sur mon travail, ma stack…', question: 'Votre question', send: 'Envoyer',
+    note: "Réponses générées à partir de ce site ; vérifiez tout point important.",
+    hello: "Bonjour, je suis l'IA de ce site. Je connais le parcours, la stack et les articles d'Abdelkerim. Que voulez-vous savoir ?",
+    error: "Une erreur est survenue. Écrivez plutôt à abdelkerimdassi@gmail.com.",
+    offline: "Impossible de joindre l'assistant. Vérifiez votre connexion ou écrivez à abdelkerimdassi@gmail.com.",
+  } : {
+    suggestions: ['What has he shipped in production?', 'Is he open to relocation?', 'Does he know Arabic NLP?'],
+    fab: 'Ask my AI', eyebrow: 'Grounded in this site', title: 'Ask my <em>AI</em>', close: 'Close',
+    placeholder: 'Ask about my work, stack, writing…', question: 'Your question', send: 'Send',
+    note: 'AI answers grounded in this site; double-check anything important.',
+    hello: "Hi, I'm the AI on this site. I know Abdelkerim's work, stack, and writing. What do you want to know?",
+    error: 'Something went wrong. Email abdelkerimdassi@gmail.com instead.',
+    offline: "Couldn't reach the assistant. Check your connection or email abdelkerimdassi@gmail.com.",
+  };
 
   const root = document.createElement('div');
   root.id = 'ask-root';
   root.innerHTML = `
-    <button id="ask-fab" aria-haspopup="dialog" aria-expanded="false">
-      <span class="ask-fab-dot"></span><span class="ask-fab-label">Ask my AI</span>
+    <button id="ask-fab" aria-haspopup="dialog" aria-expanded="false" aria-label="${T.fab}">
+      <span class="ask-fab-dot"></span><span class="ask-fab-label">${T.fab}</span>
     </button>
-    <section id="ask-panel" role="dialog" aria-modal="false" aria-label="Ask my AI" hidden>
+    <section id="ask-panel" role="dialog" aria-modal="false" aria-label="${T.fab}" hidden>
       <header class="ask-head">
         <div>
-          <div class="ask-eyebrow">Grounded in this site</div>
-          <div class="ask-title">Ask my <em>AI</em></div>
+          <div class="ask-eyebrow">${T.eyebrow}</div>
+          <div class="ask-title">${T.title}</div>
         </div>
-        <button class="ask-close" aria-label="Close">×</button>
+        <button class="ask-close" aria-label="${T.close}">×</button>
       </header>
       <div class="ask-msgs" aria-live="polite"></div>
       <div class="ask-chips"></div>
       <form class="ask-form">
-        <input class="ask-input" type="text" maxlength="500" placeholder="Ask about my work, stack, writing…" aria-label="Your question">
-        <button class="ask-send" type="submit" aria-label="Send">→</button>
+        <input class="ask-input" type="text" maxlength="500" placeholder="${T.placeholder}" aria-label="${T.question}">
+        <button class="ask-send" type="submit" aria-label="${T.send}">→</button>
       </form>
-      <div class="ask-note">AI answers grounded in this site; double-check anything important.</div>
+      <div class="ask-note">${T.note}</div>
     </section>`;
   document.body.appendChild(root);
 
@@ -463,7 +487,7 @@
   function renderChips() {
     chips.innerHTML = '';
     if (history.length) return;
-    SUGGESTIONS.forEach(q => {
+    T.suggestions.forEach(q => {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'ask-chip';
@@ -482,7 +506,7 @@
     root.classList.add('ask-open');
     if (!msgs.children.length) {
       if (history.length) history.forEach(m => addMsg(m.role, m.content));
-      else addMsg('assistant', "Hi, I'm the AI on this site. I know Abdelkerim's work, stack, and writing. What do you want to know?");
+      else addMsg('assistant', T.hello);
     }
     renderChips();
     input.focus();
@@ -524,11 +548,11 @@
         history.push({ role: 'assistant', content: data.answer });
         persist();
       } else {
-        pending.textContent = data.error || "Something went wrong. Email abdelkerimdassi@gmail.com instead.";
+        pending.textContent = data.error || T.error;
       }
     } catch (err) {
       pending.classList.remove('ask-pending');
-      pending.textContent = "Couldn't reach the assistant. Check your connection or email abdelkerimdassi@gmail.com.";
+      pending.textContent = T.offline;
     } finally {
       send.disabled = false;
       input.focus();

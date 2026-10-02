@@ -160,7 +160,7 @@
   <h2>L'arabe n'est pas une seule langue</h2>
 
   <p>
-    Deux arabophones n'écrivent pas le même mot de la même manière. L'alif change de forme (ٱ, آ, إ, أ), les diacritiques apparaissent ou disparaissent, et le clavier du téléphone glisse au passage ses marques RTL invisibles. Le dialecte, lui, vient se superposer à tout ça : entre la forme de dictionnaire que contiennent vos documents et ce qu'un agriculteur écrit sur WhatsApp, il y a un monde. La plupart des modèles d'embedding, même multilingues, ne voient pas que <em>« comment j'arrose ma courgette en été »</em> et <code lang="ar" dir="rtl">ازاى اروى الكوسة فى الصيف؟</code> disent exactement la même chose.
+    Deux arabophones n'écrivent pas le même mot de la même manière. L'alif change de forme (<bdi>ٱ</bdi>, <bdi>آ</bdi>, <bdi>إ</bdi>, <bdi>أ</bdi>), les diacritiques apparaissent ou disparaissent, et le clavier du téléphone glisse au passage ses marques RTL invisibles. Le dialecte, lui, vient se superposer à tout ça : entre la forme de dictionnaire que contiennent vos documents et ce qu'un agriculteur écrit sur WhatsApp, il y a un monde. La plupart des modèles d'embedding, même multilingues, ne voient pas que <em>« comment j'arrose ma courgette en été »</em> et <code lang="ar" dir="rtl">ازاى اروى الكوسة فى الصيف؟</code> disent exactement la même chose.
   </p>
 
   <h2>Correctif n° 1 : normaliser la requête, pas les documents</h2>
@@ -172,7 +172,7 @@
     La leçon qui m'a coûté plus cher : <strong>n'appliquez surtout pas la même normalisation à votre base</strong>. Vous y abîmeriez en silence les mots mêmes que les agriculteurs cherchent. On normalise ce qui entre ; on ne touche pas à ce qui est déjà indexé.
   </p>
 
-  <pre><code lang="ar" dir="rtl">text = strip_diacritics(text)
+  <pre><code>text = strip_diacritics(text)
 text = re.sub(r"[ٱآإأ]", "ا", text)
 text = re.sub(r"ي", "ى", text)
 text = re.sub(r"\s+", " ", text).strip()</code></pre>

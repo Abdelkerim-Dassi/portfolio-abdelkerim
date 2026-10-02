@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
 <!--#include head-open-->
-<title>Projets · Ingénieur IA : réalisations &amp; expérience · Abdelkerim Dassi</title>
-<meta name="description" content="Le parcours et les projets d'Abdelkerim Dassi : AI Team Lead chez 1morething Studio (vision edge à Riyad, RAG en arabe pour la FAO, OCR juridique sur site), évaluation d'agents pour Anthropic, NTT DATA Munich, Silver Brain AI Zurich.">
+<title>Projets d'ingénieur IA &amp; expérience · Abdelkerim Dassi</title>
+<meta name="description" content="Vision edge à Riyad, RAG en arabe pour la FAO, OCR juridique sur site, évaluation d'agents pour Anthropic, et Qirat. Des projets aux résultats mesurés.">
 <meta name="author" content="Abdelkerim Dassi">
 <meta name="keywords" content="portfolio ingénieur IA, projets ingénieur machine learning, IA embarquée Jetson, RAG arabe, évaluation d'agents, ingénieur LLM, ingénieur IA Tunisie, Abdelkerim Dassi, 1morething, NTT DATA, Qualipro, D2D Analytics, Silver Brain AI">
 <link rel="canonical" href="https://abdelkerimdassi.com/fr/projets">
@@ -79,7 +79,7 @@
     <div class="exp-row r" id="agent-eval">
       <span class="e-num">02</span>
       <div>
-        <h3 class="e-role">Ingénieur évaluation IA · Freelance</h3>
+        <h3 class="e-role">Ingénieur en évaluation IA · Freelance</h3>
         <div class="e-co">Startup en mode furtif · États-Unis · À distance</div>
         <ul class="e-bullets">
           <li>Conception d'<b>environ 40 tâches d'évaluation agentique</b> qui testent des modèles de pointe, <b>Claude Sonnet 5 et Opus 4.6 d'Anthropic</b>, sur de vrais logiciels clients, pour que ces clients puissent livrer des agents fondés sur ces modèles. <b>Environ 80 % de tâches acceptées.</b></li>
@@ -223,7 +223,7 @@
 
     <a class="proj-row r" href="https://signal-desk-psi.vercel.app" target="_blank" rel="noopener">
       <span class="p-num">01</span>
-      <div><h3 class="p-name">Signal Desk : tableau de bord crypto</h3><div class="p-sub">Conçu, développé et déployé seul. Un moteur de règles note 18 cryptomonnaies de 0 à 100, filtrées par le régime de marché ; un LLM transforme ces chiffres en briefing et répond aux questions dans un chat en streaming ancré sur eux. Le LLM n'est jamais appelé lors du rafraîchissement toutes les 2 minutes : le trafic au repos ne coûte rien. Backtesté sur plus de 35 000 jours-actifs depuis 2021 : les configurations notées « fortes » ont gagné en moyenne +8,6 % à 30 jours, contre +3,6 % pour l'ensemble des signaux. FastAPI · React · Redis · Vercel.</div></div>
+      <div><h3 class="p-name">Qirat : tableau de bord crypto</h3><div class="p-sub">Le carat note l'or ; Qirat note les cryptos. Anciennement Signal Desk. Conçu, développé et déployé seul. Un moteur de règles note 18 cryptomonnaies de 0 à 100, filtrées par le régime de marché ; un LLM transforme ces chiffres en briefing et répond aux questions dans un chat en streaming ancré sur eux. Le LLM n'est jamais appelé lors du rafraîchissement toutes les 2 minutes : le trafic au repos ne coûte rien. Backtesté sur plus de 35 000 jours actifs depuis 2021 : les configurations notées « fortes » ont gagné en moyenne +8,6 % à 30 jours, contre +3,6 % pour l'ensemble des signaux. FastAPI · React · Redis · Vercel.</div></div>
       <div class="p-metric">En ligne</div>
       <span class="p-arr">↗</span>
     </a>
@@ -244,7 +244,7 @@
         <span class="activity-user">@Abdelkerim-Dassi</span>
         <span class="activity-live"><span class="activity-dot"></span>Synchronisé en direct</span>
       </div>
-      <div class="activity-graph">
+      <div class="activity-graph" tabindex="0">
         <div id="gh-chart" class="gh-grid" role="img" aria-label="Graphique des contributions GitHub">
           <div class="gh-loading">Chargement du graphique…</div>
         </div>
@@ -342,16 +342,31 @@ document.addEventListener('DOMContentLoaded', function () {
   const el = document.getElementById('map');
   if (!el || typeof L === 'undefined') return;
 
+  const places = [
+    { c: [25.346, 55.421], name: 'Sharjah, EAU',           role: 'Portefeuille 1MT · EAU' },
+    { c: [30.044, 31.236], name: 'Le Caire, Égypte',       role: 'SheGrows × FAO · RAG en arabe pour agricultrices' },
+    { c: [24.713, 46.675], name: 'Riyad, Arabie saoudite', role: 'Absar · vision edge dans une chaîne de cafés' },
+    { c: [36.806, 10.181], name: 'Tunis, Tunisie',         role: 'Base · Qualipro · Bootcamps' },
+    { c: [48.135, 11.582], name: 'Munich, Allemagne',      role: 'NTT DATA Munich · intégré en direct' },
+    { c: [47.376,  8.541], name: 'Zurich, Suisse',         role: 'Silver Brain AI · 1M+ documents juridiques allemands' },
+    { c: [45.421,-75.697], name: 'Ottawa, Canada',         role: 'D2D Analytics · RAG parlementaire' },
+    { c: [40.712,-74.006], name: 'États-Unis',             role: 'Évaluation d\'agents pour modèles de pointe' },
+    { c: [48.857,  2.352], name: 'Paris, France',          role: 'RLVR · apprentissage par renforcement à récompenses vérifiables' },
+    { c: [51.507, -0.128], name: 'Londres, Royaume-Uni',   role: 'RLVR · apprentissage par renforcement à récompenses vérifiables' },
+  ];
+
   const map = L.map(el, {
-    center: [32, 25],
-    zoom: 3,
-    minZoom: 2,
+    minZoom: 1,
+    zoomSnap: 0.25, // lets fitBounds land between levels on narrow screens
     maxZoom: 7,
     scrollWheelZoom: false,
     dragging: !L.Browser.mobile, // one-finger swipe scrolls the page, not the map
     tapHold: false,
     worldCopyJump: true,
   });
+
+  // a fixed centre/zoom cut pins off on phones and hid London/Paris under the zoom buttons
+  map.fitBounds(L.latLngBounds(places.map(p => p.c)), { paddingTopLeft: [56, 40], paddingBottomRight: [40, 40] });
 
   // Esri grey canvas basemaps: no API key, and a base + labels pair per theme.
   // (CARTO retired anonymous access; its tiles come back stamped 'API KEY REQUIRED'.)
@@ -389,24 +404,13 @@ document.addEventListener('DOMContentLoaded', function () {
     iconAnchor: [7, 7],
   });
 
-  const places = [
-    { c: [25.346, 55.421], name: 'Sharjah, EAU',           role: 'Portefeuille 1MT · EAU' },
-    { c: [30.044, 31.236], name: 'Le Caire, Égypte',       role: 'SheGrows × FAO · RAG en arabe pour agricultrices' },
-    { c: [24.713, 46.675], name: 'Riyad, Arabie saoudite', role: 'Absar · vision edge dans une chaîne de cafés' },
-    { c: [36.806, 10.181], name: 'Tunis, Tunisie',         role: 'Base · Qualipro · Bootcamps' },
-    { c: [48.135, 11.582], name: 'Munich, Allemagne',      role: 'NTT DATA Munich · intégré en direct' },
-    { c: [47.376,  8.541], name: 'Zurich, Suisse',         role: 'Silver Brain AI · 1M+ documents juridiques allemands' },
-    { c: [45.421,-75.697], name: 'Ottawa, Canada',         role: 'D2D Analytics · RAG parlementaire' },
-    { c: [40.712,-74.006], name: 'États-Unis',             role: 'Évaluation d\'agents pour modèles de pointe' },
-    { c: [48.857,  2.352], name: 'Paris, France',          role: 'RLVR · apprentissage par renforcement à récompenses vérifiables' },
-    { c: [51.507, -0.128], name: 'Londres, Royaume-Uni',   role: 'RLVR · apprentissage par renforcement à récompenses vérifiables' },
-  ];
 
   places.forEach(p => {
-    L.marker(p.c, { icon: pinIcon, riseOnHover: true })
+    L.marker(p.c, { icon: pinIcon, riseOnHover: true, title: p.name, alt: p.name })
       .addTo(map)
       .bindPopup(`<b>${p.name}</b><em>${p.role}</em>`);
   });
+
 });
 </script>
 <!--#include scripts-->

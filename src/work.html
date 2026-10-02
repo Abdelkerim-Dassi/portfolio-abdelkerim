@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <!--#include head-open-->
-<title>Work · AI Engineer Projects &amp; Experience · Abdelkerim Dassi</title>
-<meta name="description" content="Abdelkerim Dassi's experience and projects: AI Team Lead at 1morething Studio (edge vision in Riyadh, Arabic RAG for FAO, on-prem legal OCR), agent evaluation for Anthropic, NTT DATA München, Silver Brain AI Zurich.">
+<title>AI Engineer Projects &amp; Experience · Abdelkerim Dassi</title>
+<meta name="description" content="Edge vision live in Riyadh, Arabic RAG for FAO, on-prem legal OCR, agent evaluation for Anthropic, plus Qirat. Projects with measured results.">
 <meta name="author" content="Abdelkerim Dassi">
 <meta name="keywords" content="AI engineer portfolio, machine learning engineer projects, edge AI Jetson, Arabic RAG, agent evaluation, LLM engineer, Abdelkerim Dassi, 1morething, NTT DATA, Qualipro, D2D Analytics, Silver Brain AI">
 <link rel="canonical" href="https://abdelkerimdassi.com/work">
@@ -224,7 +224,7 @@
 
     <a class="proj-row r" href="https://signal-desk-psi.vercel.app" target="_blank" rel="noopener">
       <span class="p-num">01</span>
-      <div><h3 class="p-name">Signal Desk: Crypto Decision Desk</h3><div class="p-sub">Designed, built and deployed alone. A rule engine scores 18 coins from 0 to 100 behind a market-regime gate; an LLM turns those numbers into a briefing and answers questions in a streaming chat grounded in them. The LLM is never called on the 2-minute refresh, so idle traffic costs nothing. Backtested over 35K+ coin-days since 2021: setups rated strong averaged +8.6% over 30 days, against +3.6% for all signals. FastAPI · React · Redis · Vercel.</div></div>
+      <div><h3 class="p-name">Qirat: Crypto Decision Desk</h3><div class="p-sub">A karat grades gold; Qirat grades coins. Formerly Signal Desk. Designed, built and deployed alone. A rule engine scores 18 coins from 0 to 100 behind a market-regime gate; an LLM turns those numbers into a briefing and answers questions in a streaming chat grounded in them. The LLM is never called on the 2-minute refresh, so idle traffic costs nothing. Backtested over 35K+ coin-days since 2021: setups rated strong averaged +8.6% over 30 days, against +3.6% for all signals. FastAPI · React · Redis · Vercel.</div></div>
       <div class="p-metric">Live</div>
       <span class="p-arr">↗</span>
     </a>
@@ -245,7 +245,7 @@
         <span class="activity-user">@Abdelkerim-Dassi</span>
         <span class="activity-live"><span class="activity-dot"></span>Synced live</span>
       </div>
-      <div class="activity-graph">
+      <div class="activity-graph" tabindex="0">
         <div id="gh-chart" class="gh-grid" role="img" aria-label="GitHub contribution graph">
           <div class="gh-loading">Loading contribution graph…</div>
         </div>
@@ -343,16 +343,31 @@ document.addEventListener('DOMContentLoaded', function () {
   const el = document.getElementById('map');
   if (!el || typeof L === 'undefined') return;
 
+  const places = [
+    { c: [25.346, 55.421], name: 'Sharjah, UAE',           role: '1MT portfolio · UAE' },
+    { c: [30.044, 31.236], name: 'Cairo, Egypt',           role: 'SheGrows × FAO · Arabic RAG for farmers' },
+    { c: [24.713, 46.675], name: 'Riyadh, KSA',            role: 'Absar · edge vision in a coffee chain' },
+    { c: [36.806, 10.181], name: 'Tunis, Tunisia',         role: 'Home base · Qualipro · Bootcamps' },
+    { c: [48.135, 11.582], name: 'Munich, Germany',        role: 'NTT DATA München · embedded direct' },
+    { c: [47.376,  8.541], name: 'Zurich, Switzerland',    role: 'Silver Brain AI · 1M+ German legal records' },
+    { c: [45.421,-75.697], name: 'Ottawa, Canada',         role: 'D2D Analytics · parliamentary RAG' },
+    { c: [40.712,-74.006], name: 'United States',          role: 'Agent evaluation for frontier models' },
+    { c: [48.857,  2.352], name: 'Paris, France',          role: 'RLVR · reinforcement learning with verifiable rewards' },
+    { c: [51.507, -0.128], name: 'London, UK',             role: 'RLVR · reinforcement learning with verifiable rewards' },
+  ];
+
   const map = L.map(el, {
-    center: [32, 25],
-    zoom: 3,
-    minZoom: 2,
+    minZoom: 1,
+    zoomSnap: 0.25, // lets fitBounds land between levels on narrow screens
     maxZoom: 7,
     scrollWheelZoom: false,
     dragging: !L.Browser.mobile, // one-finger swipe scrolls the page, not the map
     tapHold: false,
     worldCopyJump: true,
   });
+
+  // a fixed centre/zoom cut pins off on phones and hid London/Paris under the zoom buttons
+  map.fitBounds(L.latLngBounds(places.map(p => p.c)), { paddingTopLeft: [56, 40], paddingBottomRight: [40, 40] });
 
   // Esri grey canvas basemaps: no API key, and a base + labels pair per theme.
   // (CARTO retired anonymous access; its tiles come back stamped 'API KEY REQUIRED'.)
@@ -390,24 +405,13 @@ document.addEventListener('DOMContentLoaded', function () {
     iconAnchor: [7, 7],
   });
 
-  const places = [
-    { c: [25.346, 55.421], name: 'Sharjah, UAE',           role: '1MT portfolio · UAE' },
-    { c: [30.044, 31.236], name: 'Cairo, Egypt',           role: 'SheGrows × FAO · Arabic RAG for farmers' },
-    { c: [24.713, 46.675], name: 'Riyadh, KSA',            role: 'Absar · edge vision in a coffee chain' },
-    { c: [36.806, 10.181], name: 'Tunis, Tunisia',         role: 'Home base · Qualipro · Bootcamps' },
-    { c: [48.135, 11.582], name: 'Munich, Germany',        role: 'NTT DATA München · embedded direct' },
-    { c: [47.376,  8.541], name: 'Zurich, Switzerland',    role: 'Silver Brain AI · 1M+ German legal records' },
-    { c: [45.421,-75.697], name: 'Ottawa, Canada',         role: 'D2D Analytics · parliamentary RAG' },
-    { c: [40.712,-74.006], name: 'United States',          role: 'Agent evaluation for frontier models' },
-    { c: [48.857,  2.352], name: 'Paris, France',          role: 'RLVR · reinforcement learning with verifiable rewards' },
-    { c: [51.507, -0.128], name: 'London, UK',             role: 'RLVR · reinforcement learning with verifiable rewards' },
-  ];
 
   places.forEach(p => {
-    L.marker(p.c, { icon: pinIcon, riseOnHover: true })
+    L.marker(p.c, { icon: pinIcon, riseOnHover: true, title: p.name, alt: p.name })
       .addTo(map)
       .bindPopup(`<b>${p.name}</b><em>${p.role}</em>`);
   });
+
 });
 </script>
 <!--#include scripts-->

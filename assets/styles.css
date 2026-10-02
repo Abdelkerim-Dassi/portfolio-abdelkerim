@@ -705,6 +705,7 @@ div.proj-row:hover .p-name { transform:none; }
 
 .w-tags { display:flex; gap:8px; flex-wrap:wrap; }
 .w-tag {
+  white-space:nowrap;
   font-size:10px; letter-spacing:.12em;
   text-transform:uppercase;
   color:rgba(240,236,228,.55);
@@ -761,6 +762,8 @@ div.proj-row:hover .p-name { transform:none; }
   text-transform:uppercase; color:rgba(240,236,228,.55);
   width:72px;
 }
+/* "Téléphone" is wider than "Phone" and ran into the number */
+html[lang="fr"] .c-lbl { width:96px; }
 .c-val {
   font-size:15px; color:rgba(240,236,228,.65);
   flex:1; transition:color .3s;
@@ -1486,7 +1489,8 @@ footer {
   .skill-evidence { display: block; grid-column: 1 / -1; margin-top: 4px; }
   .certs-grid { grid-template-columns:1fr; }
   .cert,.cert:nth-child(even) { border-right:none; padding:20px 0; }
-  .w-row { grid-template-columns:1fr auto; gap:16px; padding:32px 0; }
+  /* stack the read-time under the post instead of squeezing the title into half the width */
+  .w-row { grid-template-columns:1fr; gap:12px; padding:32px 0; }
   .w-num { display:none; }
   .contact-cols { grid-template-columns:1fr; gap:40px; }
   .pull-quote { padding: 64px 24px; }
@@ -1497,6 +1501,9 @@ footer {
   .activity-card { padding:24px 20px; }
   .activity-graph { padding:14px 16px; }
   footer { padding:20px 24px; flex-direction:column; gap:10px; text-align:center; }
+  .ft-r { justify-content:center; gap:4px 24px; }
+  .ft-r a { display:inline-block; padding:6px 0; min-width:24px; text-align:center; }
+  .code-copy { padding:7px 12px; }
   .site-nav-row { grid-template-columns: 1fr auto; gap: 0 20px; padding: 28px 0; }
   .snr-num { display: none; }
 }
@@ -1519,6 +1526,7 @@ footer {
 [data-theme="light"] .n-logo:hover { color:var(--paper); }
 [data-theme="light"] .n-links a { color:rgba(15,29,61,.68); }
 [data-theme="light"] .n-links a:hover { color:var(--paper); }
+[data-theme="light"] .n-links a.active { color:var(--accent); }
 [data-theme="light"] .n-lang { border-color:rgba(176,125,53,.3); }
 [data-theme="light"] .n-lang:hover { border-color:rgba(176,125,53,.55); color:var(--accent); }
 @media (max-width:860px) {
@@ -1532,7 +1540,7 @@ footer {
 [data-theme="light"] .h-desc em { color:var(--accent); }
 [data-theme="light"] .btn { color:rgba(15,29,61,.78); border-color:rgba(15,29,61,.60); }
 [data-theme="light"] .btn:hover { color:var(--paper); border-color:var(--paper); }
-[data-theme="light"] .btn-accent { color:var(--accent); border-color:rgba(176,125,53,.4); background:rgba(176,125,53,.05); }
+[data-theme="light"] .btn-accent { color:#5e3e0e; border-color:rgba(176,125,53,.4); background:rgba(176,125,53,.05); }
 
 [data-theme="light"] .page-head { background: linear-gradient(160deg, #b5cfee 0%, #d8e6f5 100%); border-bottom:1px solid rgba(15,29,61,.10); }
 [data-theme="light"] .page-lede { color:rgba(15,29,61,.74); }
@@ -1625,8 +1633,8 @@ footer {
 [data-theme="light"] .contact-note strong { color:rgba(15,29,61,.92); }
 
 [data-theme="light"] footer { background:var(--bg2); border-color:rgba(15,29,61,.06); }
-[data-theme="light"] .ft-l { color:rgba(15,29,61,.55); }
-[data-theme="light"] .ft-r a { color:rgba(15,29,61,.55); }
+[data-theme="light"] .ft-l { color:rgba(15,29,61,.76); }
+[data-theme="light"] .ft-r a { color:rgba(15,29,61,.76); }
 [data-theme="light"] .ft-r a:hover { color:var(--accent); }
 
 /* ─────────────────────────────────────
@@ -1645,7 +1653,14 @@ footer {
 .article pre:hover .code-copy, .code-copy:focus-visible { opacity: 1; }
 .code-copy:hover { color: var(--accent); border-color: var(--accent); }
 .code-copy.copied { color: var(--teal); border-color: var(--teal); opacity: 1; }
-@media (hover: none) { .code-copy { opacity: 1; } }
+@media (hover: none) {
+  .code-copy { opacity: 1; }
+  /* the always-visible button would sit on the first code line */
+  .article pre:has(.code-copy) { padding-top: 48px; }
+}
+/* wrapped section heads in the case studies inherited body line-height */
+.cs-h { line-height: 1.05; }
+.skill-evidence code { white-space: nowrap; }
 
 /* ─────────────────────────────────────
    CONTACT CTA
@@ -1716,6 +1731,7 @@ footer {
   .ask-fab-label { display: none; }
   #ask-fab { padding: 14px; }
   #ask-fab::after { content: "AI"; font-size: 14px; letter-spacing: 1px; }
+  html[lang="fr"] #ask-fab::after { content: "IA"; }
 }
 @media print {
   /* the grain overlay is a fixed full-page texture — it prints as grey wash */

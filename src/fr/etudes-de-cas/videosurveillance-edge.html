@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
 <!--#include head-open-->
-<title>Étude de cas : Absar, vision edge pour une chaîne de cafés à Riyad · Abdelkerim Dassi</title>
-<meta name="description" content="Absar : 11 contrôles SOP sur l'appareil, sur NVIDIA Jetson, en service dans une chaîne de cafés à Riyad. Inférence 17× plus rapide, précision du détecteur de gobelets 0,875 → 0,992, détecteur de lait 12 % → 83 %. Ce que j'ai construit et comment c'est mesuré.">
+<title>Étude de cas edge AI : Absar, vision Jetson à Riyad</title>
+<meta name="description" content="11 contrôles SOP sur NVIDIA Jetson, en service dans une chaîne de cafés à Riyad : inférence 17× plus rapide, précision 0,875 → 0,992. Ce que j'ai construit.">
 <meta name="author" content="Abdelkerim Dassi">
 <link rel="canonical" href="https://abdelkerimdassi.com/fr/etudes-de-cas/videosurveillance-edge">
 <!--#include hreflang-->
@@ -160,7 +160,7 @@
     <div class="cs-outcomes">
       <div class="cs-out"><div class="cs-out-v">17×</div><div class="cs-out-k">Inférence plus rapide sur le GPU du Jetson que sur son CPU : de 3,9 s à 225 ms par image, en moyenne sur 12 exécutions</div></div>
       <div class="cs-out"><div class="cs-out-v">0,875 → 0,992</div><div class="cs-out-k">Précision du détecteur de gobelets après la reconstruction de son jeu de données à partir de 140 clips de magasin, découpé par jour. Rappel de 0,66 à 0,845</div></div>
-      <div class="cs-out"><div class="cs-out-v">12 % → 83 %</div><div class="cs-out-k">Précision du détecteur de lait sur une heure réservée d'images réelles, après avoir découvert que l'ancien découpage entraînement / test fuyait</div></div>
+      <div class="cs-out"><div class="cs-out-v">12 % → 83 %</div><div class="cs-out-k">Précision du détecteur de lait sur une heure réservée d'images réelles, après avoir découvert que l'ancien découpage entraînement / test présentait une fuite de données</div></div>
       <div class="cs-out"><div class="cs-out-v">21 → 0</div><div class="cs-out-k">Fausses alertes de moussage au rejeu de 36 alertes vérifiées par le gérant, en conservant 14 des 15 vraies</div></div>
       <div class="cs-out"><div class="cs-out-v">3,7 % → 0,2 %</div><div class="cs-out-k">Fausses alertes charlotte sur 849 têtes rejouées, dès qu'un second cadrage, plus haut, de la tête doit confirmer avant qu'une alerte parte</div></div>
       <div class="cs-out"><div class="cs-out-v">53–57 FPS</div><div class="cs-out-k">Le pipeline de tenue d'hygiène avec ses deux modèles chargés sur un Jetson Orin Nano de 8 Go, pour 1,9 Go de RAM</div></div>

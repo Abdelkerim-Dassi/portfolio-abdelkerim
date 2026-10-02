@@ -96,6 +96,26 @@ function expandIncludes(html, file, route) {
   });
 }
 
+/* ── 2b. French typography ───────────────────────────────── */
+
+/**
+ * French puts a space before ? ! ; : and inside « », and groups thousands with a
+ * space. Typed as ordinary spaces, the browser is free to break the line there and
+ * strands "?" or "%" at the start of the next line. Text nodes only: tags (and so
+ * attributes), scripts, styles, <pre> and <code> pass through untouched.
+ */
+const NNBSP = ' ', NBSP = ' ';
+function frenchTypography(html) {
+  return html
+    .split(/(<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<pre[\s\S]*?<\/pre>|<code[\s\S]*?<\/code>|<[^>]+>)/)
+    .map(part => part.startsWith('<') ? part : part
+      .replace(/ ([?!;])/g, `${NNBSP}$1`)
+      .replace(/ ([:%»])/g, `${NBSP}$1`)
+      .replace(/« /g, `«${NBSP}`)
+      .replace(/(\d) (\d{3})(?!\d)/g, `$1${NNBSP}$2`))
+    .join('');
+}
+
 /* ── 3. content-hash asset URLs ──────────────────────────── */
 
 const hashes = new Map();
@@ -232,7 +252,8 @@ const pages = [];
 for (const file of walk(SRC, '.html')) {
   const route = routeOf(file);
   const raw = readFileSync(file, 'utf8');
-  const html = stampAssets(expandIncludes(raw, file, route))
+  const expanded = expandIncludes(raw, file, route);
+  const html = stampAssets(localeOf(route) === 'fr' ? frenchTypography(expanded) : expanded)
     // The nav language switch: to the twin when there is one, else to the other home.
     .replace(/\{\{ALT_HREF\}\}/g, twinOf.get(route) || (localeOf(route) === 'en' ? '/fr' : '/'));
 
@@ -256,7 +277,9 @@ cpSync(join(ROOT, 'assets'), join(DIST, 'assets'), {
   recursive: true,
   filter: src => !src.split(/[\\/]/).slice(-3).join('/').endsWith('assets/og/template.html'),
 });
-for (const f of ['robots.txt', 'site.webmanifest']) cpSync(join(ROOT, f), join(DIST, f));
+// llms.txt: the plain-text profile AI assistants read; the hex .txt is the IndexNow key
+// (Bing, Yandex) and must be served from the site root to prove ownership
+for (const f of ['robots.txt', 'site.webmanifest', 'llms.txt', '4de1820114baa530faa367ad5f93f7cd.txt']) cpSync(join(ROOT, f), join(DIST, f));
 
 writeFileSync(join(DIST, 'sitemap.xml'), buildSitemap(pages));
 for (const locale of Object.keys(FEEDS)) {

@@ -103,7 +103,7 @@
   </figure>
 
   <p>
-    Tout le monde écrit sur le RAG, et les tutoriels donnent l'impression que c'est simple : vous embarquez vos documents, vous les jetez dans une base vectorielle, vous branchez un LLM, terminé. Livrez.
+    Tout le monde écrit sur le RAG, et les tutoriels donnent l'impression que c'est simple : vous vectorisez vos documents, vous les jetez dans une base vectorielle, vous branchez un LLM, terminé. Livrez.
   </p>
   <p>
     Je l'ai cru aussi, jusqu'au jour où il a fallu construire des systèmes RAG qui <strong>tiennent vraiment en production</strong>. Pas des démos. Pas des notebooks. Des systèmes où de vrais utilisateurs posent des questions imprévisibles, où une mauvaise réponse a des conséquences, et où « ça marche la plupart du temps » ne suffit pas.
@@ -167,7 +167,7 @@
     Le prototype a pris deux semaines. Le rendre prêt pour la production a pris trois mois.
   </p>
   <p>
-    La première leçon est tombée tout de suite : <strong>le composant le plus important, c'est votre pipeline d'ingestion</strong>. Pas le LLM. Pas le prompt. La façon dont vous traitez, découpez et embarquez les documents décide de 80 % de la qualité finale.
+    La première leçon est tombée tout de suite : <strong>le composant le plus important, c'est votre pipeline d'ingestion</strong>. Pas le LLM. Pas le prompt. La façon dont vous traitez, découpez et vectorisez les documents décide de 80 % de la qualité finale.
   </p>
 
   <h3>Découper n'est pas fractionner</h3>
@@ -185,7 +185,7 @@
     <li><strong>Un découpage attentif à la structure</strong> : analyser d'abord le format du document (titres Markdown, sections HTML, mise en page PDF) et découper le long des frontières sémantiques, pas des comptes de tokens</li>
     <li><strong>Des fenêtres chevauchantes avec métadonnées</strong> : 15 à 20 % de chevauchement entre morceaux, avec les titres de section parents injectés en métadonnées pour que le retriever puisse évaluer la pertinence au regard du contexte plus large</li>
     <li><strong>La préservation des tableaux</strong> : les tableaux étaient extraits entiers et stockés comme morceaux distincts avec un indicateur de type « table », jamais coupés entre les lignes</li>
-    <li><strong>Petits morceaux pour la récupération, grands morceaux pour la génération</strong> : le motif « parent-enfant », où l'on embarque de petits morceaux granulaires mais où l'on récupère le parent plus large quand une correspondance est trouvée</li>
+    <li><strong>Petits morceaux pour la récupération, grands morceaux pour la génération</strong> : le motif « parent-enfant », où l'on vectorise de petits morceaux granulaires mais où l'on récupère le parent plus large quand une correspondance est trouvée</li>
   </ul>
 
   <div class="callout">
@@ -309,7 +309,7 @@
     Comment savoir si votre système RAG est réellement bon ? C'est la question sur laquelle je bute encore, après trois systèmes en production.
   </p>
   <p>
-    Ce à quoi je me suis arrêté, c'est une <strong>évaluation à trois couches</strong> :
+    Ce sur quoi je me suis arrêté, c'est une <strong>évaluation à trois couches</strong> :
   </p>
   <ul>
     <li><strong>Qualité de récupération</strong> : pour une question donnée, les bons morceaux sont-ils dans le top 5 ? Mesurée par le rappel@5 sur un jeu de test constitué à la main. C'est la métrique la plus importante et celle que la plupart des gens sautent</li>

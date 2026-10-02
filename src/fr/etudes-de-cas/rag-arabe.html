@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
 <!--#include head-open-->
-<title>Étude de cas : SheGrows, RAG en arabe pour agricultrices (FAO Égypte) · Abdelkerim Dassi</title>
-<meta name="description" content="SheGrows, un assistant RAG sur WhatsApp pour les agricultrices en Égypte, construit pour la FAO : plus de 15 000 questions traitées en production. Comment j'ai construit sa couche de recherche en dialecte égyptien et sa boucle de retour des experts.">
+<title>Étude de cas RAG arabe : SheGrows pour la FAO Égypte</title>
+<meta name="description" content="Un assistant RAG WhatsApp pour les agricultrices égyptiennes, conçu pour la FAO : 15K+ questions. Ma recherche en dialecte et la boucle d'experts.">
 <meta name="author" content="Abdelkerim Dassi">
 <link rel="canonical" href="https://abdelkerimdassi.com/fr/etudes-de-cas/rag-arabe">
 <!--#include hreflang-->
@@ -101,7 +101,7 @@
     <p class="cs-p">
       Le RAG a l'air magique dans les démos en anglais. On dépose des PDF, on récupère, on interroge le
       modèle, terminé. Celui-ci devait répondre à des questions comme <b>« comment arroser mes courgettes
-      en été »</b> (tapé <b>ازاى اروى الكوسة فى الصيف؟</b>) à partir d'une documentation en arabe
+      en été »</b> (tapé <b lang="ar" dir="rtl">ازاى اروى الكوسة فى الصيف؟</b>) à partir d'une documentation en arabe
       standard. Le même mot arrive avec différentes formes d'alif, avec ou sans voyelles, avec des
       marques de sens d'écriture parasites laissées par le clavier du téléphone. Et le dialecte se
       superpose à tout cela.
@@ -186,7 +186,7 @@
   </section>
 
   <div class="cs-cta r">
-    <span class="cs-cta-txt">Un problème RAG bien réel, en vrac, et pas en anglais ?</span>
+    <span class="cs-cta-txt">Un problème RAG bien réel, désordonné, et pas en anglais ?</span>
     <a class="btn btn-accent" href="/fr/contact">Parlons-en <span>↗</span></a>
   </div>
 

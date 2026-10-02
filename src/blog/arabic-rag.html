@@ -159,7 +159,7 @@
   <h2>Arabic Isn't One Language</h2>
 
   <p>
-    Arabic users don't type the same way. The same word can carry different alif shapes (ٱ, آ, إ, أ), diacritics or no diacritics, stray RTL marks from a keyboard. Dialect is a separate problem on top: the dictionary form your docs use and what a farmer types on WhatsApp are often very different. Most embedding models, even multilingual ones, can't tell that <em>"how do I water my courgette in summer"</em> and <code lang="ar" dir="rtl">ازاى اروى الكوسة فى الصيف؟</code> mean the same thing.
+    Arabic users don't type the same way. The same word can carry different alif shapes (<bdi>ٱ</bdi>, <bdi>آ</bdi>, <bdi>إ</bdi>, <bdi>أ</bdi>), diacritics or no diacritics, stray RTL marks from a keyboard. Dialect is a separate problem on top: the dictionary form your docs use and what a farmer types on WhatsApp are often very different. Most embedding models, even multilingual ones, can't tell that <em>"how do I water my courgette in summer"</em> and <code lang="ar" dir="rtl">ازاى اروى الكوسة فى الصيف؟</code> mean the same thing.
   </p>
 
   <h2>Fix #1: Normalize the Query, Not the Docs</h2>
@@ -171,7 +171,7 @@
     The harder rule I learned: <strong>don't run the same normalization on your knowledge base</strong>. You'll quietly damage the exact words farmers search for. Normalize what comes in. Leave what's already indexed.
   </p>
 
-  <pre><code lang="ar" dir="rtl">text = strip_diacritics(text)
+  <pre><code>text = strip_diacritics(text)
 text = re.sub(r"[ٱآإأ]", "ا", text)
 text = re.sub(r"ي", "ى", text)
 text = re.sub(r"\s+", " ", text).strip()</code></pre>

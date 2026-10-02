@@ -39,7 +39,7 @@
   opacity: .55;
   font-style: italic;
 }
-.comments-error { color: #d97757; }
+.comments-error { color: #e8896b; opacity: .9; }
 
 .comment {
   border-top: 1px solid var(--line);
@@ -61,7 +61,7 @@
 .comment-time {
   font-size: 11px;
   letter-spacing: .04em;
-  opacity: .45;
+  opacity: .62;
 }
 .comment-body {
   font-size: 14.5px;

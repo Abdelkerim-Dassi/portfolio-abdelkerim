@@ -1,0 +1,30 @@
+# Abdelkerim Dassi
+
+> AI engineer and AI Team Lead at 1morething Studio (Tunis, Tunisia). Builds production RAG, LLM agents, agent-evaluation tasks for frontier models, and edge computer vision on NVIDIA Jetson. Open to full-time AI / ML engineering roles with relocation to the Gulf (UAE, Saudi Arabia, Qatar), France and the EU, the UK, or the US. Needs an employer-sponsored work visa; 21-day notice. Also takes remote freelance projects.
+
+Arabic (native), English (C1), French (C1), basic German. In AI since 2021 (internships during engineering school), full-time since 2025. National Engineer Degree in Data Science, ESPRIT (2025). Four NVIDIA DLI certifications.
+
+## Hire and contact
+
+- [Contact](https://abdelkerimdassi.com/contact): availability, relocation, visa and notice period, book a call
+- [Resume](https://abdelkerimdassi.com/resume): full experience, printable
+- Email: abdelkerimdassi@gmail.com
+- [LinkedIn](https://linkedin.com/in/abdelkerim-dassi/) · [GitHub](https://github.com/Abdelkerim-Dassi)
+
+## Work with measured results
+
+- [Absar case study](https://abdelkerimdassi.com/case-studies/edge-cctv): 11 on-device SOP checks on NVIDIA Jetson, live in a coffee chain in Riyadh since Sep 2026. 17x faster inference from a GPU benchmark he ran; cup-detector precision 0.875 to 0.992; milk-detector precision 12% to 83%; hairnet false flags 3.7% to 0.2%.
+- [SheGrows case study](https://abdelkerimdassi.com/case-studies/arabic-rag): WhatsApp RAG assistant for women farmers in Egypt, built for FAO. He built the Egyptian-dialect retrieval layer and expert feedback loop; 15K+ questions answered in production.
+- [Experience and projects](https://abdelkerimdassi.com/work): AI Team Lead at 1morething Studio (owns the AI roadmap for every product); LegalTech on-premise Arabic OCR for a ministry (45x faster OCR); ~40 agentic evaluation tasks for Anthropic's Claude Sonnet 5 and Opus 4.6 (~80% accepted); Qirat, a solo-built crypto decision desk; earlier roles at Qualipro, D2D Analytics, NTT DATA Munich and Silver Brain AI Zurich.
+
+## Writing
+
+- [RAG in Production: What Nobody Tells You](https://abdelkerimdassi.com/blog/rag-in-production)
+- [Arabic Broke My RAG. Here's What Saved It.](https://abdelkerimdassi.com/blog/arabic-rag)
+- [What a $250 Box Can Actually Do: Jetson Orin Nano](https://abdelkerimdassi.com/blog/jetson-orin-nano)
+- [I Used Pip for Years. Poetry for Teams. Then Uv Showed Up.](https://abdelkerimdassi.com/blog/pip-poetry-uv)
+
+## Optional
+
+- [About](https://abdelkerimdassi.com/about) · [Stack](https://abdelkerimdassi.com/stack)
+- French version of the site: [abdelkerimdassi.com/fr](https://abdelkerimdassi.com/fr)
