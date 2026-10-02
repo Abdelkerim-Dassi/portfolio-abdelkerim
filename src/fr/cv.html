@@ -3,9 +3,9 @@
 <head>
 <!--#include head-open-->
 <title>CV · Abdelkerim Dassi · Ingénieur IA (LLM, RAG, agents, vision edge)</title>
-<meta name="description" content="CV d'Abdelkerim Dassi, ingénieur IA et AI Lead chez 1morething Ventures. RAG en production, agents LLM, évaluation d'agents, vision par ordinateur en edge. Ouvert à la mobilité vers le Golfe, l'UE, le Royaume-Uni ou les États-Unis. Imprimez cette page pour un PDF propre.">
+<meta name="description" content="CV d'Abdelkerim Dassi, ingénieur IA et AI Team Lead chez 1morething Studio. RAG en production, agents LLM, évaluation d'agents, vision par ordinateur en edge. Ouvert à la mobilité vers le Golfe, l'UE, le Royaume-Uni ou les États-Unis. Imprimez cette page pour un PDF propre.">
 <meta name="author" content="Abdelkerim Dassi">
-<meta name="keywords" content="CV ingénieur IA, CV ingénieur machine learning, ingénieur LLM, AI Lead, mobilité internationale, ingénieur IA Tunisie, Abdelkerim Dassi, RAG, Spring AI, MCP">
+<meta name="keywords" content="CV ingénieur IA, CV ingénieur machine learning, ingénieur LLM, AI Team Lead, mobilité internationale, ingénieur IA Tunisie, Abdelkerim Dassi, RAG, Spring AI, MCP">
 <link rel="canonical" href="https://abdelkerimdassi.com/fr/cv">
 <!--#include hreflang-->
 <!--#include head-icons-->
@@ -13,7 +13,7 @@
 <meta property="og:type" content="profile">
 <meta property="og:url" content="https://abdelkerimdassi.com/fr/cv">
 <meta property="og:title" content="CV · Abdelkerim Dassi · Ingénieur IA, mobilité internationale">
-<meta property="og:description" content="AI Lead chez 1morething Ventures. RAG en production, agents LLM, évaluation d'agents, vision edge. Ouvert à la mobilité internationale.">
+<meta property="og:description" content="AI Team Lead chez 1morething Studio. RAG en production, agents LLM, évaluation d'agents, vision edge. Ouvert à la mobilité internationale.">
 <meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -37,11 +37,11 @@
     "name": "Abdelkerim Dassi",
     "url": "https://abdelkerimdassi.com",
     "image": "https://abdelkerimdassi.com/assets/avatar.jpg",
-    "jobTitle": "AI Lead",
+    "jobTitle": "AI Team Lead",
     "email": "abdelkerimdassi@gmail.com",
     "worksFor": {
       "@type": "Organization",
-      "name": "1morething Ventures",
+      "name": "1morething Studio",
       "url": "https://1morething.io"
     },
     "alumniOf": {
@@ -123,10 +123,16 @@
     .cv-skills { font-size: 11.5px; gap: 5px 20px; }
     .cv-skill-v { line-height: 1.45; }
     /* A4 is ~673px wide, under the 700px phone breakpoint: keep the desktop grid on paper */
-    .cv-item { grid-template-columns: 1fr 120px !important; }
+    .cv-item { grid-template-columns: 1fr 150px !important; }
     .cv-item-date { text-align: right !important; }
     .cv-skills { grid-template-columns: 130px 1fr !important; gap: 5px 18px !important; }
     .cv-two { grid-template-columns: 1fr 1fr !important; gap: 0 32px !important; }
+    /* ATS: spaced-out headings extract as "E x pe r ie n ce", kerning after P drops spaces */
+    .cv-wrap, .cv-wrap * { letter-spacing: 0 !important; font-kerning: none; }
+    .cv-item-date { white-space: nowrap; }
+    .cv-two .cv-item { grid-template-columns: 1fr !important; }
+    .cv-summary { max-width: none; }
+    .cv-sec-title, .cv-name { word-spacing: .3em; }
     a { text-decoration: none !important; border: none !important; }
     /* the contact links already print their own address */
     .cv-contact a::after { content: none !important; }
@@ -168,7 +174,7 @@
     <p class="cv-summary">
       Ingénieur IA qui livre en production : <b>RAG, agents LLM, évaluation d'agents et vision par ordinateur en edge</b>.
       Dans l'IA depuis 2021 : des stages à Zurich et avec NTT DATA Munich pendant mon diplôme d'ingénieur, puis le plein temps à partir de 2025.
-      Aujourd'hui <b>AI Lead chez 1morething Ventures</b> (vision edge à Riyad, RAG en arabe pour la <b>FAO en Égypte</b>,
+      Aujourd'hui <b>AI Team Lead chez 1morething Studio</b> (vision edge à Riyad, RAG en arabe pour la <b>FAO en Égypte</b>,
       OCR juridique pour un ministère) et concepteur de tâches d'évaluation d'agents pour les <b>modèles d'Anthropic</b>.
       Je cherche un poste d'ingénieur IA / ML à plein temps à l'étranger.
     </p>
@@ -178,8 +184,8 @@
     <h2 class="cv-sec-title">Expérience</h2>
 
     <div class="cv-item">
-      <div><div class="cv-item-role">AI Lead</div><div class="cv-item-co">1morething Ventures · Sharjah, EAU · Hybride</div></div>
-      <div class="cv-item-date">Janv. 2026 – auj.</div>
+      <div><div class="cv-item-role">AI Team Lead</div><div class="cv-item-co">1morething Studio · Tunis, Tunisie · Hybride</div></div>
+      <div class="cv-item-date">Févr. 2026 – auj.</div>
       <ul>
         <li>Responsable de la <b>feuille de route IA de tous les produits</b> du portefeuille : validation des choix d'architecture et de modèles, standards des services IA, relecture des services IA livrés par l'équipe. Encadrement de 2 à 4 ingénieurs.</li>
         <li><b>Absar, vision edge (chaîne de cafés, Riyad) :</b> construction des 11 contrôles SOP sur l'appareil (tenue d'hygiène, sécurité alimentaire, drive), en service sur NVIDIA Jetson, 8 caméras à 16 FPS. Mon benchmark GPU : <b>inférence 17× plus rapide</b> (3,9 s → 225 ms).</li>

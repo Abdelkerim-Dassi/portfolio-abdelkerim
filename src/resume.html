@@ -3,7 +3,7 @@
 <head>
 <!--#include head-open-->
 <title>Resume · Abdelkerim Dassi · AI Engineer (LLM, RAG, Agents, Edge Vision)</title>
-<meta name="description" content="Resume of Abdelkerim Dassi, AI engineer and AI Lead at 1morething Ventures. Production RAG, LLM agents, agent evaluation, edge computer vision. Open to relocation to the Gulf, EU, UK or US. Print this page for a clean PDF.">
+<meta name="description" content="Resume of Abdelkerim Dassi, AI engineer and AI Team Lead at 1morething Studio. Production RAG, LLM agents, agent evaluation, edge computer vision. Open to relocation to the Gulf, EU, UK or US. Print this page for a clean PDF.">
 <meta name="author" content="Abdelkerim Dassi">
 <link rel="canonical" href="https://abdelkerimdassi.com/resume">
 <!--#include hreflang-->
@@ -12,7 +12,7 @@
 <meta property="og:type" content="profile">
 <meta property="og:url" content="https://abdelkerimdassi.com/resume">
 <meta property="og:title" content="Resume · Abdelkerim Dassi · AI Engineer, open to relocation">
-<meta property="og:description" content="AI Lead at 1morething Ventures. Production RAG, LLM agents, agent evaluation, edge vision. Open to relocation.">
+<meta property="og:description" content="AI Team Lead at 1morething Studio. Production RAG, LLM agents, agent evaluation, edge vision. Open to relocation.">
 <meta property="og:image" content="https://abdelkerimdassi.com/assets/og/og-default.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -34,11 +34,11 @@
     "name": "Abdelkerim Dassi",
     "url": "https://abdelkerimdassi.com",
     "image": "https://abdelkerimdassi.com/assets/avatar.jpg",
-    "jobTitle": "AI Lead",
+    "jobTitle": "AI Team Lead",
     "email": "abdelkerimdassi@gmail.com",
     "worksFor": {
       "@type": "Organization",
-      "name": "1morething Ventures",
+      "name": "1morething Studio",
       "url": "https://1morething.io"
     },
     "alumniOf": {
@@ -120,10 +120,16 @@
     .cv-skills { font-size: 11.5px; gap: 5px 20px; }
     .cv-skill-v { line-height: 1.45; }
     /* A4 is ~673px wide, under the 700px phone breakpoint: keep the desktop grid on paper */
-    .cv-item { grid-template-columns: 1fr 120px !important; }
+    .cv-item { grid-template-columns: 1fr 150px !important; }
     .cv-item-date { text-align: right !important; }
     .cv-skills { grid-template-columns: 130px 1fr !important; gap: 5px 18px !important; }
     .cv-two { grid-template-columns: 1fr 1fr !important; gap: 0 32px !important; }
+    /* ATS: spaced-out headings extract as "E x pe r ie n ce", kerning after P drops spaces */
+    .cv-wrap, .cv-wrap * { letter-spacing: 0 !important; font-kerning: none; }
+    .cv-item-date { white-space: nowrap; }
+    .cv-two .cv-item { grid-template-columns: 1fr !important; }
+    .cv-summary { max-width: none; }
+    .cv-sec-title, .cv-name { word-spacing: .3em; }
     a { text-decoration: none !important; border: none !important; }
     /* the contact links already print their own address */
     .cv-contact a::after { content: none !important; }
@@ -165,7 +171,7 @@
     <p class="cv-summary">
       AI engineer who ships to production: <b>RAG, LLM agents, agent evaluation and edge computer vision</b>.
       In AI since 2021: internships in Zurich and with NTT DATA Munich during my engineering degree, then full-time from 2025.
-      Today I am <b>AI Lead at 1morething Ventures</b>, owning the AI roadmap across its product portfolio and building hands-on:
+      Today I am <b>AI Team Lead at 1morething Studio</b>, owning the AI roadmap across its product portfolio and building hands-on:
       edge vision live in a Riyadh coffee chain, an Arabic RAG assistant for <b>FAO in Egypt</b> that has answered 15K+ questions,
       and an on-premise legal-document pipeline for a ministry. On the side I build agent-evaluation tasks for
       <b>Anthropic's frontier models</b>. Looking for a full-time AI / ML engineering role abroad.
@@ -176,8 +182,8 @@
     <h2 class="cv-sec-title">Experience</h2>
 
     <div class="cv-item">
-      <div><div class="cv-item-role">AI Lead</div><div class="cv-item-co">1morething Ventures · Sharjah, UAE · Hybrid</div></div>
-      <div class="cv-item-date">Jan 2026 – Present</div>
+      <div><div class="cv-item-role">AI Team Lead</div><div class="cv-item-co">1morething Studio · Tunis, Tunisia · Hybrid</div></div>
+      <div class="cv-item-date">Feb 2026 – Present</div>
       <ul>
         <li>Own the <b>AI roadmap for every product</b> in the venture portfolio: validate architecture and model decisions, set the AI service standards, and review the AI services the team ships. Mentor 2–4 engineers.</li>
         <li><b>Absar, edge vision (coffee chain, Riyadh):</b> built all 11 on-device SOP checks (hygiene gear, food safety, drive-thru) live on NVIDIA Jetson, 8 cameras at 16 FPS. A GPU benchmark I ran gave <b>17× faster inference</b> (3.9 s → 225 ms) and set the box's architecture.</li>
